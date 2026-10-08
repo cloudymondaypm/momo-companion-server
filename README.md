@@ -1,6 +1,12 @@
 [![Banners](docs/images/banner1.png)](https://github.com/xinnan-tech/xiaozhi-esp32-server)
 
-<h1 align="center">小智后端服务xiaozhi-esp32-server</h1>
+<h1 align="center">Momo Companion Server</h1>
+<!-- momo-companion-brand -->
+> **Momo Companion Server** is the CloudyMonday bilingual English/Filipino voice-companion distribution of [xiaozhi-esp32-server](https://github.com/xinnan-tech/xiaozhi-esp32-server). It adds NVIDIA NIM compatibility, Filipino-capable local speech recognition, and optional memory integrations while preserving upstream MIT attribution.
+
+**Repository:** https://github.com/cloudymondaypm/momo-companion-server
+
+
 
 <p align="center">
 本项目基于人机共生智能理论和技术研发智能终端软硬件体系<br/>为开源智能硬件项目
