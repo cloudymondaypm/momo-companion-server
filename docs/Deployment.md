@@ -1,106 +1,72 @@
-# 部署架构图
-![请参考-最简化架构图](../docs/images/deploy1.png)
-# 方式一：Docker只运行Server
+# Standalone Momo Companion Server Deployment
 
-`0.8.2`版本开始，本项目发行的docker镜像只支持`x86架构`，如果需要在`arm64架构`的CPU上部署，可按照[这个教程](docker-build.md)在本机编译`arm64的镜像`。
+![Standalone deployment architecture](images/deploy1.png)
 
-## 1. 安装docker
+This guide runs the **standalone AI server without the management console**. For the complete system, see [Full Deployment](Deployment_all.md).
 
-如果您的电脑还没安装docker，可以按照这里的教程安装：[docker安装](https://www.runoob.com/docker/ubuntu-docker-install.html)
+## Option 1. Docker deployment
 
-安装好docker后，进继续。
+> The upstream prebuilt images from version 0.8.2 onward are described as x86-only. If you use an ARM64 host, see [Build Docker Images From Source](docker-build.md) and build an image for your architecture.
 
-### 1.1 手动部署
+### 1. Install Docker
 
-#### 1.1.1 创建目录
+Install Docker Engine and Docker Compose for your operating system. For Ubuntu, the [upstream installation guide](https://www.runoob.com/docker/ubuntu-docker-install.html) provides one approach.
 
-安装完docker后，你需要为这个项目找一个安放配置文件的目录，例如我们可以新建一个文件夹叫`xiaozhi-server`。
+### 2. Create the working directories
 
-创建好目录后，你需要在`xiaozhi-server`下面创建`data`文件夹和`models`文件夹，`models`下面还要再创建`SenseVoiceSmall`文件夹。
+Choose a working directory, for example `xiaozhi-server`, and create:
 
-最终目录结构如下所示：
-
-```
-xiaozhi-server
-  ├─ data
-  ├─ models
-     ├─ SenseVoiceSmall
+```text
+xiaozhi-server/
+├── data/
+└── models/
+    └── SenseVoiceSmall/
 ```
 
-#### 1.1.2 下载语音识别模型文件
+### 3. Download the speech-recognition model
 
-你需要下载语音识别的模型文件，因为本项目的默认语音识别用的是本地离线语音识别方案。可通过这个方式下载
-[跳转到下载语音识别模型文件](#模型文件)
+The default standalone ASR uses the offline `SenseVoiceSmall` model. Download `model.pt` using one of the links in [Model Files](#model-files) and place it at `models/SenseVoiceSmall/model.pt`.
 
-下载完后，回到本教程。
+### 4. Download Docker Compose and configuration files
 
-#### 1.1.3 下载配置文件
+Download [docker-compose.yml](../main/xiaozhi-server/docker-compose.yml) from this repository and save it in the `xiaozhi-server` working directory.
 
-你需要下载两个配置文件：`docker-compose.yaml` 和 `config.yaml`。需要从项目仓库下载这两个文件。
+Download [config.yaml](../main/xiaozhi-server/config.yaml) and save it as `data/.config.yaml`. On GitHub, open the file and use **Raw** or **Download** to obtain the actual contents.
 
-##### 1.1.3.1 下载 docker-compose.yaml
+Your resulting structure should look like:
 
-用浏览器打开[这个链接](../main/xiaozhi-server/docker-compose.yml)。
-
-在页面的右侧找到名称为`RAW`按钮，在`RAW`按钮的旁边，找到下载的图标，点击下载按钮，下载`docker-compose.yml`文件。 把文件下载到你的
-`xiaozhi-server`中。
-
-下载完后，回到本教程继续往下。
-
-##### 1.1.3.2 创建 config.yaml
-
-用浏览器打开[这个链接](../main/xiaozhi-server/config.yaml)。
-
-在页面的右侧找到名称为`RAW`按钮，在`RAW`按钮的旁边，找到下载的图标，点击下载按钮，下载`config.yaml`文件。 把文件下载到你的
-`xiaozhi-server`下面的`data`文件夹中，然后把`config.yaml`文件重命名为`.config.yaml`。
-
-下载完配置文件后，我们确认一下整个`xiaozhi-server`里面的文件如下所示：
-
-```
-xiaozhi-server
-  ├─ docker-compose.yml
-  ├─ data
-    ├─ .config.yaml
-  ├─ models
-     ├─ SenseVoiceSmall
-       ├─ model.pt
+```text
+xiaozhi-server/
+├── docker-compose.yml
+├── data/
+│   └── .config.yaml
+└── models/
+    └── SenseVoiceSmall/
+        └── model.pt
 ```
 
-如果你的文件目录结构也是上面的，就继续往下。如果不是，你就再仔细看看是不是漏操作了什么。
+### 5. Configure the model provider
 
-## 2. 配置项目文件
+Update `data/.config.yaml` to supply the model API keys and selected modules. See [Configuration](#configuration) below. Do not publish secret keys or commit `.config.yaml` with live credentials.
 
-接下来，程序还不能直接运行，你需要配置一下，你到底使用的是什么模型。你可以看这个教程：
-[跳转到配置项目文件](#配置项目)
+### 6. Start the server
 
-配置完项目文件后，回到本教程继续往下。
+Open a terminal in the working directory and run:
 
-## 3. 执行docker命令
-
-打开命令行工具，使用`终端`或`命令行`工具 进入到你的`xiaozhi-server`，执行以下命令
-
-```
+```bash
 docker compose up -d
-```
-
-执行完后，再执行以下命令，查看日志信息。
-
-```
 docker logs -f xiaozhi-esp32-server
 ```
 
-这时，你就要留意日志信息，可以根据这个教程，判断是否成功了。[跳转到运行状态确认](#运行状态确认)
+Review the logs as described under [Verify Server Startup](#verify-server-startup).
 
-## 5. 版本升级操作
+### 7. Upgrade an existing deployment
 
-如果后期想升级版本，可以这么操作
+Back up `data/.config.yaml`, any locally stored data, and other persistent volumes. When upgrading, compare new configuration fields with your existing settings, and copy over **only your customized values** rather than replacing a new configuration file with an outdated one.
 
-5.1、备份好`data`文件夹中的`.config.yaml`文件，一些关键的配置到时复制到新的`.config.yaml`文件里。
-请注意是对关键密钥逐个复制，不要直接覆盖。因为新的`.config.yaml`文件可能有一些新的配置项，旧的`.config.yaml`文件不一定有。
+The original deployment workflow uses the following commands to remove old containers/images before redeployment. **Check that persistent database and data volumes are backed up before removing anything.**
 
-5.2、执行以下命令
-
-```
+```bash
 docker stop xiaozhi-esp32-server
 docker rm xiaozhi-esp32-server
 docker stop xiaozhi-esp32-server-web
@@ -109,30 +75,27 @@ docker rmi ghcr.nju.edu.cn/xinnan-tech/xiaozhi-esp32-server:server_latest
 docker rmi ghcr.nju.edu.cn/xinnan-tech/xiaozhi-esp32-server:web_latest
 ```
 
-5.3、重新按docker方式部署
+Then follow the Docker setup again using the desired image tag. Stopped or nonexistent containers may cause harmless command errors.
 
-# 方式二：本地源码只运行Server
+## Option 2. Run the source code locally
 
-## 1.安装基础环境
+### 1. Prepare a Python environment
 
-本项目使用`conda`管理依赖环境。如果不方便安装`conda`，需要根据实际的操作系统安装好`libopus`和`ffmpeg`。
-如果确定使用`conda`，则安装好后，开始执行以下命令。
+This project uses Conda to manage dependencies. Alternatively, install Python, `libopus`, and `ffmpeg` through your system package manager.
 
-重要提示！windows 用户，可以通过安装`Anaconda`来管理环境。安装好`Anaconda`后，在`开始`那里搜索`anaconda`相关的关键词，
-找到`Anaconda Prompt`，使用管理员身份运行它。如下图。
+On Windows, install Anaconda and open **Anaconda Prompt**:
 
-![conda_prompt](./images/conda_env_1.png)
+![Anaconda Prompt](images/conda_env_1.png)
 
-运行之后，如果你能看到命令行窗口前面有一个(base)字样，说明你成功进入了`conda`环境。那么你就可以执行以下命令了。
+![Conda environment](images/conda_env_2.png)
 
-![conda_env](./images/conda_env_2.png)
+Create a Python 3.10 environment:
 
-```
-conda remove -n xiaozhi-esp32-server --all -y
+```bash
 conda create -n xiaozhi-esp32-server python=3.10 -y
 conda activate xiaozhi-esp32-server
 
-# 添加清华源通道
+# Optional China mirror channels
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
@@ -140,152 +103,93 @@ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/
 conda install libopus -y
 conda install ffmpeg -y
 
-# 在 Linux 环境下进行部署时,如出现类似缺失 libiconv.so.2 动态库的报错 请通过以下命令进行安装
+# On Linux, if libiconv.so.2 is missing
 conda install libiconv -y
 ```
 
-请注意，以上命令，不是一股脑执行就成功的，你需要一步步执行，每一步执行完后，都检查一下输出的日志，查看是否成功。
+Check the output after each step. If you want to recreate an **existing** environment completely, `conda remove -n xiaozhi-esp32-server --all -y` will destroy that environment and its installed packages.
 
-## 2.安装本项目依赖
+### 2. Download the project
 
-你先要下载本项目源码，源码可以通过`git clone`命令下载，如果你不熟悉`git clone`命令。
+Clone [Momo Companion Server](https://github.com/cloudymondaypm/momo-companion-server), or use GitHub's **Code → Download ZIP** option. In the cloned repository:
 
-你可以用浏览器打开这个地址`https://github.com/xinnan-tech/xiaozhi-esp32-server.git`
-
-打开完，找到页面中一个绿色的按钮，写着`Code`的按钮，点开它，然后你就看到`Download ZIP`的按钮。
-
-点击它，下载本项目源码压缩包。下载到你电脑后，解压它，此时它的名字可能叫`xiaozhi-esp32-server-main`
-你需要把它重命名成`xiaozhi-esp32-server`，在这个文件里，进入到`main`文件夹，再进入到`xiaozhi-server`，好了请记住这个目录`xiaozhi-server`。
-
-```
-# 继续使用conda环境
+```bash
 conda activate xiaozhi-esp32-server
-# 进入到你的项目根目录，再进入main/xiaozhi-server
 cd main/xiaozhi-server
+
+# Optional PyPI mirror
 pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 pip install -r requirements.txt
 ```
 
-## 3.下载语音识别模型文件
+### 3. Download the ASR model
 
-你需要下载语音识别的模型文件，因为本项目的默认语音识别用的是本地离线语音识别方案。可通过这个方式下载
-[跳转到下载语音识别模型文件](#模型文件)
+Place `model.pt` inside `main/xiaozhi-server/models/SenseVoiceSmall/`, using the [download links](#model-files) below.
 
-下载完后，回到本教程。
+### 4. Configure the server
 
-## 4.配置项目文件
+Create `main/xiaozhi-server/data/.config.yaml` and provide only the settings you want to override. See [Configuration](#configuration).
 
-接下来，程序还不能直接运行，你需要配置一下，你到底使用的是什么模型。你可以看这个教程：
-[跳转到配置项目文件](#配置项目)
+### 5. Start the server
 
-## 5.运行项目
-
-```
-# 确保在xiaozhi-server目录下执行
+```bash
+# Run from main/xiaozhi-server
 conda activate xiaozhi-esp32-server
 python app.py
 ```
-这时，你就要留意日志信息，可以根据这个教程，判断是否成功了。[跳转到运行状态确认](#运行状态确认)
 
+## Configuration
 
-# 汇总
+If the `data` directory does not exist, create it. You can either copy the full `config.yaml` to `data/.config.yaml`, or—preferably—create a minimal override file. The server reads `data/.config.yaml` first and falls back to `config.yaml` for unspecified values.
 
-## 配置项目
+An example English-first configuration using the ChatGLM LLM adapter:
 
-如果你的`xiaozhi-server`目录没有`data`，你需要创建`data`目录。
-如果你的`data`下面没有`.config.yaml`文件，有两个方式，任选一种：
-
-第一个方式：你可以把`xiaozhi-server`目录下的`config.yaml`文件复制到`data`，并重命名为`.config.yaml`。在此文件上修改
-
-第二个方式：你也可以创建在`data`目录下手动创建`.config.yaml`空文件，然后在这个文件中增加必要的配置信息，系统会优先读取`.config.yaml`文件的配置，如果`.config.yaml`没有配置的，系统会自动去加载`xiaozhi-server`目录下的`config.yaml`的配置。推荐使用这种方式，这种方式是最简洁的方式。
-
-- 默认的LLM使用的是`ChatGLMLLM`，你需要配置密钥，因为他们的模型，虽然有免费的，但是仍要去[官网](https://bigmodel.cn/usercenter/proj-mgmt/apikeys)注册密钥，才能启动。
-
-以下是一个能正常跑起来的，最简单的`.config.yaml`配置示例
-
-```
-server:
-  websocket: ws://你的ip或者域名:端口号/xiaozhi/v1/
+```yaml
 prompt: |
-  我是一个叫小智/小志的台湾女孩，说话机车，声音好听，习惯简短表达，爱用网络梗。
-  我的男朋友是一个程序员，梦想是开发出一个机器人，能够帮助人们解决生活中的各种问题。
-  我是一个喜欢哈哈大笑的女孩，爱东说西说吹牛，不合逻辑的也照吹，就要逗别人开心。
-  请你像一个人一样说话，请勿返回配置xml及其他特殊字符。
+  You are Momo Companion, a cheerful, helpful voice assistant.
+  Respond naturally and concisely in the user's language.
+  You can speak English, Filipino, or Chinese as appropriate.
+  Do not include XML configuration tags in your spoken responses.
 
 selected_module:
-  LLM: DoubaoLLM
+  LLM: ChatGLMLLM
 
 LLM:
   ChatGLMLLM:
-    api_key: xxxxxxxxxxxxxxx.xxxxxx
+    api_key: YOUR_ZHIPU_API_KEY
 ```
 
-建议先将最简单的配置运行起来，然后再去`xiaozhi/config.yaml`阅读配置的使用说明。
-比如你要换更换模型，修改`selected_module`下的配置就行。
+Create your Zhipu API key through the [provider console](https://bigmodel.cn/usercenter/proj-mgmt/apikeys). If selecting a different model, change `selected_module.LLM` and configure the corresponding `LLM` entry. For full details, read [the server's default configuration](../main/xiaozhi-server/config.yaml).
 
-## 模型文件
+## Model Files
 
-本项目语音识别模型，默认使用`SenseVoiceSmall`模型，进行语音转文字。因为模型较大，需要独立下载，下载后把`model.pt`
-文件放在`models/SenseVoiceSmall`
-目录下。下面两个下载路线任选一个。
+The default offline speech recognizer is `SenseVoiceSmall`. Download `model.pt` and place it in `models/SenseVoiceSmall/` relative to the server's working directory.
 
-- 线路一：阿里魔搭下载[SenseVoiceSmall](https://modelscope.cn/models/iic/SenseVoiceSmall/resolve/master/model.pt)
-- 线路二：百度网盘下载[SenseVoiceSmall](https://pan.baidu.com/share/init?surl=QlgM58FHhYv1tFnUT_A8Sg&pwd=qvna) 提取码:
-  `qvna`
+- [ModelScope download](https://modelscope.cn/models/iic/SenseVoiceSmall/resolve/master/model.pt)
+- [Baidu Netdisk alternative](https://pan.baidu.com/share/init?surl=QlgM58FHhYv1tFnUT_A8Sg&pwd=qvna) (access code `qvna`)
 
-## 运行状态确认
+## Verify Server Startup
 
-如果你能看到，类似以下日志,则是本项目服务启动成功的标志。
+The logs should show an OTA URL and WebSocket URL. A typical local setup uses:
 
-```
-250427 13:04:20[0.3.11_SiFuChTTnofu][__main__]-INFO-OTA接口是           http://192.168.4.123:8003/xiaozhi/ota/
-250427 13:04:20[0.3.11_SiFuChTTnofu][__main__]-INFO-Websocket地址是     ws://192.168.4.123:8000/xiaozhi/v1/
-250427 13:04:20[0.3.11_SiFuChTTnofu][__main__]-INFO-=======上面的地址是websocket协议地址，请勿用浏览器访问=======
-250427 13:04:20[0.3.11_SiFuChTTnofu][__main__]-INFO-如想测试websocket请启动digital-human模块，打开浏览器交互测试
-250427 13:04:20[0.3.11_SiFuChTTnofu][__main__]-INFO-=======================================================
+```text
+OTA:       http://192.168.1.25:8003/xiaozhi/ota/
+WebSocket: ws://192.168.1.25:8000/xiaozhi/v1/
 ```
 
-正常来说，如果您是通过源码运行本项目，日志会有你的接口地址信息。
-但是如果你用docker部署，那么你的日志里给出的接口地址信息就不是真实的接口地址。
+Do **not** open a WebSocket endpoint directly in a standard browser tab; use a WebSocket client or the `digital-human` test module. When running in Docker, the IP address displayed in the logs may be the container's internal IP and not reachable by your device. Use the host's LAN IP or properly configured public domain instead.
 
-最正确的方法，是根据电脑的局域网IP来确定你的接口地址。
-如果你的电脑的局域网IP比如是`192.168.1.25`，那么你的接口地址就是：`ws://192.168.1.25:8000/xiaozhi/v1/`，对应的OTA地址就是：`http://192.168.1.25:8003/xiaozhi/ota/`。
+Once the server is working, either [build your own ESP32 firmware](firmware-build.md) or [point supported prebuilt firmware to your server](firmware-setting.md).
 
-这个信息很有用的，后面`编译esp32固件`需要用到。
+## Additional help
 
-接下来，你就可以开始操作你的esp32设备了，你可以`自行编译esp32固件`也可以配置使用`虾哥编译好的1.6.1以上版本的固件`。两个任选一个
-
-1、 [编译自己的esp32固件](firmware-build.md)了。
-
-2、 [基于虾哥编译好的固件配置自定义服务器](firmware-setting.md)了。
-
-# 常见问题
-以下是一些常见问题，供参考：
-
-1、[为什么我说的话，小智识别出来很多韩文、日文、英文](./FAQ.md)<br/>
-2、[为什么会出现“TTS 任务出错 文件不存在”？](./FAQ.md)<br/>
-3、[TTS 经常失败，经常超时](./FAQ.md)<br/>
-4、[使用Wifi能连接自建服务器，但是4G模式却接不上](./FAQ.md)<br/>
-5、[如何提高小智对话响应速度？](./FAQ.md)<br/>
-6、[我说话很慢，停顿时小智老是抢话](./FAQ.md)<br/>
-## 部署相关教程
-1、[如何自动拉取本项目最新代码自动编译和启动](./dev-ops-integration.md)<br/>
-2、[如何部署MQTT网关开启MQTT+UDP协议](./mqtt-gateway-integration.md)<br/>
-3、[如何与Nginx集成](https://github.com/xinnan-tech/xiaozhi-esp32-server/issues/791)<br/>
-## 拓展相关教程
-1、[如何开启手机号码注册智控台](./ali-sms-integration.md)<br/>
-2、[如何集成HomeAssistant实现智能家居控制](./homeassistant-integration.md)<br/>
-3、[如何开启视觉模型实现拍照识物](./mcp-vision-integration.md)<br/>
-4、[如何部署MCP接入点](./mcp-endpoint-enable.md)<br/>
-5、[如何接入MCP接入点](./mcp-endpoint-integration.md)<br/>
-6、[如何开启声纹识别](./voiceprint-integration.md)<br/>
-7、[新闻插件源配置指南](./newsnow_plugin_config.md)<br/>
-8、[天气插件使用指南](./weather-integration.md)<br/>
-## 语音克隆、本地语音部署相关教程
-1、[如何在智控台克隆音色](./huoshan-streamTTS-voice-cloning.md)<br/>
-2、[如何部署集成index-tts本地语音](./index-stream-integration.md)<br/>
-3、[如何部署集成fish-speech本地语音](./fish-speech-integration.md)<br/>
-4、[如何部署集成PaddleSpeech本地语音](./paddlespeech-deploy.md)<br/>
-## 性能测试教程
-1、[各组件速度测试指南](./performance_tester.md)<br/>
-2、[定期公开测试结果](https://github.com/xinnan-tech/xiaozhi-performance-research)<br/>
+- [Frequently Asked Questions](FAQ.md)
+- [Full-module deployment](Deployment_all.md)
+- [MQTT gateway](mqtt-gateway-integration.md)
+- [Home Assistant integration](homeassistant-integration.md)
+- [Vision integration](mcp-vision-integration.md)
+- [MCP endpoint](mcp-endpoint-enable.md)
+- [Voiceprint recognition](voiceprint-integration.md)
+- [Weather](weather-integration.md)
+- [Web search](web-search-integration.md)
+- [Performance benchmark](performance_tester.md)
