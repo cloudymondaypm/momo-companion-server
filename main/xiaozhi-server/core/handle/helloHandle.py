@@ -20,15 +20,15 @@ TAG = __name__
 WAKEUP_CONFIG = {
     "refresh_time": 10,
     "responses": [
-        "我一直都在呢，您请说。",
-        "在的呢，请随时吩咐我。",
-        "来啦来啦，请告诉我吧。",
-        "您请说，我正听着。",
-        "请您讲话，我准备好了。",
-        "请您说出指令吧。",
-        "我认真听着呢，请讲。",
-        "请问您需要什么帮助？",
-        "我在这里，等候您的指令。",
+        "I'm here and listening.",
+        "Yes, I'm here. What can I do for you?",
+        "Here I am! Tell me what's on your mind.",
+        "Go ahead, I'm listening.",
+        "I'm ready whenever you are.",
+        "Tell me what you'd like me to do.",
+        "I'm all ears. Go ahead.",
+        "How can I help you?",
+        "I'm here. What should we do next?",
     ],
 }
 
