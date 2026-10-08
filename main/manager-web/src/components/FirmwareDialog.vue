@@ -95,7 +95,7 @@ export default {
   },
   computed: {
     isTypeDisabled() {
-      // 如果有id，说明是编辑模式，禁用类型选择
+      // Disable firmware type selection when editing an existing record
       return !!this.form.id
     }
   },
@@ -103,15 +103,15 @@ export default {
     submit() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          // 如果是新增模式且没有上传文件，则提示错误
+          // Show an error if no file was uploaded in create mode
           if (!this.form.id && !this.form.firmwarePath) {
             this.$message.error(this.$t('firmwareDialog.requiredFirmwareFile'))
             return
           }
           this.saving = true
-          // 提交成功后将关闭对话框的逻辑交给父组件处理
+          // Let parent handle dialog close after successful submission
           this.$emit('submit', this.form)
-          // 兜底：父组件若未在回调内重置 saving，3 秒后强制释放加载状态
+          // Fallback: release saving state after three seconds if parent does not reset it
           setTimeout(() => {
             this.saving = false
           }, 3000)
@@ -122,7 +122,7 @@ export default {
       this.saving = false
       this.$emit('cancel')
     },
-    // 提供给父组件调用以重置saving状态
+    // Expose reset of saving state to parent
     resetSaving() {
       this.saving = false
     },
@@ -146,15 +146,15 @@ export default {
       this.uploadStatus = ''
       this.isUploading = true
 
-      // 使用setTimeout实现简单的0-50%过渡
+      // Use setTimeout for a simple 0–50% progress transition
       const timer = setTimeout(() => {
-        if (this.uploadProgress < 50) {  // 只有当进度小于50%时才设置
+        if (this.uploadProgress < 50) {  // Only update when progress is below 50%
           this.uploadProgress = 50
         }
       }, 1000)
 
       Api.ota.uploadFirmware(file, (res) => {
-        clearTimeout(timer)  // 清除定时器
+        clearTimeout(timer)  // Clear timer
         res = res.data
         if (res.code === 0) {
           this.form.firmwarePath = res.data
@@ -162,7 +162,7 @@ export default {
           this.uploadProgress = 100
           this.uploadStatus = 'success'
           this.$message.success(this.$t('firmwareDialog.uploadSuccess'))
-          // 延迟2秒后隐藏进度条
+          // Hide progress bar after two seconds
           setTimeout(() => {
             this.isUploading = false
           }, 2000)
@@ -174,11 +174,11 @@ export default {
       }, (progressEvent) => {
         if (progressEvent.total) {
           const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-          // 只有当进度大于50%时才更新
+          // Update only when progress is above 50%
           if (progress > 50) {
             this.uploadProgress = progress
           }
-          // 如果上传完成但还没收到成功响应，保持进度条显示
+          // Keep progress bar visible until upload success response arrives
           if (progress === 100) {
             this.uploadStatus = ''
           }
@@ -193,17 +193,17 @@ export default {
       this.isUploading = false
     },
     handleOpen() {
-      // 重置上传相关状态
+      // Reset upload state
       this.uploadProgress = 0
       this.uploadStatus = ''
       this.isUploading = false
       this.saving = false
-      // 重置表单中的文件相关字段
-      if (!this.form.id) {  // 只在新增时重置
+      // Reset file-related form fields
+      if (!this.form.id) {  // Reset only in create mode
         this.form.firmwarePath = ''
         this.form.size = 0
       }
-      // 无论是否编辑模式，都重置上传组件
+      // Reset upload component in both create and edit modes
       this.$nextTick(() => {
         if (this.$refs.upload) {
           this.$refs.upload.clearFiles()

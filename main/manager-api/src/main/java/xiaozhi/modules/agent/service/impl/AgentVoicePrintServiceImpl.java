@@ -78,7 +78,7 @@ public class AgentVoicePrintServiceImpl extends CrudRepository<AgentVoicePrintDa
         if (response != null && response.getScore() > RECOGNITION) {
             // 根据识别出的声纹ID查询对应的用户信息
             AgentVoicePrintEntity existingVoicePrint = baseMapper.selectById(response.getSpeakerId());
-            String existingUserName = existingVoicePrint != null ? existingVoicePrint.getSourceName() : "未知用户";
+            String existingUserName = existingVoicePrint != null ? existingVoicePrint.getSourceName() : "Unknown user";
             throw new RenException(ErrorCode.VOICEPRINT_ALREADY_REGISTERED, existingUserName);
         }
         AgentVoicePrintEntity entity = ConvertUtils.sourceToTarget(dto, AgentVoicePrintEntity.class);
@@ -100,7 +100,7 @@ public class AgentVoicePrintServiceImpl extends CrudRepository<AgentVoicePrintDa
                 throw e;
             } catch (Exception e) {
                 status.setRollbackOnly(); // 标记事务回滚
-                log.error("保存声纹错误原因：{}", e.getMessage());
+                log.error("Failed to save voiceprint: {}", e.getMessage());
                 throw new RenException(ErrorCode.VOICE_PRINT_SAVE_ERROR);
             }
         }));
@@ -123,7 +123,7 @@ public class AgentVoicePrintServiceImpl extends CrudRepository<AgentVoicePrintDa
                 return true;
             } catch (Exception e) {
                 status.setRollbackOnly(); // 标记事务回滚
-                log.error("删除声纹存在错误原因：{}", e.getMessage());
+                log.error("Failed to delete voiceprint: {}", e.getMessage());
                 throw new RenException(ErrorCode.VOICEPRINT_DELETE_ERROR);
             }
         }));
@@ -133,7 +133,7 @@ public class AgentVoicePrintServiceImpl extends CrudRepository<AgentVoicePrintDa
                 try {
                     cancelVoicePrint(voicePrintId);
                 }catch (RuntimeException e) {
-                    log.error("删除声纹存在运行时错误原因：{}，id：{}", e.getMessage(),voicePrintId);
+                    log.error("Runtime error deleting voiceprint: {}, id: {}", e.getMessage(),voicePrintId);
                 }
             });
         }
@@ -179,7 +179,7 @@ public class AgentVoicePrintServiceImpl extends CrudRepository<AgentVoicePrintDa
                 if (!response.getSpeakerId().equals(dto.getId())) {
                     // 根据识别出的声纹ID查询对应的用户信息
                     AgentVoicePrintEntity existingVoicePrint = baseMapper.selectById(response.getSpeakerId());
-                    String existingUserName = existingVoicePrint != null ? existingVoicePrint.getSourceName() : "未知用户";
+                    String existingUserName = existingVoicePrint != null ? existingVoicePrint.getSourceName() : "Unknown user";
                     throw new RenException(ErrorCode.VOICEPRINT_UPDATE_NOT_ALLOWED, existingUserName);
                 }
             }
@@ -208,7 +208,7 @@ public class AgentVoicePrintServiceImpl extends CrudRepository<AgentVoicePrintDa
                 throw e;
             } catch (Exception e) {
                 status.setRollbackOnly(); // 标记事务回滚
-                log.error("修改声纹错误原因：{}", e.getMessage());
+                log.error("Failed to update voiceprint: {}", e.getMessage());
                 throw new RenException(ErrorCode.VOICEPRINT_UPDATE_ADMIN_ERROR);
             }
         }));
@@ -225,7 +225,7 @@ public class AgentVoicePrintServiceImpl extends CrudRepository<AgentVoicePrintDa
         try {
             return new URI(voicePrint);
         } catch (URISyntaxException e) {
-            log.error("路径格式不正确路径：{}，\n错误信息:{}", voicePrint, e.getMessage());
+            log.error("Invalid URL: {}\nError: {}", voicePrint, e.getMessage());
                 throw new RenException(ErrorCode.VOICEPRINT_API_URI_ERROR);
         }
     }
@@ -314,13 +314,13 @@ public class AgentVoicePrintServiceImpl extends CrudRepository<AgentVoicePrintDa
         ResponseEntity<String> response = restTemplate.postForEntity(requestUrl, requestEntity, String.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
-            log.error("声纹注册失败,请求路径：{}", requestUrl);
+            log.error("Voiceprint registration failed, request URL: {}", requestUrl);
             throw new RenException(ErrorCode.VOICEPRINT_REGISTER_REQUEST_ERROR);
         }
         // 检查响应内容
         String responseBody = response.getBody();
         if (responseBody == null || !responseBody.contains("true")) {
-            log.error("声纹注册失败,请求处理失败内容：{}", responseBody == null ? "空内容" : responseBody);
+            log.error("Voiceprint registration response error: {}", responseBody == null ? "Empty response" : responseBody);
             throw new RenException(ErrorCode.VOICEPRINT_REGISTER_PROCESS_ERROR);
         }
     }
@@ -344,13 +344,13 @@ public class AgentVoicePrintServiceImpl extends CrudRepository<AgentVoicePrintDa
         ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.DELETE, requestEntity,
                 String.class);
         if (response.getStatusCode() != HttpStatus.OK) {
-            log.error("声纹注销失败,请求路径：{}", requestUrl);
+            log.error("Voiceprint removal failed, request URL: {}", requestUrl);
             throw new RenException(ErrorCode.VOICEPRINT_UNREGISTER_REQUEST_ERROR);
         }
         // 检查响应内容
         String responseBody = response.getBody();
         if (responseBody == null || !responseBody.contains("true")) {
-            log.error("声纹注销失败,请求处理失败内容：{}", responseBody == null ? "空内容" : responseBody);
+            log.error("Voiceprint removal response error: {}", responseBody == null ? "Empty response" : responseBody);
             throw new RenException(ErrorCode.VOICEPRINT_UNREGISTER_PROCESS_ERROR);
         }
     }
@@ -398,7 +398,7 @@ public class AgentVoicePrintServiceImpl extends CrudRepository<AgentVoicePrintDa
         ResponseEntity<String> response = restTemplate.postForEntity(requestUrl, requestEntity, String.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
-            log.error("声纹识别请求失败,请求路径：{}", requestUrl);
+            log.error("Voiceprint identification failed, request URL: {}", requestUrl);
             throw new RenException(ErrorCode.VOICEPRINT_IDENTIFY_REQUEST_ERROR);
         }
         // 检查响应内容

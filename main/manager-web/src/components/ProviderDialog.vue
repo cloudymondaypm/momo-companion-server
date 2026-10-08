@@ -268,7 +268,7 @@ export default {
           });
       }).catch(() => {
         this.$message.info({
-          message: '已取消删除',
+          message: 'Deletion canceled',
           showClose: true
         });
       });
@@ -310,7 +310,7 @@ export default {
             }
           });
 
-          // 兜底：父组件若未在回调内清 saving，3 秒后强制释放加载状态
+          // Fallback: release saving state after three seconds if parent callback does not
           setTimeout(() => {
             this.saving = false;
           }, 3000);

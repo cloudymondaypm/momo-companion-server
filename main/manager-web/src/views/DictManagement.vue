@@ -14,7 +14,7 @@
           </div>
         </div>
         <div class="content-panel">
-          <!-- 左侧字典类型列表 -->
+          <!-- Dictionary types on the left -->
           <div class="dict-type-panel">
             <div class="dict-type-header">
               <h4 class="dict-type-title">{{ $t('dictManagement.dictTypeCategory') }}</h4>
@@ -42,7 +42,7 @@
               </el-checkbox-group>
             </div>
           </div>
-          <!-- 右侧字典数据列表 -->
+          <!-- Dictionary data on the right -->
           <div class="content-area">
             <CustomTable :data="dictDataList" :columns="tableColumns" :loading="dictDataLoading" :show-selection="true"
               :show-operations="true" :operations-label="$t('dictManagement.operation')" :total="total"
@@ -79,11 +79,11 @@
       </el-card>
     </div>
 
-    <!-- 使用字典类型编辑弹框组件 -->
+    <!-- Use dictionary type edit dialog -->
     <DictTypeDialog :visible.sync="dictTypeDialogVisible" :title="dictTypeDialogTitle" :dictTypeData="dictTypeForm"
       @save="saveDictType" />
 
-    <!-- 使用字典数据编辑弹框组件 -->
+    <!-- Use dictionary data edit dialog -->
     <DictDataDialog :visible.sync="dictDataDialogVisible" :title="dictDataDialogTitle" :dictData="dictDataForm"
       :dictTypeId="selectedDictType?.id" @save="saveDictData" />
     <el-footer style="flex-shrink:unset;">
@@ -112,25 +112,25 @@ export default {
   },
   data() {
     return {
-      // 字典类型相关
+      // Dictionary types
       dictTypeList: [],
       dictTypeLoading: false,
       selectedDictType: null,
       selectedDictTypes: [],
       dictTypeDialogVisible: false,
-      dictTypeDialogTitle: '新增字典类型',
+      dictTypeDialogTitle: 'Add dictionary type',
       dictTypeForm: {
         id: null,
         dictName: '',
         dictType: ''
       },
 
-      // 字典数据相关
+      // Dictionary data
       dictDataList: [],
       dictDataLoading: false,
       isAllDictDataSelected: false,
       dictDataDialogVisible: false,
-      dictDataDialogTitle: '新增字典数据',
+      dictDataDialogTitle: 'Add dictionary entry',
       dictDataForm: {
         id: null,
         dictTypeId: null,
@@ -155,26 +155,26 @@ export default {
   },
   methods: {
     handleCheckAllChange(val) {
-      // 根据当前实际选中状态决定是全选还是取消全选
+      // Toggle select all based on current selection state
       const isAllSelected = this.checkedDictTypesIds.length === this.dictTypeList.length;
       if (isAllSelected) {
-        // 已全选，取消全选
+        // Everything selected; deselect all
         this.checkedDictTypesIds = [];
         this.checkAll = false;
         this.selectedDictTypes = [];
       } else {
-        // 未全选，执行全选
+        // Not all selected; select all
         this.checkedDictTypesIds = this.dictTypeList.map(item => item.dictName);
         this.checkAll = true;
         this.selectedDictTypes = [...this.dictTypeList];
       }
-      // 重置 indeterminate 状态
+      // Reset indeterminate state
       this.isIndeterminate = false;
     },
     handleDictTypeSelectionChange(checkedIds) {
-      // 更新选中的字典类型列表
+      // Update selected dictionary type list
       this.selectedDictTypes = this.dictTypeList.filter(item => checkedIds.includes(item.dictName));
-      // 部分选中时 checkAll 为 true，isIndeterminate 为 true 显示半选状态
+      // For partial selection, checkAll and isIndeterminate show mixed state
       this.checkAll = checkedIds.length > 0;
       this.isIndeterminate = checkedIds.length > 0 && checkedIds.length < this.dictTypeList.length;
     },
@@ -197,7 +197,7 @@ export default {
         }
       ]
     },
-    // 字典类型相关方法
+    // Dictionary type methods
     loadDictTypeList() {
       this.dictTypeLoading = true
       dictApi.getDictTypeList({
@@ -264,7 +264,7 @@ export default {
       })
     },
 
-    // 字典数据相关方法
+    // Dictionary data methods
     loadDictDataList(dictTypeId) {
       if (!dictTypeId) return
       this.dictDataLoading = true

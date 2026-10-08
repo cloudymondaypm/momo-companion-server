@@ -51,11 +51,11 @@ CHANNEL_MAP = {
     "虫部落": "chongbuluo-latest",
 }
 
-# 默认新闻来源字典，当配置中没有指定时使用
+# Default source names when no configuration is provided
 DEFAULT_NEWS_SOURCES = "澎湃新闻;百度热搜;财联社"
 
 def _get_newsnow_config(conn):
-    # 从连接配置获取
+    # Get from connection settings
     plugins = conn.config.get("plugins", {})
     newsnow = plugins.get("get_news_from_newsnow", {})
     sources = newsnow.get("news_sources", "")
@@ -65,43 +65,43 @@ def _get_newsnow_config(conn):
     return ""
 
 def get_news_sources_from_config(conn):
-    """从配置中获取新闻源字符串"""
+    """Read configured news source names"""
     try:
         result = _get_newsnow_config(conn)
         if result:
-            logger.bind(tag=TAG).debug(f"使用配置的新闻源: {result}")
+            logger.bind(tag=TAG).debug(f"Using configured news sources: {result}")
             return result
 
-        logger.bind(tag=TAG).debug("未找到新闻源配置，使用默认配置")
+        logger.bind(tag=TAG).debug("No news sources configured; using defaults")
         return DEFAULT_NEWS_SOURCES
 
     except Exception as e:
-        logger.bind(tag=TAG).error(f"获取新闻源配置失败: {e}，使用默认配置")
+        logger.bind(tag=TAG).error(f"Failed to read news source configuration: {e}; using defaults")
         return DEFAULT_NEWS_SOURCES
 
 
-# 从默认配置获取可用的新闻源名称（运行时由get_news_sources_from_config动态获取）
+# Fetch available news sources from defaults (resolved dynamically)
 example_sources_str = DEFAULT_NEWS_SOURCES.replace(";","、")
 
 GET_NEWS_FROM_NEWSNOW_FUNCTION_DESC = {
     "type": "function",
     "function": {
         "name": "get_news_from_newsnow",
-        "description": "当用户要求查看或收听新闻时调用（如'来条新闻''今天有什么新闻'）。",
+        "description": "Call when the user asks for current news or headlines.",
         "parameters": {
             "type": "object",
             "properties": {
                 "source": {
                     "type": "string",
-                    "description": f"新闻源的标准中文名称，例如{example_sources_str}等。可选参数，如果不提供则使用默认新闻源",
+                    "description": f"Exact provider identifier from the configured news sources, e.g. {example_sources_str}. Optional; default provider if omitted.",
                 },
                 "detail": {
                     "type": "boolean",
-                    "description": "是否获取详细内容，默认为false。如果为true，则获取上一条新闻的详细内容",
+                    "description": "Whether to get the previously mentioned article's details. Default: false.",
                 },
                 "lang": {
                     "type": "string",
-                    "description": "返回用户使用的语言code，例如zh_CN/zh_HK/en_US/ja_JP等，默认zh_CN",
+                    "description": "Response language code (en_US, zh_CN, ja_JP etc.); default en_US.",
                 },
             },
             "required": ["lang"],
@@ -111,7 +111,7 @@ GET_NEWS_FROM_NEWSNOW_FUNCTION_DESC = {
 
 
 async def fetch_news_from_api(conn: "ConnectionHandler", source="thepaper"):
-    """从API获取新闻列表"""
+    """Fetch news items from API"""
     try:
         api_url = f"https://newsnow.busiyi.world/api/s?id={source}"
 
@@ -128,22 +128,22 @@ async def fetch_news_from_api(conn: "ConnectionHandler", source="thepaper"):
         if "items" in data:
             return data["items"]
         else:
-            logger.bind(tag=TAG).error(f"获取新闻API响应格式错误: {data}")
+            logger.bind(tag=TAG).error(f"Malformed news API response: {data}")
             return []
 
     except Exception as e:
-        logger.bind(tag=TAG).error(f"获取新闻API失败: {e}")
+        logger.bind(tag=TAG).error(f"News API request failed: {e}")
         return []
 
 
 async def fetch_news_detail(url):
-    """获取新闻详情页内容并使用MarkItDown清理HTML"""
+    """Get article details and clean HTML using MarkItDown"""
     try:
         headers = {"User-Agent": "Mozilla/5.0"}
         async with httpx.AsyncClient(timeout=httpx.Timeout(10.0, connect=3.0)) as client:
             response = await client.get(url, headers=headers)
 
-        # 使用MarkItDown清理HTML内容
+        # Clean HTML using MarkItDown
         md = MarkItDown(enable_plugins=False)
         result = md.convert_stream(
             BytesIO(response.content),
@@ -154,18 +154,18 @@ async def fetch_news_detail(url):
             ),
         )
 
-        # 获取清理后的文本内容
+        # Read cleaned article text
         clean_text = result.text_content
 
-        # 如果清理后的内容为空，返回提示信息
+        # Return an error when cleaned article text is empty
         if not clean_text or len(clean_text.strip()) == 0:
-            logger.bind(tag=TAG).warning(f"清理后的新闻内容为空: {url}")
-            return "无法解析新闻详情内容，可能是网站结构特殊或内容受限。"
+            logger.bind(tag=TAG).warning(f"Cleaned article content is empty: {url}")
+            return "Unable to parse article details; the site structure or access restrictions may prevent extraction."
 
         return clean_text
     except Exception as e:
-        logger.bind(tag=TAG).error(f"获取新闻详情失败: {e}")
-        return "无法获取详细内容"
+        logger.bind(tag=TAG).error(f"Unable to fetch article details: {e}")
+        return "Unable to retrieve article details"
 
 
 @register_function(
@@ -177,14 +177,14 @@ async def get_news_from_newsnow(
     conn: "ConnectionHandler",
     source: str = "澎湃新闻",
     detail: bool = False,
-    lang: str = "zh_CN",
+    lang: str = "en_US",
 ):
-    """获取新闻并随机选择一条进行播报，或获取上一条新闻的详细内容"""
+    """Get a random news item or details about the previous item"""
     try:
-        # 获取当前配置的新闻源
+        # Get available configured news sources
         news_sources = get_news_sources_from_config(conn)
 
-        # 如果detail为True，获取上一条新闻的详细内容
+        # If detail is true, get the previous article's details
         detail = str(detail).lower() == "true"
         if detail:
             if (
@@ -194,101 +194,101 @@ async def get_news_from_newsnow(
             ):
                 return ActionResponse(
                     Action.REQLLM,
-                    "抱歉，没有找到最近查询的新闻，请先获取一条新闻。",
+                    "There is no previous news story. Ask me for a headline first.",
                     None,
                 )
 
             url = conn.last_newsnow_link.get("url")
-            title = conn.last_newsnow_link.get("title", "未知标题")
+            title = conn.last_newsnow_link.get("title", "Unknown title")
             source_id = conn.last_newsnow_link.get("source_id", "thepaper")
-            source_name = CHANNEL_MAP.get(source_id, "未知来源")
+            source_name = CHANNEL_MAP.get(source_id, "Unknown source")
 
             if not url or url == "#":
                 return ActionResponse(
-                    Action.REQLLM, "抱歉，该新闻没有可用的链接获取详细内容。", None
+                    Action.REQLLM, "Sorry, this article does not have a link for more details.", None
                 )
 
             logger.bind(tag=TAG).debug(
-                f"获取新闻详情: {title}, 来源: {source_name}, URL={url}"
+                f"Getting news details: {title}, 来源: {source_name}, URL={url}"
             )
 
-            # 获取新闻详情
+            # Getting news details
             detail_content = await fetch_news_detail(url)
 
-            if not detail_content or detail_content == "无法获取详细内容":
+            if not detail_content or detail_content == "Unable to retrieve article details":
                 return ActionResponse(
                     Action.REQLLM,
-                    f"抱歉，无法获取《{title}》的详细内容，可能是链接已失效或网站结构发生变化。",
+                    f"Sorry, I could not retrieve details for {title}; the link may have expired or the page format changed.",
                     None,
                 )
 
-            # 构建详情报告
+            # Build detail report
             detail_report = (
-                f"根据下列数据，用{lang}回应用户的新闻详情查询请求：\n\n"
-                f"新闻标题: {title}\n"
-                # f"新闻来源: {source_name}\n"
-                f"详细内容: {detail_content}\n\n"
-                f"(请对上述新闻内容进行总结，提取关键信息，以自然、流畅的方式向用户播报，"
-                f"不要提及这是总结，就像是在讲述一个完整的新闻)"
+                f"Respond to the user's news detail request in {lang} using:\n\n"
+                f"Headline: {title}\n"
+                # f"News source: {source_name}\n"
+                f"Article details: {detail_content}\n\n"
+                f"(Summarize the key facts in natural, fluent spoken language. "
+                f"Do not mention summarization; tell it as a complete story.)"
             )
 
             return ActionResponse(Action.REQLLM, detail_report, None)
 
-        # 否则，获取新闻列表并随机选择一条
-        # 将中文名称转换为英文ID
+        # Otherwise, fetch a list and select a random story
+        # Map source name to API provider ID
         english_source_id = None
 
-        # 检查输入的中文名称是否在配置的新闻源中
+        # Validate source against configured providers
         news_sources_list = [
             name.strip() for name in news_sources.split(";") if name.strip()
         ]
         if source in news_sources_list:
-            # 如果输入的中文名称在配置的新闻源中，在 CHANNEL_MAP 中查找对应的英文ID
+            # Look up the provider ID in CHANNEL_MAP
             english_source_id = CHANNEL_MAP.get(source)
 
-        # 如果找不到对应的英文ID，使用默认源
+        # Fall back to default provider ID
         if not english_source_id:
-            logger.bind(tag=TAG).warning(f"无效的新闻源: {source}，使用默认源澎湃新闻")
+            logger.bind(tag=TAG).warning(f"Invalid news source: {source}; using The Paper")
             english_source_id = "thepaper"
             source = "澎湃新闻"
 
-        logger.bind(tag=TAG).info(f"获取新闻: 新闻源={source}({english_source_id})")
+        logger.bind(tag=TAG).info(f"Getting news from source={source}({english_source_id})")
 
-        # 获取新闻列表
+        # Get news list
         news_items = await fetch_news_from_api(conn, english_source_id)
 
         if not news_items:
             return ActionResponse(
                 Action.REQLLM,
-                f"抱歉，未能从{source}获取到新闻信息，请稍后再试或尝试其他新闻源。",
+                f"Sorry, no news was available from {source}. Try again or choose another provider.",
                 None,
             )
 
-        # 随机选择一条新闻
+        # Choose a random article
         selected_news = random.choice(news_items)
 
-        # 保存当前新闻链接到连接对象，以便后续查询详情
+        # Save current article for follow-up queries
         if not hasattr(conn, "last_newsnow_link"):
             conn.last_newsnow_link = {}
         conn.last_newsnow_link = {
             "url": selected_news.get("url", "#"),
-            "title": selected_news.get("title", "未知标题"),
+            "title": selected_news.get("title", "Unknown title"),
             "source_id": english_source_id,
         }
 
-        # 构建新闻报告
+        # Build news report
         news_report = (
-            f"根据下列数据，用{lang}回应用户的新闻查询请求：\n\n"
-            f"新闻标题: {selected_news['title']}\n"
-            # f"新闻来源: {source}\n"
-            f"(请以自然、流畅的方式向用户播报这条新闻标题，"
-            f"提示用户可以要求获取详细内容，此时会获取新闻的详细内容。)"
+            f"Respond to the user's news request in {lang} using:\n\n"
+            f"Headline: {selected_news['title']}\n"
+            # f"News source: {source}\n"
+            f"(Read the headline naturally and fluently. "
+            f"Mention that the user can request the full article details.)"
         )
 
         return ActionResponse(Action.REQLLM, news_report, None)
 
     except Exception as e:
-        logger.bind(tag=TAG).error(f"获取新闻出错: {e}")
+        logger.bind(tag=TAG).error(f"Error retrieving news: {e}")
         return ActionResponse(
-            Action.REQLLM, "抱歉，获取新闻时发生错误，请稍后再试。", None
+            Action.REQLLM, "Sorry, there was an error retrieving news. Please try again later.", None
         )

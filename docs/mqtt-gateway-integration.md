@@ -1,187 +1,165 @@
-# MQTT 网关部署教程
+# MQTT + UDP Gateway Integration
 
-`xiaozhi-esp32-server`项目，可结合虾哥开源的[xiaozhi-mqtt-gateway](https://github.com/78/xiaozhi-mqtt-gateway) 项目进行简单改造，即可实现小智硬件MQTT+UDP连接。
-本教程分为三部分，你可以根据你是全模块部署还是单模块部署，选择对应的部分接入MQTT网关：
-- 第一部分：部署MQTT网关
-- 第二部分：全模块运行实现小智硬件MQTT+UDP连接
-- 第三部分：单模块运行xiaozhi-server实现小智硬件MQTT+UDP连接
+Momo Companion can use the [xiaozhi-mqtt-gateway](https://github.com/78/xiaozhi-mqtt-gateway) ecosystem for MQTT+UDP device connections. This guide covers gateway deployment, full management-console settings, and standalone server settings.
 
-## 准备阶段
-准备好你的`xiaozhi-server`的`mqtt-websocket`连接地址。在你原来的`websocket地址`基础上，添加`?from=mqtt_gateway`字符，就可以得到`mqtt-websocket`连接地址
+## Prerequisites
 
-1、如果你是源码部署，你的`mqtt-websocket`地址是：
-```
+Prepare the MQTT gateway's WebSocket connection URL by adding `?from=mqtt_gateway` to your AI server endpoint:
+
+```text
+# Server running from source on the same host
 ws://127.0.0.1:8000/xiaozhi/v1/?from=mqtt_gateway
+
+# Gateway running on a different host or in Docker
+ws://192.168.1.25:8000/xiaozhi/v1/?from=mqtt_gateway
 ```
 
-2、如果你是docker部署，你的`mqtt-websocket`地址是
-```
-ws://你宿主机局域网IP:8000/xiaozhi/v1/?from=mqtt_gateway
-```
+**Required ports:** The original gateway uses MQTT TCP `1883`, UDP `8884`, and management API TCP `8007`. Allow these ports between the gateway, server and authorized devices. Do not expose the management port unnecessarily.
 
-## 重要提示
+## Part 1. Deploy the MQTT gateway
 
-如果你是服务器部署，需要确保服务器`1883`、`8884`、`8007`端口都对外开放。`8884`选择的协议类型是`UDP`，其他是`TCP`。
+### 1. Clone the gateway
 
-如果你是服务器部署，需要确保服务器`1883`、`8884`、`8007`端口都对外开放。`8884`选择的协议类型是`UDP`，其他是`TCP`。
-
-如果你是服务器部署，需要确保服务器`1883`、`8884`、`8007`端口都对外开放。`8884`选择的协议类型是`UDP`，其他是`TCP`。
-
-
-## 第一部分：部署MQTT网关
-
-1. 克隆[改造后的xiaozhi-mqtt-gateway项目](https://github.com/xinnan-tech/xiaozhi-mqtt-gateway.git)：
 ```bash
-git clone https://ghfast.top/https://github.com/xinnan-tech/xiaozhi-mqtt-gateway.git
+git clone https://github.com/xinnan-tech/xiaozhi-mqtt-gateway.git
 cd xiaozhi-mqtt-gateway
-```
-
-2. 安装依赖：
-```bash
 npm install
 npm install -g pm2
 ```
 
-3. 配置 `config.json`：
+### 2. Set the WebSocket upstream
+
 ```bash
 cp config/mqtt.json.example config/mqtt.json
 ```
 
-4. 编辑配置文件 config/mqtt.json，把你在`本文准备阶段`的`mqtt-websocket`地址替换到`chat_servers`里。例如源码部署的`xiaozhi-server`就是如下配置：
+Edit `config/mqtt.json` to point `chat_servers` to the Momo Companion AI server:
 
-``` 
+```json
 {
-    "production": {
-        "chat_servers": [
-            "ws://127.0.0.1:8000/xiaozhi/v1/?from=mqtt_gateway"
-        ]
+  "production": {
+    "chat_servers": [
+      "ws://192.168.1.25:8000/xiaozhi/v1/?from=mqtt_gateway"
+    ]
+  },
+  "debug": false,
+  "max_mqtt_payload_size": 8192,
+  "mcp_client": {
+    "capabilities": {},
+    "client_info": {
+      "name": "xiaozhi-mqtt-client",
+      "version": "1.0.0"
     },
-    "debug": false,
-    "max_mqtt_payload_size": 8192,
-    "mcp_client": {
-        "capabilities": {
-        },
-        "client_info": {
-            "name": "xiaozhi-mqtt-client",
-            "version": "1.0.0"
-        },
-        "max_tools_count": 128
-    }
+    "max_tools_count": 128
+  }
 }
 ```
-5. 在项目根目录创建下`.env`文件，并设置以下环境变量:
+
+### 3. Configure environment variables
+
+Create `.env` in the gateway project root:
+
+```dotenv
+PUBLIC_IP=192.168.1.25
+MQTT_PORT=1883
+UDP_PORT=8884
+API_PORT=8007
+MQTT_SIGNATURE_KEY=YOUR_STRONG_MQTT_SIGNING_SECRET
+SERVER_SECRET=YOUR_SERVER_AUTH_SECRET
 ```
-PUBLIC_IP=your-ip         # 服务器公网IP
-MQTT_PORT=1883            # MQTT服务器端口
-UDP_PORT=8884             # UDP服务器端口
-API_PORT=8007             # 管理API端口
-MQTT_SIGNATURE_KEY=test   # MQTT签名密钥
-SERVER_SECRET=Te1st12134  # 服务器密钥，请保持和智控台（server.secret）一致或者和xiaozhi-server里（server.auth_key）保持一致
-```
-请注意`PUBLIC_IP`配置，确保其与实际公网IP一致，如果有域名就填域名。
 
-`MQTT_SIGNATURE_KEY` 是用于MQTT连接认证的密钥，最好设置成复杂一点的，最好是设置成8个字符以上且同时包含大小写字母，这个密钥稍后还会用到。
+- `PUBLIC_IP` can be a reachable host IP or domain according to your deployment.
+- `MQTT_SIGNATURE_KEY` must be a strong secret (the original guide recommends at least eight characters containing uppercase and lowercase letters). Do not use `test` or `123456`.
+- `SERVER_SECRET` must match the corresponding configured secret if server authentication is enabled:
+  - **Full-module:** Management console `server.secret`.
+  - **Standalone:** AI server `server.auth_key`.
 
-- 注意不要用简单的密码，比如`123456`、`test`等。
-- 注意不要用简单的密码，比如`123456`、`test`等。
-- 注意不要用简单的密码，比如`123456`、`test`等。
+### 4. Start the gateway
 
-`SERVER_SECRET` 是用于生成websocket连接的认证信息。
-
-1、如果你是全模块部署，且你的智控台的参数管理里`server.auth.enabled`设置成了`true`，那么，`SERVER_SECRET`需要和智控台（`server.secret`）保持一致。
-
-2、如果你是单模块部署，且你在配置文件里把`server.auth.enabled`设置成了`true`，那么，`SERVER_SECRET`需要和配置文件里（`server.auth_key`）保持一致。
-
-
-6. 启动MQTT网关
-```
-# 启动服务
+```bash
 pm2 start ecosystem.config.js
-
-# 查看日志
 pm2 logs xz-mqtt
 ```
 
-当你看到如下日志，说明MQTT网关启动成功：
-```
-0|xz-mqtt  | 2025-09-11T12:14:48: MQTT 服务器正在监听端口 1883
-0|xz-mqtt  | 2025-09-11T12:14:48: UDP 服务器正在监听 x.x.x.x:8884
-```
+The logs should indicate listeners for MQTT TCP port 1883 and UDP port 8884.
 
-如果需要重启MQTT网关，执行如下命令：
-```
+To restart:
+
+```bash
 pm2 restart xz-mqtt
 ```
 
-## 第二部分：全模块运行实现小智硬件MQTT+UDP连接
+## Part 2. Full management console configuration
 
-查看你智控台首页底部的版本号，确认你的智控台版本是否是`0.7.7`及以上版本。如果不是，需要升级智控台。
+The original integration guide expects management console version `0.7.7` or newer.
 
-1. 在智控台顶部，点击`参数管理`，搜索`server.mqtt_gateway`，点击编辑，填入你在`.env`文件中设置的`PUBLIC_IP`+`:`+`MQTT_PORT`。类似这样
-```
-192.168.0.7:1883
-```
-2. 在智控台顶部，点击`参数管理`，搜索`server.mqtt_signature_key`，点击编辑，填入你在`.env`文件中设置的`MQTT_SIGNATURE_KEY`。
+Under **Parameter Management**, set the following values:
 
-3. 在智控台顶部，点击`参数管理`，搜索`server.udp_gateway`，点击编辑，填入你在`.env`文件中设置的`PUBLIC_IP`+`:`+`UDP_PORT`。类似这样
-```
-192.168.0.7:8884
-```
-4. 在智控台顶部，点击`参数管理`，搜索`server.mqtt_manager_api`，点击编辑，填入你在`.env`文件中设置的`PUBLIC_IP`+`:`+`API_PORT`。类似这样
-```
-192.168.0.7:8007
-```
+| Parameter | Value / example |
+| --- | --- |
+| `server.mqtt_gateway` | MQTT host and port: `192.168.1.25:1883` |
+| `server.mqtt_signature_key` | Same secret as `MQTT_SIGNATURE_KEY` |
+| `server.udp_gateway` | UDP host and port: `192.168.1.25:8884` |
+| `server.mqtt_manager_api` | Gateway management API: `192.168.1.25:8007` |
 
-上面的配置完成后，你可以使用curl命令，验证你的ota地址是否会下发mqtt配置，把下面的`http://localhost:8002/xiaozhi/ota/`改成你的ota地址
-```
+Make sure these hostnames/IPs are reachable from the ESP32 device. The gateway configuration is delivered to the device through the **OTA endpoint**.
+
+### Test OTA response
+
+Replace the example URL with your full-module OTA endpoint:
+
+```bash
 curl 'http://localhost:8002/xiaozhi/ota/' \
   -H 'Content-Type: application/json' \
   -H 'Client-Id: 7b94d69a-9808-4c59-9c9b-704333b38aff' \
   -H 'Device-Id: 11:22:33:44:55:66' \
-  --data-raw $'{\n  "application": {\n    "version": "1.0.1",\n    "elf_sha256": "1"\n  },\n  "board": {\n    "mac": "11:22:33:44:55:66"\n  }\n}'
+  --data-raw '{
+    "application": {"version": "1.0.1", "elf_sha256": "1"},
+    "board": {"mac": "11:22:33:44:55:66"}
+  }'
 ```
 
-如果返回的内容包含`mqtt`相关的配置，说明配置成功。类似这样
+A correctly configured response should contain an `mqtt` object with values such as `endpoint`, `client_id`, `username`, `password`, `publish_topic`, and `subscribe_topic` alongside the normal OTA and WebSocket information.
 
-```
-{"server_time":{"timestamp":1757567894012,"timeZone":"Asia/Shanghai","timezone_offset":480},"activation":{"code":"460609","message":"http://xiaozhi.server.com\n460609","challenge":"11:22:33:44:55:66"},"firmware":{"version":"1.0.1","url":"http://xiaozhi.server.com:8002/xiaozhi/otaMag/download/NOT_ACTIVATED_FIRMWARE_THIS_IS_A_INVALID_URL"},"websocket":{"url":"ws://192.168.4.23:8000/xiaozhi/v1/"},"mqtt":{"endpoint":"192.168.0.7:1883","client_id":"GID_default@@@11_22_33_44_55_66@@@7b94d69a-9808-4c59-9c9b-704333b38aff","username":"eyJpcCI6IjA6MDowOjA6MDowOjA6MSJ9","password":"Y8XP9xcUhVIN9OmbCHT9ETBiYNE3l3Z07Wk46wV9PE8=","publish_topic":"device-server","subscribe_topic":"devices/p2p/11_22_33_44_55_66"}}
-```
+Once the device has received the OTA response, reconnect or reboot it, then verify the gateway logs:
 
-由于MQTT信息是需要靠OTA地址下发的，因此只有你保证能正常连接服务器的OTA地址，重启唤醒即可。
-
-唤醒后留意mqtt-gateway的日志，确认是否有连接成功的日志。
-```
+```bash
 pm2 logs xz-mqtt
 ```
 
-## 第三部分：单模块运行xiaozhi-server实现小智硬件MQTT+UDP连接
+## Part 3. Standalone server configuration
 
-打开你的`data/.config.yaml`文件，在`server`下找到`mqtt_gateway`填入你在`.env`文件中设置的`PUBLIC_IP`+`:`+`MQTT_PORT`。类似这样
-```
-192.168.0.7:1883
-```
-在`server`下找到`mqtt_signature_key`填入你在`.env`文件中设置的`MQTT_SIGNATURE_KEY`。
+Edit `data/.config.yaml`. Under the existing `server` section, set:
 
-在`server`下找到`udp_gateway`填入你在`.env`文件中设置的`PUBLIC_IP`+`:`+`UDP_PORT`。类似这样
-```
-192.168.0.7:8884
+```yaml
+server:
+  mqtt_gateway: 192.168.1.25:1883
+  mqtt_signature_key: YOUR_STRONG_MQTT_SIGNING_SECRET
+  udp_gateway: 192.168.1.25:8884
 ```
 
-上面的配置完成后，你可以使用curl命令，验证你的ota地址是否会下发mqtt配置，把下面的`http://localhost:8002/xiaozhi/ota/`改成你的ota地址
-```
-curl 'http://localhost:8002/xiaozhi/ota/' \
+The signing key must match the gateway's `.env`. Merge this into your existing `server` mapping rather than defining the mapping twice.
+
+### Test standalone OTA response
+
+Use the standalone OTA port (`8003` by default):
+
+```bash
+curl 'http://localhost:8003/xiaozhi/ota/' \
+  -H 'Content-Type: application/json' \
   -H 'Device-Id: 11:22:33:44:55:66' \
-  --data-raw $'{\n  "application": {\n    "version": "1.0.1",\n    "elf_sha256": "1"\n  },\n  "board": {\n    "mac": "11:22:33:44:55:66"\n  }\n}'
+  --data-raw '{
+    "application": {"version": "1.0.1", "elf_sha256": "1"},
+    "board": {"mac": "11:22:33:44:55:66"}
+  }'
 ```
 
-如果返回的内容包含`mqtt`相关的配置，说明配置成功。类似这样
-```
-{"server_time":{"timestamp":1758781561083,"timeZone":"GMT+08:00","timezone_offset":480},"activation":{"code":"527111","message":"http://xiaozhi.server.com\n527111","challenge":"11:22:33:44:55:66"},"firmware":{"version":"1.0.1","url":"http://xiaozhi.server.com:8002/xiaozhi/otaMag/download/NOT_ACTIVATED_FIRMWARE_THIS_IS_A_INVALID_URL"},"websocket":{"url":"ws://192.168.1.15:8000/xiaozhi/v1/"},"mqtt":{"endpoint":"192.168.1.15:1883","client_id":"GID_default@@@11_22_33_44_55_66@@@11_22_33_44_55_66","username":"eyJpcCI6IjE5Mi4xNjguMS4xNSJ9","password":"fjAYs49zTJecWqJ3jBt+kqxVn/x7vkXRAc85ak/va7Y=","publish_topic":"device-server","subscribe_topic":"devices/p2p/11_22_33_44_55_66"}}
-```
+Verify the response includes an `mqtt` configuration. If not, check the signing key, gateway ports, and that you are using the correct OTA endpoint.
 
-由于MQTT信息是需要靠OTA地址下发的，因此只有你保证能正常连接服务器的OTA地址，重启唤醒即可。
+Restart or wake the device, then inspect:
 
-唤醒后留意mqtt-gateway的日志，确认是否有连接成功的日志。
-```
+```bash
 pm2 logs xz-mqtt
 ```
+
+**Note:** The server/gateway must be running and the device must successfully receive its OTA response for MQTT settings to take effect.

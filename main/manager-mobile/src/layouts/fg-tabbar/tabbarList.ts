@@ -6,13 +6,13 @@ type FgTabBarItem = TabBar['list'][0] & {
 }
 
 /**
- * tabbar 选择的策略，更详细的介绍见 tabbar.md 文件
- * 0: 'NO_TABBAR' `无 tabbar`
- * 1: 'NATIVE_TABBAR'  `完全原生 tabbar`
- * 2: 'CUSTOM_TABBAR_WITH_CACHE' `有缓存自定义 tabbar`
- * 3: 'CUSTOM_TABBAR_WITHOUT_CACHE' `无缓存自定义 tabbar`
+ * Tab bar strategy; see tabbar.md
+ * 0: 'NO_TABBAR' `No tab bar`
+ * 1: 'NATIVE_TABBAR'  `Native tab bar`
+ * 2: 'CUSTOM_TABBAR_WITH_CACHE' `Custom cached tab bar`
+ * 3: 'CUSTOM_TABBAR_WITHOUT_CACHE' `Custom tab bar without cache`
  *
- * 温馨提示：本文件的任何代码更改了之后，都需要重新运行，否则 pages.json 不会更新导致错误
+ * Restart after editing this file to regenerate pages.json
  */
 export const TABBAR_MAP = {
   NO_TABBAR: 0,
@@ -20,27 +20,27 @@ export const TABBAR_MAP = {
   CUSTOM_TABBAR_WITH_CACHE: 2,
   CUSTOM_TABBAR_WITHOUT_CACHE: 3,
 }
-// TODO：通过这里切换使用tabbar的策略
+// TODO: Select tab bar strategy here
 export const selectedTabbarStrategy = TABBAR_MAP.NATIVE_TABBAR
 
-// selectedTabbarStrategy==NATIVE_TABBAR(1) 时，需要填 iconPath 和 selectedIconPath
-// selectedTabbarStrategy==CUSTOM_TABBAR(2,3) 时，需要填 icon 和 iconType
-// selectedTabbarStrategy==NO_TABBAR(0) 时，tabbarList 不生效
+// selectedTabbarStrategy==NATIVE_TABBAR(1) requires iconPath and selectedIconPath
+// selectedTabbarStrategy==CUSTOM_TABBAR(2,3) requires icon and iconType
+// selectedTabbarStrategy==NO_TABBAR(0) disables tabbarList
 export const tabbarList: FgTabBarItem[] = [
   {
     iconPath: 'static/tabbar/robot.png',
     selectedIconPath: 'static/tabbar/robot_activate.png',
     pagePath: 'pages/index/index',
-    text: '首页',
+    text: 'Home',
     icon: 'home',
-    // 选用 UI 框架自带的 icon 时，iconType 为 uiLib
+    // Use iconType uiLib for UI framework icons
     iconType: 'uiLib',
   },
   {
     iconPath: 'static/tabbar/network.png',
     selectedIconPath: 'static/tabbar/network_activate.png',
     pagePath: 'pages/device-config/index',
-    text: '配网',
+    text: 'Network Setup',
     icon: 'i-carbon-network-3',
     iconType: 'uiLib',
   },
@@ -48,18 +48,18 @@ export const tabbarList: FgTabBarItem[] = [
     iconPath: 'static/tabbar/system.png',
     selectedIconPath: 'static/tabbar/system_activate.png',
     pagePath: 'pages/settings/index',
-    text: '系统',
+    text: 'System',
     icon: 'i-carbon-settings',
     iconType: 'uiLib',
   },
 ]
 
-// NATIVE_TABBAR(1) 和 CUSTOM_TABBAR_WITH_CACHE(2) 时，需要tabbar缓存
+// NATIVE_TABBAR(1) and CUSTOM_TABBAR_WITH_CACHE(2) require tab bar caching
 export const cacheTabbarEnable = selectedTabbarStrategy === TABBAR_MAP.NATIVE_TABBAR
   || selectedTabbarStrategy === TABBAR_MAP.CUSTOM_TABBAR_WITH_CACHE
 
 const _tabbar: TabBar = {
-  // 只有微信小程序支持 custom。App 和 H5 不生效
+  // Only WeChat Mini Programs support custom (not App or H5)
   custom: selectedTabbarStrategy === TABBAR_MAP.CUSTOM_TABBAR_WITH_CACHE,
   color: '#e6e6e6',
   selectedColor: '#667dea',
@@ -72,5 +72,5 @@ const _tabbar: TabBar = {
   list: tabbarList as unknown as TabBar['list'],
 }
 
-// 0和1 需要显示底部的tabbar的各种配置，以利用缓存
+// Strategies 0 and 1 need bottom tab bar configuration for caching
 export const tabBar = cacheTabbarEnable ? _tabbar : undefined

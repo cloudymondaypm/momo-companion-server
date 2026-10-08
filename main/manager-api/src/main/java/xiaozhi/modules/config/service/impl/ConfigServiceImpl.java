@@ -382,7 +382,7 @@ public class ConfigServiceImpl implements ConfigService {
             result.put("voiceprint", voiceprintConfig);
         } catch (Exception e) {
             // 声纹配置获取失败时不影响其他功能
-            System.err.println("获取声纹配置失败: " + e.getMessage());
+            System.err.println("Failed to load voiceprint configuration: " + e.getMessage());
         }
     }
 
@@ -546,7 +546,7 @@ public class ConfigServiceImpl implements ConfigService {
 
         result.put("selected_module", selectedModule);
         if (StringUtils.isNotBlank(prompt)) {
-            prompt = prompt.replace("{{assistant_name}}", StringUtils.isBlank(assistantName) ? "小智" : assistantName);
+            prompt = prompt.replace("{{assistant_name}}", StringUtils.isBlank(assistantName) ? "Momo Companion" : assistantName);
         }
         result.put("prompt", prompt);
         result.put("summaryMemory", summaryMemory);

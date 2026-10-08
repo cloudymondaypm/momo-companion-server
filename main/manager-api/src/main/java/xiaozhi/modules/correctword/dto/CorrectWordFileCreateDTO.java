@@ -8,17 +8,17 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-@Schema(description = "创建替换词文件DTO")
+@Schema(description = "Create replacement-word file DTO")
 public class CorrectWordFileCreateDTO {
 
-    @NotBlank(message = "文件名不能为空")
-    @Schema(description = "文件名")
+    @NotBlank(message = "File name is required")
+    @Schema(description = "File name")
     private String fileName;
 
-    @NotEmpty(message = "替换词内容不能为空")
-    @Schema(description = "替换词内容，每条格式：原词|替换词")
+    @NotEmpty(message = "Replacement words are required")
+    @Schema(description = "Replacement words; each item has original|replacement format")
     private List<String> content;
 
-    @Schema(description = "文件大小（字节），不能超过1MB")
+    @Schema(description = "File size in bytes, maximum 1 MB")
     private Long fileSize;
 }

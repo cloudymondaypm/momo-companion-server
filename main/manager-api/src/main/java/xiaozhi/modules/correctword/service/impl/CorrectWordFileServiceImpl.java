@@ -95,7 +95,7 @@ public class CorrectWordFileServiceImpl extends BaseServiceImpl<CorrectWordFileD
                 .eq(CorrectWordFileEntity::getFileName, dto.getFileName())
                 .ne(CorrectWordFileEntity::getId, fileId);
         if (correctWordFileDao.selectCount(nameWrapper) > 0) {
-            throw new RenException("文件名已存在：" + dto.getFileName());
+            throw new RenException("File name already exists: " + dto.getFileName());
         }
 
         // 先删除旧词条
