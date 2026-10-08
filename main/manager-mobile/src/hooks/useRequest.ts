@@ -18,8 +18,8 @@ interface IUseRequestReturn<T> {
  * useRequest is a custom hook for handling asynchronous requests and responses.
  * @param func An async function that returns a Promise containing response data.
  * @param options Request options {immediate, initialData}。
- * @param options.immediate Whether to execute immediately请求，默认为false。
- * @param options.initialData Initial data，默认为undefined。
+ * @param options.immediate Whether to execute immediately; defaults to false.
+ * @param options.initialData Initial data; defaults to undefined.
  * @returns Returns an object{loading, error, data, run}，containing loading state, error, response data, and a function to trigger the request manually.
  */
 export default function useRequest<T>(
