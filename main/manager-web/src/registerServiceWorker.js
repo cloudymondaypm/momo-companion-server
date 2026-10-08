@@ -84,7 +84,7 @@ export const register = () => {
             };
           })
           .catch(error => {
-            console.error('Service Worker 注册failed:', error);
+            console.error('Service Worker registration failed:', error);
             
             if (error.name === 'TypeError' && error.message.includes('Failed to register a ServiceWorker')) {
               console.warn('[Momo Companion] Network error registering Service Worker; CDN assets may not be cached');
