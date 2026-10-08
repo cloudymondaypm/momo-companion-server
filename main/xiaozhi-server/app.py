@@ -20,7 +20,7 @@ def _missing_config(value):
     if not value:
         return True
     setting = str(value).strip().lower()
-    return "你" in setting or setting.startswith(("your-", "your ", "your_"))
+    return "你" in setting or setting.startswith(("your-", "your ", "your_")) or "your-host" in setting
 
 
 async def wait_for_exit() -> None:
