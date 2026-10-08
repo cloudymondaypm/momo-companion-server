@@ -19,8 +19,8 @@ export default {
                 callback(res)
             })
             .networkFail((err) => {
-                console.error('Retrieve dictionary type listfailed:', err)
-                this.$message.error(err.msg || 'Retrieve dictionary type listfailed')
+                console.error('Retrieve dictionary type list failed:', err)
+                this.$message.error(err.msg || 'Retrieve dictionary type list failed')
                 RequestService.reAjaxFun(() => {
                     this.getDictTypeList(params, callback)
                 })
@@ -37,8 +37,8 @@ export default {
                 callback(res)
             })
             .networkFail((err) => {
-                console.error('Retrieve dictionary type detailsfailed:', err)
-                this.$message.error(err.msg || 'Retrieve dictionary type detailsfailed')
+                console.error('Retrieve dictionary type details failed:', err)
+                this.$message.error(err.msg || 'Retrieve dictionary type details failed')
                 RequestService.reAjaxFun(() => {
                     this.getDictTypeDetail(id, callback)
                 })
@@ -56,8 +56,8 @@ export default {
                 callback(res)
             })
             .networkFail((err) => {
-                console.error('Create dictionary typefailed:', err)
-                this.$message.error(err.msg || 'Create dictionary typefailed')
+                console.error('Create dictionary type failed:', err)
+                this.$message.error(err.msg || 'Create dictionary type failed')
                 RequestService.reAjaxFun(() => {
                     this.addDictType(data, callback)
                 })
@@ -75,8 +75,8 @@ export default {
                 callback(res)
             })
             .networkFail((err) => {
-                console.error('Update dictionary typefailed:', err)
-                this.$message.error(err.msg || 'Update dictionary typefailed')
+                console.error('Update dictionary type failed:', err)
+                this.$message.error(err.msg || 'Update dictionary type failed')
                 RequestService.reAjaxFun(() => {
                     this.updateDictType(data, callback)
                 })
@@ -94,8 +94,8 @@ export default {
                 callback(res)
             })
             .networkFail((err) => {
-                console.error('Delete dictionary typefailed:', err)
-                this.$message.error(err.msg || 'Delete dictionary typefailed')
+                console.error('Delete dictionary type failed:', err)
+                this.$message.error(err.msg || 'Delete dictionary type failed')
                 RequestService.reAjaxFun(() => {
                     this.deleteDictType(ids, callback)
                 })
@@ -120,8 +120,8 @@ export default {
                 callback(res)
             })
             .networkFail((err) => {
-                console.error('Retrieve dictionary entry listfailed:', err)
-                this.$message.error(err.msg || 'Retrieve dictionary entry listfailed')
+                console.error('Retrieve dictionary entry list failed:', err)
+                this.$message.error(err.msg || 'Retrieve dictionary entry list failed')
                 RequestService.reAjaxFun(() => {
                     this.getDictDataList(params, callback)
                 })
@@ -138,8 +138,8 @@ export default {
                 callback(res)
             })
             .networkFail((err) => {
-                console.error('Retrieve dictionary entry detailsfailed:', err)
-                this.$message.error(err.msg || 'Retrieve dictionary entry detailsfailed')
+                console.error('Retrieve dictionary entry details failed:', err)
+                this.$message.error(err.msg || 'Retrieve dictionary entry details failed')
                 RequestService.reAjaxFun(() => {
                     this.getDictDataDetail(id, callback)
                 })
@@ -157,8 +157,8 @@ export default {
                 callback(res)
             })
             .networkFail((err) => {
-                console.error('Create dictionary entryfailed:', err)
-                this.$message.error(err.msg || 'Create dictionary entryfailed')
+                console.error('Create dictionary entry failed:', err)
+                this.$message.error(err.msg || 'Create dictionary entry failed')
                 RequestService.reAjaxFun(() => {
                     this.addDictData(data, callback)
                 })
@@ -176,8 +176,8 @@ export default {
                 callback(res)
             })
             .networkFail((err) => {
-                console.error('Update dictionary entryfailed:', err)
-                this.$message.error(err.msg || 'Update dictionary entryfailed')
+                console.error('Update dictionary entry failed:', err)
+                this.$message.error(err.msg || 'Update dictionary entry failed')
                 RequestService.reAjaxFun(() => {
                     this.updateDictData(data, callback)
                 })
@@ -195,8 +195,8 @@ export default {
                 callback(res)
             })
             .networkFail((err) => {
-                console.error('Delete dictionary entryfailed:', err)
-                this.$message.error(err.msg || 'Delete dictionary entryfailed')
+                console.error('Delete dictionary entry failed:', err)
+                this.$message.error(err.msg || 'Delete dictionary entry failed')
                 RequestService.reAjaxFun(() => {
                     this.deleteDictData(ids, callback)
                 })
@@ -214,11 +214,11 @@ export default {
                     if (res.data && res.data.code === 0) {
                         resolve(res.data)
                     } else {
-                        reject(new Error(res.data?.msg || 'Retrieve dictionary entry listfailed'))
+                        reject(new Error(res.data?.msg || 'Retrieve dictionary entry list failed'))
                     }
                 })
                 .networkFail((err) => {
-                    console.error('Retrieve dictionary entry listfailed:', err)
+                    console.error('Retrieve dictionary entry list failed:', err)
                     reject(err)
                 }).send()
         })
