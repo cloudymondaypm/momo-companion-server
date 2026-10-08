@@ -296,7 +296,7 @@ public class KnowledgeFilesServiceImpl extends BaseServiceImpl<DocumentDao, Docu
                 // Issue 6: 远程列表为空，可能是文档已删除，也可能是适配器调用出了问题
                 // [Bug Fix] P2: 仅当远程确实返回了合法空列表时才标记 CANCEL
                 // 同时更新 last_sync_at，配合 P1 冷却机制防止高频误判
-                log.warn("Remote synchronization: RAGFlow returned empty document list, docId={}, 当前本地状态={}",
+                log.warn("Remote synchronization: RAGFlow returned empty document list, docId={}, current local status={}",
                         documentId, dto.getRun());
                 dto.setRun("CANCEL");
                 dto.setError("Document was deleted on remote server");
@@ -844,7 +844,7 @@ public class KnowledgeFilesServiceImpl extends BaseServiceImpl<DocumentDao, Docu
             }
             try {
                 self.deleteDocumentShadows(deletedDocIds, datasetId, totalChunkDelta, totalTokenDelta);
-                log.info("Removing shadow records deleted remotely: {} 个, datasetId={}", deletedDocs.size(), datasetId);
+                log.info("Removing shadow records deleted remotely: {} records, datasetId={}", deletedDocs.size(), datasetId);
             } catch (Exception e) {
                 log.warn("Failed to remove shadow records deleted remotely: datasetId={}, error={}", datasetId, e.getMessage());
             }
@@ -936,7 +936,7 @@ public class KnowledgeFilesServiceImpl extends BaseServiceImpl<DocumentDao, Docu
             return;
         }
 
-        log.info("定时任务: 发现 {} 个文档正在解析中，开始同步...", runningDocs.size());
+        log.info("Scheduled sync: found {} documents being parsed; starting synchronization...", runningDocs.size());
 
         // 2. 按 DatasetID 分组，复用 Adapter
         Map<String, List<DocumentEntity>> groupedDocs = runningDocs.stream()
@@ -949,7 +949,7 @@ public class KnowledgeFilesServiceImpl extends BaseServiceImpl<DocumentDao, Docu
                 Map<String, Object> ragConfig = knowledgeBaseService.getRAGConfigByDatasetId(datasetId);
                 adapter = KnowledgeBaseAdapterFactory.getAdapter(extractAdapterType(ragConfig), ragConfig);
             } catch (Exception e) {
-                log.warn("无法为数据集 {} 初始化适配器，跳过同步: {}", datasetId, e.getMessage());
+                log.warn("Unable to initialize adapter for dataset {}, skipping synchronization: {}", datasetId, e.getMessage());
                 return;
             }
 
@@ -969,10 +969,10 @@ public class KnowledgeFilesServiceImpl extends BaseServiceImpl<DocumentDao, Docu
                     // 仅当状态变为 SUCCESS 且 Token 数有变化时更新统计
                     if (tokenDelta != 0) {
                         knowledgeBaseService.updateStatistics(datasetId, 0, 0L, tokenDelta);
-                        log.info("定时任务: 同步修正知识库统计, docId={}, tokenDelta={}", dto.getDocumentId(), tokenDelta);
+                        log.info("Scheduled sync: update knowledge base statistics, docId={}, tokenDelta={}", dto.getDocumentId(), tokenDelta);
                     }
                 } catch (Exception e) {
-                    log.error("同步文档 {} 失败: {}", doc.getDocumentId(), e.getMessage());
+                    log.error("Failed to synchronize document {}: {}", doc.getDocumentId(), e.getMessage());
                 }
             }
         });
