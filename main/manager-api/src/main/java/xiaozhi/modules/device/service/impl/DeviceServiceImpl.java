@@ -93,7 +93,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
                 redisUtils.set(RedisKeys.getAgentDeviceLastConnectedAtById(agentId), new Date());
             }
         } catch (Exception e) {
-            log.error("异步更新设备连接信息失败", e);
+            log.error("Failed to update device connection details asynchronously", e);
         }
     }
 
@@ -224,7 +224,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
                 String token = generateWebSocketToken(clientId, macAddress);
                 websocket.setToken(token);
             } catch (Exception e) {
-                log.error("生成WebSocket token失败: {}", e.getMessage());
+                log.error("Failed to generate WebSocket token: {}", e.getMessage());
                 websocket.setToken("");
             }
         } else {
@@ -232,7 +232,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
         }
 
         if (StringUtils.isBlank(wsUrl) || wsUrl.equals("null")) {
-            log.error("WebSocket地址未配置，请登录智控台，在参数管理找到【server.websocket】配置");
+            log.error("WebSocket URL is not configured. Configure server.websocket under Parameter Management.");
             wsUrl = "ws://xiaozhi.server.com:8000/xiaozhi/v1/";
             websocket.setUrl(wsUrl);
         } else {
@@ -241,7 +241,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
                 // 随机选择一个WebSocket URL
                 websocket.setUrl(wsUrls[RandomUtil.randomInt(0, wsUrls.length)]);
             } else {
-                log.error("WebSocket地址未配置，请登录智控台，在参数管理找到【server.websocket】配置");
+                log.error("WebSocket URL is not configured. Configure server.websocket under Parameter Management.");
                 websocket.setUrl("ws://xiaozhi.server.com:8000/xiaozhi/v1/");
             }
         }
@@ -261,7 +261,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
                     response.setMqtt(mqtt);
                 }
             } catch (Exception e) {
-                log.error("生成MQTT配置失败: {}", e.getMessage());
+                log.error("Failed to generate MQTT configuration: {}", e.getMessage());
             }
         }
 
@@ -499,7 +499,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
             if (compareVersions(ota.getVersion(), currentVersion) > 0) {
                 String otaUrl = sysParamsService.getValue(Constant.SERVER_OTA, true);
                 if (StringUtils.isBlank(otaUrl) || otaUrl.equals("null")) {
-                    log.error("OTA地址未配置，请登录智控台，在参数管理找到【server.ota】配置");
+                    log.error("OTA URL is not configured. Configure server.ota under Parameter Management.");
                     // 尝试从请求中获取
                     HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
                             .getRequestAttributes())
@@ -611,7 +611,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
         // 从系统参数获取密钥
         String secretKey = sysParamsService.getValue(Constant.SERVER_SECRET, false);
         if (StringUtils.isBlank(secretKey)) {
-            throw new IllegalStateException("WebSocket认证密钥未配置(server.secret)");
+            throw new IllegalStateException("WebSocket authentication secret is missing (server.secret)");
         }
 
         // 获取当前时间戳(秒)
@@ -645,7 +645,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
         // 从环境变量或系统参数获取签名密钥
         String signatureKey = sysParamsService.getValue("server.mqtt_signature_key", true);
         if (StringUtils.isBlank(signatureKey)) {
-            log.warn("缺少MQTT_SIGNATURE_KEY，跳过MQTT配置生成");
+            log.warn("MQTT_SIGNATURE_KEY is missing; skipping MQTT configuration");
             return null;
         }
 
