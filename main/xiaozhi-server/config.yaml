@@ -599,10 +599,10 @@ ASR:
     max_sentence_silence: 200  # VAD silence threshold in ms (200–6000), for VAD mode only
     multi_threshold_mode_enabled: false  # Prevent overly long VAD chunks; applies to VAD mode only
     punctuation_prediction_enabled: true  # Whether to add punctuation automatically
-    inverse_text_normalization_enabled: true  # 是否开启ITN(中文数字转阿拉伯数字)
-    # 热词定制Documentation URL：https://help.aliyun.com/zh/model-studio/custom-hot-words?
-    # vocabulary_id: vocab-xxx-24ee19fa8cfb4d52902170a0xxxxxxxx  # 热词ID(Optional)
-    # language_hints: ["zh", "en"]  # 指定语言(Optional)，支持zh、en、ja、yue、ko、de、fr、ru
+    inverse_text_normalization_enabled: true  # Enable inverse text normalization (convert Chinese numerals to Arabic numerals)
+    # Hotword customization documentation：https://help.aliyun.com/zh/model-studio/custom-hot-words?
+    # vocabulary_id: vocab-xxx-24ee19fa8cfb4d52902170a0xxxxxxxx  # Hotword ID(Optional)
+    # language_hints: ["zh", "en"]  # Specify language(Optional)，Supports zh, en, ja, yue, ko, de, fr, ru
     output_dir: tmp/  
 VAD:
   SileroVAD:
@@ -610,181 +610,181 @@ VAD:
     threshold: 0.5
     threshold_low: 0.3
     model_dir: models/snakers4_silero-vad
-    min_silence_duration_ms: 200  # 如果说话停顿比较长，可以把这个值设置大一些
+    min_silence_duration_ms: 200  # Increase this threshold for longer speaking pauses
 
 LLM:
-  # 所有openai类型均可以修改超参，以AliLLM为例
-  # 当前支持的type为openai、dify、ollama，可自行适配
+  # All OpenAI-compatible models support custom parameters; AliLLM example below
+  # Supported types include openai, dify and ollama; extend as needed
   AliLLM:
-    # 定义LLM API类型
+    # Define LLM API type
     type: openai
-    # 可在这里找到你的 api_key https://bailian.console.aliyun.com/?apiKey=1#/api-key
+    # Find your API key here https://bailian.console.aliyun.com/?apiKey=1#/api-key
     base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
     model_name: qwen-flash
     api_key: 你的deepseek web key
-    temperature: 0.7  # 温度值
-    max_tokens: 500   # 最大生成token数
+    temperature: 0.7  # Temperature
+    max_tokens: 500   # Maximum generated tokens
     top_p: 1
-    frequency_penalty: 0  # 频率惩罚
+    frequency_penalty: 0  # Frequency penalty
   AliAppLLM:
-    # 定义LLM API类型
+    # Define LLM API type
     type: AliBL
     base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
     app_id: 你的app_id
-    # 可在这里找到你的 api_key https://bailian.console.aliyun.com/?apiKey=1#/api-key
+    # Find your API key here https://bailian.console.aliyun.com/?apiKey=1#/api-key
     api_key: 你的api_key
-    # 是否不使用本地prompt：true|false (默不用请在百练应用中设置prompt)
+    # Whether to ignore the local prompt (set prompt in the Bailian app)
     is_no_prompt: true
-    # Ali_memory_id：false（不使用）|你的memory_id（请在百练应用中设置中获取）
-    # Tips！：Ali_memory未实现多用户存储记忆(记忆按id调用)
+    # Ali_memory_id: false to disable, or your memory ID from the Bailian application
+    # Ali_memory does not yet support multi-user memory; it uses memory IDs.
     ali_memory_id: false
   DoubaoLLM:
-    # 定义LLM API类型
+    # Define LLM API type
     type: openai
-    # 先开通服务，打开以下网址，开通的服务搜索Doubao-Seed-2.0-Lite，开通它
+    # Enable Doubao-Seed-2.0-Lite on the provider console.
     # Activation URL：https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement?LLM=%7B%7D&OpenTokenDrawer=false
-    # 免费额度500000token
-    # 开通后，进入这里获取密钥：https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey?apikey=%7B%7D
+    # Free quota: 500,000 tokens
+    # Get your API key after activation：https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey?apikey=%7B%7D
     base_url: https://ark.cn-beijing.volces.com/api/v3
     model_name: doubao-seed-2-0-lite-260215
     api_key: 你的doubao web key
   DeepSeekLLM:
-    # 定义LLM API类型
+    # Define LLM API type
     type: openai
-    # 可在这里找到你的api key https://platform.deepseek.com/
+    # Find your API key here https://platform.deepseek.com/
     model_name: deepseek-v4-flash
     url: https://api.deepseek.com
     api_key: 你的deepseek web key
   ChatGLMLLM:
-    # 定义LLM API类型
+    # Define LLM API type
     type: openai
-    # glm-4-flash 是免费的，但是还是需要注册填写api_key的
-    # 可在这里找到你的api key https://bigmodel.cn/usercenter/proj-mgmt/apikeys
+    # glm-4-flash is free but still requires a registered API key
+    # Find your API key here https://bigmodel.cn/usercenter/proj-mgmt/apikeys
     model_name: glm-4-flash
     url: https://open.bigmodel.cn/api/paas/v4/
     api_key: 你的chat-glm web key
   OllamaLLM:
-    # 定义LLM API类型
+    # Define LLM API type
     type: ollama
-    model_name: qwen2.5 #  使用的模型名称，需要预先使用ollama pull下载
-    base_url: http://localhost:11434  # Ollama服务地址
+    model_name: qwen2.5 #  Model must be downloaded with ollama pull first
+    base_url: http://localhost:11434  # Ollama service URL
   DifyLLM:
-    # 定义LLM API类型
+    # Define LLM API type
     type: dify
-    # 建议使用本地部署的dify接口，国内部分区域访问dify公有云接口可能会受限
-    # 如果使用DifyLLM，配置文件里prompt(提示词)是无效的，需要在dify控制台设置提示词
+    # Prefer a local Dify deployment if public-cloud access is restricted.
+    # DifyLLM ignores local prompts; configure prompts in the Dify console.
     base_url: https://api.dify.ai/v1
     api_key: 你的DifyLLM web key
-    # 使用的对话模式 可以选择工作流 workflows/run 对话模式 chat-messages  文本生成 completion-messages
-    # 使用workflows进行返回的时候输入参数为 query 返回参数的名字要设置为 answer
-    # 文本生成的默认输入参数也是query
+    # Choose workflow (workflows/run), chat (chat-messages) or text generation (completion-messages).
+    # Workflows use query as input and answer as output.
+    # Text generation also uses query as input.
     mode: chat-messages
   GeminiLLM:
     type: gemini
-    # 谷歌Gemini API，需要先在Google Cloud控制台创建API密钥并获取api_key
-    # 若在中国境内使用，请遵守《生成式人工智能服务管理暂行办法》
-    # token申请地址： https://aistudio.google.com/apikey
-    # 若部署地无法访问接口，需要开启科学上网
+    # Google Gemini requires an API key from Google AI Studio or Cloud Console.
+    # Follow applicable local regulations when operating in China.
+    # Token application URL： https://aistudio.google.com/apikey
+    # Ensure network connectivity to the API from your deployment region.
     api_key: 你的gemini web key
     model_name: "gemini-2.0-flash"
     http_proxy: ""  #"http://127.0.0.1:10808"
     https_proxy: "" #http://127.0.0.1:10808"
   CozeLLM:
-    # 定义LLM API类型
+    # Define LLM API type
     type: coze
-    # 你可以在这里找到个人令牌
+    # Find your personal access token here
     # https://www.coze.cn/open/oauth/pats
-    # bot_id和user_id的内容写在引号之内
+    # Put bot_id and user_id in quotation marks
     bot_id: "你的bot_id"
     user_id: "你的user_id"
     personal_access_token: 你的coze个人令牌
   VolcesAiGatewayLLM:
-    # 火山引擎 - 边缘大模型网关
-    # 定义LLM API类型
+    # Volcengine edge LLM gateway
+    # Define LLM API type
     type: openai
-    # 先开通服务，打开以下网址，创建网关访问密钥，搜索并勾选 Doubao-pro-32k-functioncall ，开通
-    # 如果需要使用边缘大模型网关提供的语音合成，一并勾选 Doubao-语音合成 ，另见 TTS.VolcesAiGatewayTTS 配置
+    # Enable Doubao-pro-32k-functioncall in the Volcengine gateway console.
+    # To use gateway TTS, also enable Doubao speech synthesis; see TTS.VolcesAiGatewayTTS.
     # https://console.volcengine.com/vei/aigateway/
-    # 开通后，进入这里获取密钥：https://console.volcengine.com/vei/aigateway/tokens-list
+    # Get your API key after activation：https://console.volcengine.com/vei/aigateway/tokens-list
     base_url: https://ai-gateway.vei.volces.com/v1
     model_name: doubao-pro-32k-functioncall
     api_key: 你的网关访问密钥
   LMStudioLLM:
-    # 定义LLM API类型
+    # Define LLM API type
     type: openai
-    model_name: deepseek-r1-distill-llama-8b@q4_k_m # 使用的模型名称，需要预先在社区下载
-    url: http://localhost:1234/v1 # LM Studio服务地址
-    api_key: lm-studio # LM Studio服务的固定API Key
+    model_name: deepseek-r1-distill-llama-8b@q4_k_m # Download this model before use.
+    url: http://localhost:1234/v1 # LM Studio service URL
+    api_key: lm-studio # LM Studio fixed API key
   HomeAssistant:
-    # 定义LLM API类型
+    # Define LLM API type
     type: homeassistant
     base_url: http://homeassistant.local:8123
     agent_id: conversation.chatgpt
     api_key: 你的home assistant api访问令牌
   FastgptLLM:
-    # 定义LLM API类型
+    # Define LLM API type
     type: fastgpt
-    # 如果使用fastgpt，配置文件里prompt(提示词)是无效的，需要在fastgpt控制台设置提示词
+    # FastGPT ignores local prompts; set prompts in its console.
     base_url: https://host/api/v1
-    # 你可以在这里找到你的api_key
+    # Find your API key here
     # https://cloud.tryfastgpt.ai/account/apikey
     api_key: 你的fastgpt密钥
     variables:
       k: "v"
       k2: "v2"
   XinferenceLLM:
-    # 定义LLM API类型
+    # Define LLM API type
     type: xinference
-    # Xinference服务地址和模型名称
-    model_name: qwen2.5:72b-AWQ  # 使用的模型名称，需要预先在Xinference启动对应模型
-    base_url: http://localhost:9997  # Xinference服务地址
+    # Xinference server URL and model name
+    model_name: qwen2.5:72b-AWQ  # Start corresponding model in Xinference before use.
+    base_url: http://localhost:9997  # Xinference service URL
   XinferenceSmallLLM:
-    # 定义轻量级LLM API类型，用于意图识别
+    # Define lightweight LLM for intent recognition
     type: xinference
-    # Xinference服务地址和模型名称
-    model_name: qwen2.5:3b-AWQ  # 使用的小模型名称，用于意图识别
-    base_url: http://localhost:9997  # Xinference服务地址
-# VLLM配置（视觉语言大模型）
+    # Xinference server URL and model name
+    model_name: qwen2.5:3b-AWQ  # Small model name used for intent recognition
+    base_url: http://localhost:9997  # Xinference service URL
+# VLLM configuration (vision-language model)
 VLLM:
   ChatGLMVLLM:
     type: openai
-    # glm-4v-flash是智谱免费AI的视觉模型，需要先在智谱AI平台创建API密钥并获取api_key
-    # 可在这里找到你的api key https://bigmodel.cn/usercenter/proj-mgmt/apikeys
-    model_name: glm-4v-flash  # 智谱AI的视觉模型
+    # glm-4v-flash is a free vision model from Zhipu; obtain an API key first.
+    # Find your API key here https://bigmodel.cn/usercenter/proj-mgmt/apikeys
+    model_name: glm-4v-flash  # Zhipu AI vision model
     url: https://open.bigmodel.cn/api/paas/v4/
     api_key: 你的api_key
   QwenVLVLLM:
     type: openai
     model_name: qwen3.5-flash
     url: https://dashscope.aliyuncs.com/compatible-mode/v1
-    # 可在这里找到你的api key https://bailian.console.aliyun.com/?apiKey=1#/api-key
+    # Find your API key here https://bailian.console.aliyun.com/?apiKey=1#/api-key
     api_key: 你的api_key
   XunfeiSparkLLM:
-    # 定义LLM API类型
+    # Define LLM API type
     type: openai
-    # 先新建应用，在下面的地址
-    # 开通应用地址：https://console.xfyun.cn/app/myapp
-    # 有免费额度，但也要开通服务，才能获取api_key
-    # 每一个模型都需要单独开通，每一个模型的api_password都不同，例如Lite模型在https://console.xfyun.cn/services/cbm 开通
+    # Create an application at the URL below.
+    # App activation URL：https://console.xfyun.cn/app/myapp
+    # Free quota is available, but service activation is required for an API key.
+    # Each model requires separate activation and api_password; e.g. Lite athttps://console.xfyun.cn/services/cbm 开通
     base_url: https://ark.cn-beijing.volces.com/api/v3
     model_name: lite
     api_key: 你的api_password
 TTS:
-  # 当前支持的type为edge、doubao，可自行适配
+  # Currently supports edge and doubao; extend as needed
   EdgeTTS:
-    # 定义TTS API类型
+    # Define TTS API type
     type: edge
     voice: zh-CN-XiaoxiaoNeural
     output_dir: tmp/
-    # language: "中文"  # 指定输出语种,如:中文、英语、日语、韩语等,请根据所选音色支持的语言进行设置,不填则默认为中文
+    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
   DoubaoTTS:
-    # 定义TTS API类型
+    # Define TTS API type
     type: doubao
-    # 火山引擎语音合成服务，需要先在火山引擎控制台创建应用并获取appid和access_token
-    # 山引擎语音一定要购买花钱，起步价30元，就有100并发了。如果用免费的只有2个并发，会经常报tts错误
-    # 购买服务后，购买免费的音色后，可能要等半小时左右，才能使用。
-    # 普通音色在这里开通：https://console.volcengine.com/speech/service/8
-    # 湾湾小何音色在这里开通：https://console.volcengine.com/speech/service/10007，开通后将下面的voice设置成zh_female_wanwanxiaohe_moon_bigtts
+    # Volcengine speech synthesis requires an appid and access_token from its console.
+    # Volcengine TTS has paid tiers with higher concurrency; the free tier may be limited.
+    # Newly activated voices may take time before becoming available.
+    # Activate standard voices here：https://console.volcengine.com/speech/service/8
+    # Activate Wanwan Xiaohe voice here：https://console.volcengine.com/speech/service/10007，开通后将下面的voice设置成zh_female_wanwanxiaohe_moon_bigtts
     api_url: https://openspeech.bytedance.com/api/v1/tts
     voice: BV001_streaming
     output_dir: tmp/
@@ -795,39 +795,39 @@ TTS:
     speed_ratio: 1.0
     volume_ratio: 1.0
     pitch_ratio: 1.0
-    # language: "中文"  # 指定输出语种,如:中文、英语、日语、韩语等,请根据所选音色支持的语言进行设置,不填则默认为中文
-  #火山tts，支持双向流式tts
+    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+  #Volcengine TTS supports bidirectional streaming
   HuoshanDoubleStreamTTS:
     type: huoshan_double_stream
-    # 访问 https://console.volcengine.com/speech/service/10007 开通语音合成大模型，购买音色
-    # 在页面底部获取appid和access_token
-    # 资源ID固定为：volc.service_type.10029（大模型语音合成及混音）
-    # 如果是机智云，把接口地址换成wss://bytedance.gizwitsapi.com/api/v3/tts/bidirection
-    # 机智云不需要天填 appid
+    # Visit https://console.volcengine.com/speech/service/10007 to activate speech synthesis and purchase voices
+    # Find appid and access_token at the bottom of the page.
+    # Fixed resource ID：volc.service_type.10029（大模型语音合成及混音）
+    # For Gizwits, set the endpoint to wss://bytedance.gizwitsapi.com/api/v3/tts/bidirection.
+    # Gizwits does not require an appid.
     ws_url: wss://openspeech.bytedance.com/api/v3/tts/bidirection
     appid: 你的火山引擎语音合成服务appid
     access_token: 你的火山引擎语音合成服务access_token
     resource_id: volc.service_type.10029
     speaker: zh_female_wanwanxiaohe_moon_bigtts
-    # 开启WebSocket连接复用，默认复用（注意：复用后设备处于聆听状态时空闲链接会占并发数）
+    # Reuse WebSocket connections by default; idle listening connections may consume concurrency slots.
     enable_ws_reuse: True
-    # 相关参数文档：https://www.volcengine.com/docs/6561/1329505
-    # 音频输出配置（audio_params）- 用户可自定义添加火山引擎支持的任何音频参数
+    # Parameter documentation：https://www.volcengine.com/docs/6561/1329505
+    # Audio output settings: additional Volcengine audio_params are supported.
     audio_params:
-      speech_rate: 0  # 语速(-50~100)
-      loudness_rate: 0  # 音量(-50~100)
-      # 多情感音色参数，注意：当前仅部分音色支持设置情感。
-      # 相关音色列表：https://www.volcengine.com/docs/6561/1257544
-      # emotion: "neutral"  # 情感类型（仅部分音色支持）：neutral、happy、sad、angry、fearful、disgusted、surprised
-      # emotion_scale: 4  # 情感强度(1~5)
-    # 高级文本处理配置（additions）- 用户可自定义添加火山引擎支持的任何高级参数
+      speech_rate: 0  # Speech rate(-50~100)
+      loudness_rate: 0  # Volume(-50~100)
+      # Emotion parameters; available only for supported voices.
+      # Available voices：https://www.volcengine.com/docs/6561/1257544
+      # emotion: "neutral"  # Emotion type (supported voices only)：neutral、happy、sad、angry、fearful、disgusted、surprised
+      # emotion_scale: 4  # Emotion intensity(1~5)
+    # Advanced text processing settings (additions) supported by Volcengine.
     additions:
       post_process:
-        pitch: 0  # 音高(-12~12)
-      # aigc_metadata: {}  # AIGC元数据配置
-      # cache_config: {}  # 缓存配置
-    # 混音控制配置（mix_speaker）- 多音色混合（仅 TTS 1.0）
-    # 混音功能主要适用于豆包语音合成模型1.0的音色，使用时需要将req_params.speaker设置为custom_mix_bigtts
+        pitch: 0  # Pitch(-12~12)
+      # aigc_metadata: {}  # AIGC metadata
+      # cache_config: {}  # Cache configuration
+    # Mixed voices (mix_speaker), TTS 1.0 only
+    # Voice mixing applies mainly to Doubao TTS 1.0; set req_params.speaker to custom_mix_bigtts.
     # mix_speaker:
     #   speakers:
     #     - source_speaker: zh_male_bvlazysheep
@@ -836,61 +836,61 @@ TTS:
     #       mix_factor: 0.3
     #     - source_speaker: zh_male_ahu_conversation_wvae_bigtts
     #       mix_factor: 0.4
-    # language: "中文"  # 指定输出语种,如:中文、英语、日语、韩语等,请根据所选音色支持的语言进行设置,不填则默认为中文
-  #豆包语音合成模型2.0，支持双向流式tts（基于seed-tts-2.0资源）
+    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+  #Doubao TTS 2.0 supports bidirectional streaming using seed-tts-2.0
   HuoshanDoubleStreamTTSV2:
     type: huoshan_double_stream
-    # 访问 https://console.volcengine.com/speech/service/10035 开通语音合成大模型，购买音色
-    # 在页面底部获取appid和access_token
-    # 资源ID固定为：seed-tts-2.0（豆包语音合成模型2.0）
-    # 如果是机智云，把接口地址换成wss://bytedance.gizwitsapi.com/api/v3/tts/bidirection
-    # 机智云不需要天填 appid
+    # Visit https://console.volcengine.com/speech/service/10035 to activate speech synthesis and purchase voices
+    # Find appid and access_token at the bottom of the page.
+    # Fixed resource ID：seed-tts-2.0（豆包语音合成模型2.0）
+    # For Gizwits, set the endpoint to wss://bytedance.gizwitsapi.com/api/v3/tts/bidirection.
+    # Gizwits does not require an appid.
     ws_url: wss://openspeech.bytedance.com/api/v3/tts/bidirection
     appid: 你的火山引擎语音合成服务appid
     access_token: 你的火山引擎语音合成服务access_token
     resource_id: seed-tts-2.0
     speaker: zh_female_xiaohe_uranus_bigtts
-    # 开启WebSocket连接复用，默认复用（注意：复用后设备处于聆听状态时空闲链接会占并发数）
+    # Reuse WebSocket connections by default; idle listening connections may consume concurrency slots.
     enable_ws_reuse: True
-    # 相关参数文档：https://www.volcengine.com/docs/6561/1329505
-    # 音频输出配置（audio_params）- 用户可自定义添加火山引擎支持的任何音频参数
+    # Parameter documentation：https://www.volcengine.com/docs/6561/1329505
+    # Audio output settings: additional Volcengine audio_params are supported.
     audio_params:
-      speech_rate: 0  # 语速(-50~100)
-      loudness_rate: 0  # 音量(-50~100)
-    # 高级文本处理配置（additions）- 用户可自定义添加火山引擎支持的任何高级参数
+      speech_rate: 0  # Speech rate(-50~100)
+      loudness_rate: 0  # Volume(-50~100)
+    # Advanced text processing settings (additions) supported by Volcengine.
     additions:
       post_process:
-        pitch: 0  # 音高(-12~12)
-    # language: "中文"  # 指定输出语种,如:中文、英语、日语、韩语等,请根据所选音色支持的语言进行设置,不填则默认为中文
+        pitch: 0  # Pitch(-12~12)
+    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
   CosyVoiceSiliconflow:
     type: siliconflow
-    # 硅基流动TTS
-    # token申请地址 https://cloud.siliconflow.cn/account/ak
+    # SiliconFlow TTS
+    # Token application URL https://cloud.siliconflow.cn/account/ak
     model: FunAudioLLM/CosyVoice2-0.5B
     voice: FunAudioLLM/CosyVoice2-0.5B:alex
     output_dir: tmp/
     access_token: 你的硅基流动API密钥
     response_format: wav
-    # language: "中文"  # 指定输出语种,如:中文、英语、日语、韩语等,请根据所选音色支持的语言进行设置,不填则默认为中文
+    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
   CozeCnTTS:
     type: cozecn
     # COZECN TTS
-    # token申请地址 https://www.coze.cn/open/oauth/pats
+    # Token application URL https://www.coze.cn/open/oauth/pats
     voice: 7426720361733046281
     output_dir: tmp/
     access_token: 你的coze web key
     response_format: wav
-    # language: "中文"  # 指定输出语种,如:中文、英语、日语、韩语等,请根据所选音色支持的语言进行设置,不填则默认为中文
-    # 以下可不用设置，使用默认设置
-    # speed: 1  # 语速：-0.5到2
-    # loudness_rate: 0  # 音量：-50到100
+    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+    # Optional; defaults are available
+    # speed: 1  # Speech rate：-0.5到2
+    # loudness_rate: 0  # Volume：-50到100
   VolcesAiGatewayTTS:
     type: openai
-    # 火山引擎 - 边缘大模型网关
-    # 先开通服务，打开以下网址，创建网关访问密钥，搜索并勾选 Doubao-语音合成 ，开通
+    # Volcengine edge LLM gateway
+    # 先开通服务，打开以下网址，创建网关Visit密钥，搜索并勾选 Doubao-语音合成 ，开通
     # 如果需要使用边缘大模型网关提供的 LLM，一并勾选 Doubao-pro-32k-functioncall ，另见 LLM.VolcesAiGatewayLLM 配置
     # https://console.volcengine.com/vei/aigateway/
-    # 开通后，进入这里获取密钥：https://console.volcengine.com/vei/aigateway/tokens-list
+    # Get your API key after activation：https://console.volcengine.com/vei/aigateway/tokens-list
     api_key: 你的网关访问密钥
     api_url: https://ai-gateway.vei.volces.com/v1/audio/speech
     model: doubao-tts
@@ -898,9 +898,9 @@ TTS:
     voice: zh_male_shaonianzixin_moon_bigtts
     speed: 1
     output_dir: tmp/
-    # language: "中文"  # 指定输出语种,如:中文、英语、日语、韩语等,请根据所选音色支持的语言进行设置,不填则默认为中文
+    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
   FishSpeech:
-    # 参照教程：https://github.com/xinnan-tech/xiaozhi-esp32-server/blob/main/docs/fish-speech-integration.md
+    # See guide：https://github.com/xinnan-tech/xiaozhi-esp32-server/blob/main/docs/fish-speech-integration.md
     type: fishspeech
     output_dir: tmp/
     response_format: wav
@@ -920,10 +920,10 @@ TTS:
     rate: 44100
     api_key: "你的api_key"
     api_url: "http://127.0.0.1:8080/v1/tts"
-    # language: "中文"  # 指定输出语种,如:中文、英语、日语、韩语等,请根据所选音色支持的语言进行设置,不填则默认为中文
+    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
   GPT_SOVITS_V2:
-    # 定义TTS API类型
-    #启动tts方法：
+    # Define TTS API type
+    #How to start TTS：
     #python api_v2.py -a 127.0.0.1 -p 9880 -c GPT_SoVITS/configs/demo.yaml
     type: gpt_sovits_v2
     url: "http://127.0.0.1:9880/tts"
@@ -946,10 +946,10 @@ TTS:
     parallel_infer: true
     repetition_penalty: 1.35
     aux_ref_audio_paths: []
-    # language: "中文"  # 指定输出语种,如:中文、英语、日语、韩语等,请根据所选音色支持的语言进行设置,不填则默认为中文
+    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
   GPT_SOVITS_V3:
-    # 定义TTS API类型 GPT-SoVITS-v3lora-20250228
-    #启动tts方法：
+    # Define TTS API type GPT-SoVITS-v3lora-20250228
+    #How to start TTS：
     #python api.py
     type: gpt_sovits_v3
     url: "http://127.0.0.1:9880"
@@ -966,16 +966,16 @@ TTS:
     inp_refs: []
     sample_steps: 32
     if_sr: false
-    # language: "中文"  # 指定输出语种,如:中文、英语、日语、韩语等,请根据所选音色支持的语言进行设置,不填则默认为中文
+    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
   MinimaxTTSHTTPStream:
-  # Minimax流式语音合成服务
+  # MiniMax streaming TTS
     type: minimax_httpstream
     output_dir: tmp/
     group_id: 你的minimax平台groupID
     api_key: 你的minimax平台接口密钥
     model: "speech-01-turbo"
     voice_id: "female-shaonv"
-    # 以下可不用设置，使用默认设置
+    # Optional; defaults are available
     # voice_setting:
     #     voice_id: "male-qn-qingse"
     #     speed: 1
@@ -984,8 +984,8 @@ TTS:
     #     emotion: "happy"
     # pronunciation_dict:
     #     tone:
-    #       - "处理/(chu3)(li3)"
-    #       - "危险/dangerous"
+    #       - "process/(chu3)(li3)"
+    #       - "danger/dangerous"
     # audio_setting:
     #     bitrate: 128000
     #     format: "mp3"
