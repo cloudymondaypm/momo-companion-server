@@ -118,7 +118,7 @@ wakeword_runtime/models/
 
 ## Start the runtime
 
-在 `main/digital-human` directory, run：
+From the `main/digital-human` directory, run:
 
 ```bash
 pip install -r wakeword_runtime/requirements.txt
@@ -196,7 +196,7 @@ Configuration fields：
 
 1. Prepare `models/` model files and `tokens.txt`
 2. Verify `models/keywords.txt` exists
-3. 在 `digital-human` 目录run `python start.py`
+3. From the `digital-human` directory, run `python start.py`
 4. Open in a browser `http://127.0.0.1:8006/index.html`
 5. Check wake-word settings on the configuration page
 
