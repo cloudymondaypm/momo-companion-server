@@ -18,13 +18,13 @@ import jakarta.validation.constraints.*;
 public class RetrievalDTO {
 
     /**
-     * 文档聚合信息 (VO)
+     * Document aggregation details (VO)
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "文档聚合信息")
+    @Schema(description = "Document aggregation details")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class DocAggVO implements Serializable {
         private static final long serialVersionUID = 1L;
@@ -59,7 +59,7 @@ public class RetrievalDTO {
         @NotEmpty(message = "Knowledge base ID list is required")
         private List<String> datasetIds;
 
-        @Schema(description = "Document ID 列表 (可选，用于限定检索范围)")
+        @Schema(description = "Document ID list (optional, restrict retrieval scope)")
         @JsonProperty("document_ids")
         private List<String> documentIds;
 
@@ -67,22 +67,22 @@ public class RetrievalDTO {
         @NotBlank(message = "Retrieval question is required")
         private String question;
 
-        @Schema(description = "Page number (默认 1)")
+        @Schema(description = "Page number (default 1)")
         private Integer page;
 
-        @Schema(description = "Page size (默认 10)")
+        @Schema(description = "Page size (default 10)")
         @JsonProperty("page_size")
         private Integer pageSize;
 
-        @Schema(description = "Similarity threshold (默认 0.2)")
+        @Schema(description = "Similarity threshold (default 0.2)")
         @JsonProperty("similarity_threshold")
         private Float similarityThreshold;
 
-        @Schema(description = "Vector similarity weight (默认 0.3)")
+        @Schema(description = "Vector similarity weight (default 0.3)")
         @JsonProperty("vector_similarity_weight")
         private Float vectorSimilarityWeight;
 
-        @Schema(description = "Return top K chunks (默认 1024)")
+        @Schema(description = "Return top K chunks (default 1024)")
         @JsonProperty("top_k")
         private Integer topK;
 
@@ -96,11 +96,11 @@ public class RetrievalDTO {
         @Schema(description = "Enable keyword retrieval")
         private Boolean keyword;
 
-        @Schema(description = "Cross-language translations (可选)")
+        @Schema(description = "Cross-language translations (optional)")
         @JsonProperty("cross_languages")
         private List<String> crossLanguages;
 
-        @Schema(description = "Metadata filters (JSON 对象)")
+        @Schema(description = "Metadata filters (JSON object)")
         @JsonProperty("metadata_condition")
         private Map<String, Object> metadataCondition;
     }
@@ -135,18 +135,18 @@ public class RetrievalDTO {
         @JsonProperty("document_name")
         private String documentName;
 
-        @Schema(description = "文档关键词")
+        @Schema(description = "Document keywords")
         @JsonProperty("document_keyword")
         private String documentKeyword;
 
-        @Schema(description = "综合相似度", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Overall similarity", requiredMode = Schema.RequiredMode.REQUIRED)
         private Float similarity;
 
-        @Schema(description = "向量相似度")
+        @Schema(description = "Vector similarity")
         @JsonProperty("vector_similarity")
         private Float vectorSimilarity;
 
-        @Schema(description = "关键词相似度")
+        @Schema(description = "Keyword similarity")
         @JsonProperty("term_similarity")
         private Float termSimilarity;
 
@@ -167,18 +167,18 @@ public class RetrievalDTO {
         @JsonProperty("image_id")
         private String imageId;
 
-        @Schema(description = "Location indices (RAGFlow返回嵌套数组, 如 [[start, end, filename]])")
+        @Schema(description = "Location indices (RAGFlow returns nested arrays, e.g. [[start, end, filename]])")
         private Object positions;
     }
 
     /**
-     * 知识库元数据摘要 (VO)
+     * Knowledge base metadata summary (VO)
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "知识库元数据摘要信息")
+    @Schema(description = "Knowledge base metadata summary")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class MetaSummaryVO implements Serializable {
         private static final long serialVersionUID = 1L;
@@ -187,46 +187,46 @@ public class RetrievalDTO {
         @JsonProperty("total_doc_count")
         private Long totalDocCount;
 
-        @Schema(description = "Token 总数", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Total tokens", requiredMode = Schema.RequiredMode.REQUIRED)
         @JsonProperty("total_token_count")
         private Long totalTokenCount;
 
-        @Schema(description = "File type distribution (key: 文件后缀, value: Count)")
+        @Schema(description = "File type distribution (key: file extension, value: Count)")
         @JsonProperty("file_type_distribution")
         private Map<String, Long> fileTypeDistribution;
 
-        @Schema(description = "Document status distribution (key: 状态码, value: Count)")
+        @Schema(description = "Document status distribution (key: status code, value: Count)")
         @JsonProperty("status_distribution")
         private Map<String, Long> statusDistribution;
 
-        @Schema(description = "自定义Metadata statistics (key: 字段名, value: Count/值)")
+        @Schema(description = "Custom metadata statistics (key: field name, value: Count/value)")
         @JsonProperty("custom_metadata")
         private Map<String, Object> customMetadata;
     }
 
     /**
-     * 批量更新元数据请求参数
+     * Bulk update metadata request
      */
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    @Schema(description = "批量更新元数据请求参数")
+    @Schema(description = "Bulk update metadata request")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class MetaBatchReq implements Serializable {
         private static final long serialVersionUID = 1L;
 
-        @Schema(description = "Filter器: 用于指定要更新的文档范围 (默认全部)")
+        @Schema(description = "Filter: specifies the document scope (all by default)")
         private Selector selector;
 
-        @Schema(description = "新增或更新的元数据列表")
+        @Schema(description = "Metadata to create or updatelist")
         private List<UpdateItem> updates;
 
         @Schema(description = "Metadata keys to delete")
         private List<DeleteItem> deletes;
 
         /**
-         * 文档Filter器
+         * Document filter
          */
         @Data
         @Builder
@@ -237,17 +237,17 @@ public class RetrievalDTO {
         public static class Selector implements Serializable {
             private static final long serialVersionUID = 1L;
 
-            @Schema(description = "指定Document ID 列表")
+            @Schema(description = "Selected document IDs list")
             @JsonProperty("document_ids")
             private List<String> documentIds;
 
-            @Schema(description = "Metadata condition matching (key: 字段名, value: 匹配值)")
+            @Schema(description = "Metadata condition matching (key: field name, value: matching value)")
             @JsonProperty("metadata_condition")
             private Map<String, Object> metadataCondition;
         }
 
         /**
-         * 更新项
+         * Update item
          */
         @Data
         @Builder
@@ -266,7 +266,7 @@ public class RetrievalDTO {
         }
 
         /**
-         * 删除项
+         * Delete item
          */
         @Data
         @Builder
