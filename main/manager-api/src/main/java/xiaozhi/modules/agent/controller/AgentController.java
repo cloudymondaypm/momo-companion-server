@@ -237,7 +237,7 @@ public class AgentController {
     }
 
     @GetMapping("/{id}/chat-history/user")
-    @Operation(summary = "Get agent chat history（用户）")
+    @Operation(summary = "Get agent chat history (user)")
     @RequiresPermissions("sys:role:normal")
     public Result<List<AgentChatHistoryUserVO>> getRecentlyFiftyByAgentId(
             @PathVariable("id") String id) {
@@ -255,7 +255,7 @@ public class AgentController {
     }
 
     @GetMapping("/{id}/chat-history/audio")
-    @Operation(summary = "获取音频内容")
+    @Operation(summary = "Get audio content")
     @RequiresPermissions("sys:role:normal")
     public Result<String> getContentByAudioId(
             @PathVariable("id") String id) {
@@ -266,13 +266,13 @@ public class AgentController {
     }
 
     @PostMapping("/audio/{audioId}")
-    @Operation(summary = "获取音频下载ID")
+    @Operation(summary = "Get audio download ID")
     @RequiresPermissions("sys:role:normal")
     public Result<String> getAudioId(@PathVariable("audioId") String audioId) {
         requireAudioPermission(audioId);
         byte[] audioData = agentChatAudioService.getAudio(audioId);
         if (audioData == null) {
-            return new Result<String>().error("音频不存在");
+            return new Result<String>().error("Audio not found");
         }
         String uuid = UUID.randomUUID().toString();
         redisUtils.set(RedisKeys.getAgentAudioIdKey(uuid), audioId, AUDIO_PLAY_TOKEN_EXPIRE_SECONDS);
@@ -280,7 +280,7 @@ public class AgentController {
     }
 
     @GetMapping("/play/{uuid}")
-    @Operation(summary = "播放音频")
+    @Operation(summary = "Play audio")
     public ResponseEntity<byte[]> playAudio(@PathVariable("uuid") String uuid) {
 
         String audioId = (String) redisUtils.get(RedisKeys.getAgentAudioIdKey(uuid));
@@ -300,19 +300,19 @@ public class AgentController {
     }
 
     @PostMapping("/tag")
-    @Operation(summary = "创建标签")
+    @Operation(summary = "Create tag")
     @RequiresPermissions("sys:role:normal")
     public Result<AgentTagEntity> createTag(@RequestBody Map<String, String> params) {
         String tagName = params.get("tagName");
         if (StringUtils.isBlank(tagName)) {
-            return new Result<AgentTagEntity>().error("标签名称不能为空");
+            return new Result<AgentTagEntity>().error("Tag name is required");
         }
         AgentTagEntity tag = agentTagService.saveTag(tagName);
         return new Result<AgentTagEntity>().ok(tag);
     }
 
     @GetMapping("/tag/list")
-    @Operation(summary = "获取所有标签列表")
+    @Operation(summary = "Get all tags")
     @RequiresPermissions("sys:role:normal")
     public Result<List<AgentTagDTO>> getAllTags() {
         List<AgentTagDTO> tags = agentTagService.getAllTags();
@@ -320,7 +320,7 @@ public class AgentController {
     }
 
     @DeleteMapping("/tag/{id}")
-    @Operation(summary = "删除标签")
+    @Operation(summary = "Delete tag")
     @RequiresPermissions("sys:role:normal")
     public Result<Void> deleteTag(@PathVariable String id) {
         agentTagService.deleteTag(id);
@@ -328,7 +328,7 @@ public class AgentController {
     }
 
     @GetMapping("/{id}/tags")
-    @Operation(summary = "获取智能体的标签")
+    @Operation(summary = "Get agent tags")
     @RequiresPermissions("sys:role:normal")
     public Result<List<AgentTagDTO>> getAgentTags(@PathVariable String id) {
         requireAgentPermission(id);
@@ -337,7 +337,7 @@ public class AgentController {
     }
 
     @PutMapping("/{id}/tags")
-    @Operation(summary = "保存智能体的标签")
+    @Operation(summary = "Save agent tags")
     @RequiresPermissions("sys:role:normal")
     public Result<Void> saveAgentTags(@PathVariable String id, @RequestBody Map<String, Object> params) {
         requireAgentPermission(id);
