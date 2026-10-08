@@ -1,71 +1,68 @@
-# esp32固件编译
+# Build ESP32 Firmware for Your Own Server
 
-## 第1步 准备你的ota地址
+This guide explains how to compile Xiaozhi ESP32 firmware and point it to a self-hosted Momo Companion backend.
 
-如果你，使用的是本项目0.3.12版本，不管是简单Server部署还是全模块部署，都会有ota地址。
+## 1. Prepare the OTA endpoint
 
-由于简单Server部署和全模块部署的OTA地址设置方式不一样，请你选择下面的具体方式：
+Both the standalone and full-module server deployments provide an OTA endpoint.
 
-### 如果你用的是简单Server部署
-此刻，请你用浏览器打开你的ota地址，例如我的ota地址
-```
+### Standalone server
+
+Open your local endpoint in a browser, for example:
+
+```text
 http://192.168.1.25:8003/xiaozhi/ota/
 ```
-如果显示“OTA接口运行正常，向设备发送的websocket地址是：ws://xxx:8000/xiaozhi/v1/
 
-你可以启动`digital-human`模块后打开`index.html`测试一下，是否能连上ota页面输出的websocket地址。
+The response should indicate that the OTA endpoint is healthy and show a WebSocket URL such as `ws://192.168.1.25:8000/xiaozhi/v1/`.
 
-如果访问不到，你需要到配置文件`.config.yaml`里修改`server.websocket`的地址，重启后再重新测试，直到`index.html`能正常访问。
+To test the WebSocket connection interactively, start the `digital-human` module and open its test page. If connection fails, review `server.websocket` in `data/.config.yaml`, restart the server, and retry.
 
-成功后，请往下进行第2步
+### Full-module server
 
-### 如果你用的是全模块部署
-此刻，请你用浏览器打开你的ota地址，例如我的ota地址
-```
+Open the management API OTA endpoint, for example:
+
+```text
 http://192.168.1.25:8002/xiaozhi/ota/
 ```
 
-如果显示“OTA接口运行正常，websocket集群数量：X”。那就往下进行2步。
+A healthy endpoint reports the number of WebSocket servers. If configuration is missing, sign in as superadmin to the management console, open **Parameter Management**, and set `server.websocket` to an address the ESP32 device can reach:
 
-如果显示“OTA接口运行不正常”，大概是你还没在`智控台`配置`Websocket`地址。那就：
-
-- 1、使用超级管理员登录智控台
-
-- 2、顶部菜单点击`参数管理`
-
-- 3、在列表中找到`server.websocket`项目，输入你的`Websocket`地址。例如我的就是
-
-```
+```text
 ws://192.168.1.25:8000/xiaozhi/v1/
 ```
 
-配置完后，再使用浏览器刷新你的ota接口地址，看看是不是正常了。如果还不正常就，就再次确认一下Websocket是否正常启动，是否配置了Websocket地址。
+Refresh the OTA endpoint to verify the change.
 
-## 第2步 配置环境
-先按照这个教程配置项目环境[《Windows搭建 ESP IDF 5.3.2开发环境以及编译小智》](https://icnynnzcwou8.feishu.cn/wiki/JEYDwTTALi5s2zkGlFGcDiRknXf)
+## 2. Install ESP-IDF
 
-## 第3步 打开配置文件
-配置好编译环境后，下载虾哥iaozhi-esp32项目源码，
+Set up the ESP-IDF toolchain appropriate to your firmware version. The upstream project includes a [Windows ESP-IDF 5.3.2 installation and build guide](https://icnynnzcwou8.feishu.cn/wiki/JEYDwTTALi5s2zkGlFGcDiRknXf).
 
-从这里下载虾哥[xiaozhi-esp32项目源码](https://github.com/78/xiaozhi-esp32)。
+## 3. Download the ESP32 firmware source
 
-下载后，打开`xiaozhi-esp32/main/Kconfig.projbuild`文件。
+Clone or download the upstream [xiaozhi-esp32 repository](https://github.com/78/xiaozhi-esp32). Open:
 
-## 第4步 修改OTA地址
-
-找到`OTA_URL`的`default`的内容，把`https://api.tenclass.net/xiaozhi/ota/`
-   改成你自己的地址，例如，我的接口地址是`http://192.168.1.25:8002/xiaozhi/ota/`，就把内容改成这个。
-
-修改前：
+```text
+xiaozhi-esp32/main/Kconfig.projbuild
 ```
+
+## 4. Set the OTA URL
+
+Find `config OTA_URL` and replace its default value with your server's actual URL.
+
+**Before:**
+
+```kconfig
 config OTA_URL
     string "Default OTA URL"
     default "https://api.tenclass.net/xiaozhi/ota/"
     help
         The application will access this URL to check for new firmwares and server address.
 ```
-修改后：
-```
+
+**After (example):**
+
+```kconfig
 config OTA_URL
     string "Default OTA URL"
     default "http://192.168.1.25:8002/xiaozhi/ota/"
@@ -73,66 +70,43 @@ config OTA_URL
         The application will access this URL to check for new firmwares and server address.
 ```
 
-## 第4步 设置编译参数
+Use port `8003` instead for a standalone OTA endpoint if that is how your deployment is configured. For devices outside your LAN, use a public device-reachable URL and secure transport where required.
 
-设置编译参数
+## 5. Configure the firmware target
 
-```
-# 终端命令行进入xiaozhi-esp32的根目录
+From the firmware source root:
+
+```bash
 cd xiaozhi-esp32
-# 例如我使用的板子是esp32s3，所以设置编译目标为esp32s3，如果你的板子是其他型号，请替换成对应的型号
+
+# Example for an ESP32-S3; replace with your actual chip target
 idf.py set-target esp32s3
-# 进入菜单配置
 idf.py menuconfig
 ```
 
-进入菜单配置后，再进入`Xiaozhi Assistant`，将`BOARD_TYPE`设置你板子的具体型号
-保存退出，回到终端命令行。
+In the configuration menu, open **Xiaozhi Assistant** and set `BOARD_TYPE` to match the exact board model. Save and exit.
 
-## 第5步 编译固件
+## 6. Build firmware
 
-```
+```bash
 idf.py build
 ```
 
-## 第6步 打包bin固件
+## 7. Package the firmware
 
-```
+```bash
 cd scripts
 python release.py
 ```
 
-上面的打包命令执行完成后，会在项目根目录下的`build`目录下生成固件文件`merged-binary.bin`。
-这个`merged-binary.bin`就是要烧录到硬件上的固件文件。
+The release script is expected to generate `build/merged-binary.bin`. This **merged image is used for initial full-device flashing**, not for standalone OTA update files. If packaging reports an optional ZIP error but the merged firmware exists, inspect the generated output to determine whether packaging succeeded.
 
-注意：如果执行到第二命令后，报了“zip”相关的错误，请忽略这个错误，只要`build`目录下生成固件文件`merged-binary.bin`
-，对你没有太大影响，请继续。
+## 8. Flash the ESP32
 
-## 第7步 烧录固件
-   将esp32设备连接电脑，使用chrome浏览器，打开以下网址
+Connect the ESP32 device to your computer. Open [ESP Launchpad](https://espressif.github.io/esp-launchpad/) in Chrome or another compatible browser. The [upstream web flashing guide](https://ccnphfhqs21z.feishu.cn/wiki/Zpz4wXBtdimBrLk25WdcXzxcnNS) describes the ESP Launchpad method.
 
-```
-https://espressif.github.io/esp-launchpad/
-```
+Once flashed and connected to Wi-Fi, wake the device and check the Momo Companion server logs.
 
-打开这个教程，[Flash工具/Web端烧录固件（无IDF开发环境）](https://ccnphfhqs21z.feishu.cn/wiki/Zpz4wXBtdimBrLk25WdcXzxcnNS)。
-翻到：`方式二：ESP-Launchpad 浏览器WEB端烧录`，从`3. 烧录固件/下载到开发板`开始，按照教程操作。
+## Troubleshooting
 
-烧录成功且联网成功后，通过唤醒词唤醒小智，留意server端输出的控制台信息。
-
-## 常见问题
-以下是一些常见问题，供参考：
-
-[1、为什么我说的话，小智识别出来很多韩文、日文、英文](./FAQ.md)
-
-[2、为什么会出现“TTS 任务出错 文件不存在”？](./FAQ.md)
-
-[3、TTS 经常失败，经常超时](./FAQ.md)
-
-[4、使用Wifi能连接自建服务器，但是4G模式却接不上](./FAQ.md)
-
-[5、如何提高小智对话响应速度？](./FAQ.md)
-
-[6、我说话很慢，停顿时小智老是抢话](./FAQ.md)
-
-[7、我想通过小智控制电灯、空调、远程开关机等操作](./FAQ.md)
+See the [FAQ](FAQ.md) for wrong-language ASR detection, TTS failures, 4G connections, slow responses, and speech interruption behavior.
