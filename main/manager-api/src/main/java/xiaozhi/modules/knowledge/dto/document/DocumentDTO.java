@@ -73,7 +73,7 @@ public class DocumentDTO {
         @Schema(description = "New document name (must include extension and preserve original file type)")
         private String name;
 
-        @Schema(description = "Enable/disable状态 (true: enabled, false: disabled; disabled documents are excluded from retrieval)")
+        @Schema(description = "Enable/disable status (true: enabled, false: disabled; disabled documents are excluded from retrieval)")
         private Boolean enabled;
 
         @Schema(description = "New parser method (changing this resets parser status)")
@@ -119,7 +119,7 @@ public class DocumentDTO {
         @Schema(description = "Fuzzy search: document name keywords")
         private String keywords;
 
-        @Schema(description = "Filter: file extension list (如 ['pdf', 'docx'])")
+        @Schema(description = "Filter: file extension list (e.g. ['pdf', 'docx'])")
         private List<String> suffix;
 
         @Schema(description = "Filter: run status list")
@@ -187,7 +187,7 @@ public class DocumentDTO {
         @JsonProperty("parser_config")
         private ParserConfig parserConfig;
 
-        @Schema(description = "Source type (如 local, s3, url etc.)")
+        @Schema(description = "Source type (e.g. local, s3, url etc.)")
         @JsonProperty("source_type")
         private String sourceType;
 
@@ -347,7 +347,7 @@ public class DocumentDTO {
             @JsonProperty("chunk_token_num")
             private Integer chunkTokenNum;
 
-            @Schema(description = "Section delimiter (supports escape characters, 如 \\n)")
+            @Schema(description = "Section delimiter (supports escape characters, e.g. \\n)")
             private String delimiter;
 
             @Schema(description = "Layout detection model (DeepDOC/Simple)")
@@ -381,7 +381,7 @@ public class DocumentDTO {
             @Builder
             @NoArgsConstructor
             @AllArgsConstructor
-            @Schema(description = "RAPTOR (recursive summary indexing) 配置")
+            @Schema(description = "RAPTOR (recursive summary indexing) configuration")
             @JsonIgnoreProperties(ignoreUnknown = true)
             public static class RaptorConfig implements Serializable {
                 private static final long serialVersionUID = 1L;
@@ -394,7 +394,7 @@ public class DocumentDTO {
             @Builder
             @NoArgsConstructor
             @AllArgsConstructor
-            @Schema(description = "GraphRAG (graph-enhanced retrieval) 配置")
+            @Schema(description = "GraphRAG (graph-enhanced retrieval) configuration")
             @JsonIgnoreProperties(ignoreUnknown = true)
             public static class GraphRagConfig implements Serializable {
                 private static final long serialVersionUID = 1L;
