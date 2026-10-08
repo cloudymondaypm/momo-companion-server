@@ -150,9 +150,9 @@ public class AgentTemplateController {
     public Result<String> batchRemoveAgentTemplates(@RequestBody List<String> ids) {
         boolean deleted = agentTemplateService.removeByIds(ids);
         if (deleted) {
-            return ResultUtils.success("批量删除成功");
+            return ResultUtils.success("Bulk deletion succeeded");
         } else {
-            return ResultUtils.error("批量Failed to delete template");
+            return ResultUtils.error("Failed to delete templates in bulk");
         }
     }
 }
