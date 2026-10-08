@@ -562,7 +562,7 @@ export class WebSocketHandler {
                 live2dManager.triggerEmotionAction(emotion);
                 log(`Trigger Live2D emotion: ${emotion}`, 'info');
             } else {
-                log(`无法Trigger Live2D emotion: Live2D manager unavailable or missing method`, 'warning');
+                log(`Cannot trigger Live2D emotion: manager unavailable or method missing`, 'warning');
             }
         } catch (error) {
             log(`Failed to trigger Live2D emotion: ${error.message}`, 'error');
