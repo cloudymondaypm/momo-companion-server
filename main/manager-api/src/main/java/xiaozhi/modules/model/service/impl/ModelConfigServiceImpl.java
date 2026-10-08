@@ -399,7 +399,7 @@ public class ModelConfigServiceImpl extends BaseServiceImpl<ModelConfigDao, Mode
     private void mergeJson(JSONObject original, String key, JSONObject updated) {
         // 空值检查
         if (original == null || updated == null) {
-            log.warn("mergeJson: original 或 updated 为 null");
+            log.warn("mergeJson: original or updated is null");
             return;
         }
 
@@ -417,7 +417,7 @@ public class ModelConfigServiceImpl extends BaseServiceImpl<ModelConfigDao, Mode
             originalChild = (JSONObject) originalValue;
         } else {
             // 如果不是 JSONObject 类型，记录警告并创建新的 JSON 对象
-            log.warn("mergeJson: key '{}' 的值不是 JSONObject 类型 (实际类型：{})，将创建新对象",
+            log.warn("mergeJson: value for key '{}' is not JSONObject (actual type: {}); creating a new object",
                     key, originalValue != null ? originalValue.getClass().getSimpleName() : "null");
             originalChild = new JSONObject();
             original.set(key, originalChild);
