@@ -27,7 +27,7 @@ class SimpleHttpServer:
         server_config = self.config["server"]
         websocket_config = server_config.get("websocket")
 
-        if websocket_config and "你" not in websocket_config and not str(websocket_config).strip().lower().startswith(("your-", "your ", "your_")):
+        if websocket_config and "你" not in websocket_config and not str(websocket_config).strip().lower().startswith(("your-", "your ", "your_")) and "your-host" not in str(websocket_config).lower():
             return websocket_config
         else:
             return f"ws://{local_ip}:{port}/xiaozhi/v1/"
