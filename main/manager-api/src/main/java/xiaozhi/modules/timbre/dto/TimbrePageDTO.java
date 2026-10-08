@@ -21,9 +21,9 @@ public class TimbrePageDTO {
     @Schema(description = "Voice name")
     private String name;
 
-    @Schema(description = "页数")
+    @Schema(description = "Page number")
     private String page;
 
-    @Schema(description = "显示列数")
+    @Schema(description = "Records per page")
     private String limit;
 }
