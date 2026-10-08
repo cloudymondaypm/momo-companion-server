@@ -374,7 +374,7 @@ public class VoiceCloneServiceImpl extends BaseServiceImpl<VoiceCloneDao, VoiceC
                 baseDao.updateById(entity);
             } else {
                 // 失败时使用StatusMessage作为错误信息
-                String errorMsg = StringUtils.isNotBlank(statusMessage) ? statusMessage : "训练失败";
+                String errorMsg = StringUtils.isNotBlank(statusMessage) ? statusMessage : "Training failed";
                 throw new RenException(errorMsg);
             }
         } else {
