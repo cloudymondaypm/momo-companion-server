@@ -117,32 +117,32 @@ public class DeviceReportReqDTO implements Serializable {
 
     @Getter
     @Setter
-    @Schema(description = "OTA信息")
+    @Schema(description = "OTA information")
     public static class OtaInfo {
-        @Schema(description = "当前OTA标签")
+        @Schema(description = "Current OTA label")
         private String label;
     }
 
     @Getter
     @Setter
-    @Schema(description = "板子连接和网络信息")
+    @Schema(description = "Board connectivity and network information")
     public static class BoardInfo {
-        @Schema(description = "板Subtype")
+        @Schema(description = "Board subtype")
         private String type;
 
-        @Schema(description = "连接的 Wi-Fi SSID")
+        @Schema(description = "Connected Wi-Fi SSID")
         private String ssid;
 
-        @Schema(description = "Wi-Fi 信号强度（RSSI）")
+        @Schema(description = "Wi-Fi signal strength (RSSI)")
         private Integer rssi;
 
-        @Schema(description = "Wi-Fi 信道")
+        @Schema(description = "Wi-Fi channel")
         private Integer channel;
 
-        @Schema(description = "IP 地址")
+        @Schema(description = "IP address")
         private String ip;
 
-        @Schema(description = "MAC 地址")
+        @Schema(description = "MAC address")
         private String mac;
     }
 }
