@@ -101,16 +101,16 @@ export function saveConfig() {
     }
 }
 
-// 获取配置值
+// Read configuration value
 export function getConfig() {
-    // 从DOM获取值
+    // Read value from DOM
     const deviceMac = document.getElementById('deviceMac')?.value.trim() || '';
     const deviceName = document.getElementById('deviceName')?.value.trim() || '';
     const clientId = document.getElementById('clientId')?.value.trim() || '';
     const emojiEnabled = document.getElementById('emojiEnabled')?.value !== 'false';
 
     return {
-        deviceId: deviceMac,  // 使用MAC地址作为deviceId
+        deviceId: deviceMac,  // Use MAC address as device ID
         deviceName,
         deviceMac,
         clientId,
@@ -118,7 +118,7 @@ export function getConfig() {
     };
 }
 
-// 保存连接URL
+// Save connection URL
 export function saveConnectionUrls() {
     const otaUrl = document.getElementById('otaUrl').value.trim();
     const wsUrl = document.getElementById('serverUrl').value.trim();
