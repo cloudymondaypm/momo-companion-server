@@ -34,7 +34,7 @@ export const getCacheUrls = async (cacheName) => {
     const requests = await cache.keys();
     return requests.map(request => request.url);
   } catch (error) {
-    console.error(`获取缓存 ${cacheName} URLs failed:`, error);
+    console.error(`Failed to retrieve URLs for cache ${cacheName}:`, error);
     return [];
   }
 };
@@ -60,7 +60,7 @@ export const isUrlCached = async (url) => {
     }
     return false;
   } catch (error) {
-    console.error(`检查URL ${url} cache lookup failed:`, error);
+    console.error(`Failed to check cache for URL ${url}:`, error);
     return false;
   }
 };
@@ -93,7 +93,7 @@ export const checkCdnCacheStatus = async () => {
         results.totalCached++;
       }
     } catch (error) {
-      console.error(`获取 ${cacheName} cache information retrieval failed:`, error);
+      console.error(`Failed to retrieve cache information for ${cacheName}:`, error);
     }
   }
   
