@@ -8,18 +8,18 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-@Schema(description = "获取智能体模型配置DTO")
+@Schema(description = "Agent model configuration DTO")
 public class AgentModelsDTO {
 
-    @NotBlank(message = "设备MAC地址不能为空")
-    @Schema(description = "设备MAC地址")
+    @NotBlank(message = "Device MAC address is required")
+    @Schema(description = "Device MAC address")
     private String macAddress;
 
-    @NotBlank(message = "客户端ID不能为空")
-    @Schema(description = "客户端ID")
+    @NotBlank(message = "Client ID is required")
+    @Schema(description = "Client ID")
     private String clientId;
 
-    @NotNull(message = "客户端已实例化的模型不能为空")
-    @Schema(description = "客户端已实例化的模型")
+    @NotNull(message = "Client initialized models are required")
+    @Schema(description = "Client initialized models")
     private Map<String, String> selectedModule;
 }
