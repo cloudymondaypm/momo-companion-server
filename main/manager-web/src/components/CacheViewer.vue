@@ -122,10 +122,10 @@ export default {
         this.cacheAvailable = cacheNames.length > 0;
         
         if (this.cacheAvailable) {
-          // 获取CDN缓存Status
+          // Retrieve CDN cache status
           this.cacheData = await checkCdnCacheStatus();
           
-          // 在控制台输出完整缓存Status
+          // Log the complete cache status to the console
           await logCacheStatus();
         }
       } catch (error) {
