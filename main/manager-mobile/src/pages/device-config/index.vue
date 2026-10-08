@@ -5,7 +5,7 @@ import UltrasonicConfig from './components/ultrasonic-config.vue'
 import WifiConfig from './components/wifi-config.vue'
 import WifiSelector from './components/wifi-selector.vue'
 
-// 类型定义
+// Type definitions
 interface WiFiNetwork {
   ssid: string
   rssi: number
@@ -13,16 +13,16 @@ interface WiFiNetwork {
   channel: number
 }
 
-// 配网类型
+// Network setup type
 const configType = ref<'wifi' | 'ultrasonic'>('wifi')
 
-// 配网模式选择器状态
+// Network setup mode selector state
 const configTypeSelectorShow = ref(false)
 
-// WiFi选择器引用
+// WiFi selector reference
 const wifiSelectorRef = ref<InstanceType<typeof WifiSelector>>()
 
-// 选择的WiFi网络信息
+// Selected WiFi network
 const selectedWifiInfo = ref<{
   network: WiFiNetwork | null
   password: string
@@ -31,7 +31,7 @@ const selectedWifiInfo = ref<{
   password: '',
 })
 
-// 配网模式选项
+// Network setup mode options
 const configTypeOptions = [
   {
     name: t('deviceConfig.wifiConfig'),
@@ -43,32 +43,32 @@ const configTypeOptions = [
   // },
 ]
 
-// 显示配网模式选择器
+// Show network setup mode selector
 function showConfigTypeSelector() {
   configTypeSelectorShow.value = true
 }
 
-// 配网模式选择器确认
+// Confirm network setup mode
 function onConfigTypeConfirm(item: { name: string, value: 'wifi' | 'ultrasonic' }) {
   configType.value = item.value
   configTypeSelectorShow.value = false
 }
 
-// 配网模式选择器取消
+// Cancel network setup mode
 function onConfigTypeCancel() {
   configTypeSelectorShow.value = false
 }
 
-// WiFi网络选择事件
+// WiFi network selection event
 function onNetworkSelected(network: WiFiNetwork | null, password: string) {
   selectedWifiInfo.value = { network, password }
 }
 
-// ESP32连接状态变化事件
+// ESP32 connection state change
 function onConnectionStatusChange(connected: boolean) {
-  console.log('ESP32连接状态:', connected)
+  console.log('ESP32 connection status:', connected)
 }
-// 在组件挂载后设置导航栏标题
+// Set navigation title after mounting
 onMounted(() => {
   uni.setNavigationBarTitle({
     title: t('deviceConfig.pageTitle'),
@@ -81,7 +81,7 @@ onMounted(() => {
     <wd-navbar :title="t('deviceConfig.pageTitle')" safe-area-inset-top />
 
     <view class="box-border px-[20rpx]">
-      <!-- 配网方式选择 -->
+      <!-- Network setup method selection -->
       <view class="pb-[20rpx] first:pt-[20rpx]">
         <text class="text-[32rpx] text-[#232338] font-bold">
           {{ t('deviceConfig.configMethod') }}
@@ -100,7 +100,7 @@ onMounted(() => {
         </view>
       </view>
 
-      <!-- WiFi网络选择 -->
+      <!-- WiFi network selection -->
       <view class="pb-[20rpx]">
         <text class="text-[32rpx] text-[#232338] font-bold">
           {{ t('deviceConfig.networkConfig') }}
@@ -115,16 +115,16 @@ onMounted(() => {
         />
       </view>
 
-      <!-- 配网操作 -->
+      <!-- Network setup operation -->
       <view v-if="selectedWifiInfo.network" class="flex-1">
-        <!-- WiFi配网组件 -->
+        <!-- WiFi setup component -->
         <wifi-config
           v-if="configType === 'wifi'"
           :selected-network="selectedWifiInfo.network"
           :password="selectedWifiInfo.password"
         />
 
-        <!-- 超声波配网组件 -->
+        <!-- Ultrasonic setup component -->
         <ultrasonic-config
           v-else-if="configType === 'ultrasonic'"
           :selected-network="selectedWifiInfo.network"
@@ -133,7 +133,7 @@ onMounted(() => {
       </view>
     </view>
 
-    <!-- 配网模式选择器 -->
+    <!-- Network setup mode selector -->
     <wd-action-sheet
       v-model="configTypeSelectorShow"
       :actions="configTypeOptions.map(item => ({ name: item.name, value: item.value }))"
@@ -146,7 +146,7 @@ onMounted(() => {
 <route lang="jsonc" type="page">
 {
   "style": {
-    "navigationBarTitleText": "设备配置",
+    "navigationBarTitleText": "Device Setup",
     "navigationStyle": "custom"
   }
 }
