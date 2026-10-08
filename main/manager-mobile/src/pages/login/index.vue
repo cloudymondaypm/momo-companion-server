@@ -66,7 +66,7 @@ const userStore = useUserStore()
 // 区号选择相关
 const showAreaCodeSheet = ref(false)
 const selectedAreaCode = ref('+86')
-const selectedAreaName = ref('中国大陆')
+const selectedAreaName = ref('Mainland China')
 
 // 计算属性：是否启用手机号登录
 const enableMobileLogin = computed(() => {
@@ -75,7 +75,7 @@ const enableMobileLogin = computed(() => {
 
 // 计算属性：区号列表
 const areaCodeList = computed(() => {
-  return configStore.config.mobileAreaList || [{ name: '中国大陆', key: '+86' }]
+  return configStore.config.mobileAreaList || [{ name: 'Mainland China', key: '+86' }]
 })
 
 // 切换登录方式
@@ -205,7 +205,7 @@ async function handleLogin() {
       encryptedPassword = sm2Encrypt(sm2PublicKey, captchaAndPassword)
     }
     catch (error) {
-      console.error('密码加密失败:', error)
+      console.error('Password encryption failed:', error)
       toast.warning(t('sm2.encryptionFailed'))
       return
     }
