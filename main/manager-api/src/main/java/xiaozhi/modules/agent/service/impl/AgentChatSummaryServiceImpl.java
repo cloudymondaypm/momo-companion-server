@@ -315,7 +315,7 @@ public class AgentChatSummaryServiceImpl implements AgentChatSummaryService {
      * Extract text from JSON
      */
     private String extractTextFromJson(String jsonContent) {
-        // 简化处理：提取"content"字段的值
+        // Simplified handling: extract content field
         Pattern contentPattern = Pattern.compile("\"content\"\s*:\s*\"([^\"]*)\"");
         Matcher matcher = contentPattern.matcher(jsonContent);
         if (matcher.find()) {
@@ -394,7 +394,7 @@ public class AgentChatSummaryServiceImpl implements AgentChatSummaryService {
                 return null;
             }
 
-            // 返回智能体的当前总结记忆
+            // Return agent's current summarized memory
             return agentInfo.getSummaryMemory();
         } catch (Exception e) {
             log.error("Failed to retrieve agent memory, agentId: {}, error: {}", agentId, e.getMessage());
@@ -502,7 +502,7 @@ public class AgentChatSummaryServiceImpl implements AgentChatSummaryService {
      */
     private DeviceEntity getDeviceBySessionId(String sessionId) {
         try {
-            // 查询该会话的第一条记录获取macAddress
+            // Read first session record to obtain macAddress
             QueryWrapper<AgentChatHistoryEntity> wrapper = new QueryWrapper<>();
             wrapper.select("mac_address")
                     .eq("session_id", sessionId)
