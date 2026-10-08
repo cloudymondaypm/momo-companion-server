@@ -128,7 +128,7 @@ export const getNeedLoginPages = (): string[] => getAllPages('needLogin').map(pa
 export const needLoginPages: string[] = getAllPages('needLogin').map(page => page.path)
 
 /**
- * 根据微信Mini Program当前环境，判断应该获取的 baseUrl
+ * Get baseUrl for the current WeChat Mini Program environment
  */
 export function getEnvBaseUrl() {
   // Prefer user-configured override when available
@@ -139,12 +139,12 @@ export function getEnvBaseUrl() {
   // Base URL defaults to environment variable
   let baseUrl = import.meta.env.VITE_SERVER_BASEURL
 
-  // # 有些同学可能需要在微信Mini Program里面根据 develop、trial、release 分别设置上传地址，参考代码如下。
+  // # You can set separate upload URLs for develop, trial, and release environments as shown below.
   const VITE_SERVER_BASEURL__WEIXIN_DEVELOP = 'https://ukw0y1.laf.run'
   const VITE_SERVER_BASEURL__WEIXIN_TRIAL = 'https://ukw0y1.laf.run'
   const VITE_SERVER_BASEURL__WEIXIN_RELEASE = 'https://ukw0y1.laf.run'
 
-  // 微信Mini Program端环境区分
+  // Distinguish WeChat Mini Program environments
   if (isMpWeixin) {
     const {
       miniProgram: { envVersion },
@@ -167,7 +167,7 @@ export function getEnvBaseUrl() {
 }
 
 /**
- * 根据微信Mini Program当前环境，判断应该获取的 UPLOAD_BASEURL
+ * Get UPLOAD_BASEURL for the current WeChat Mini Program environment
  */
 export function getEnvBaseUploadUrl() {
   // Request base URL
@@ -177,7 +177,7 @@ export function getEnvBaseUploadUrl() {
   const VITE_UPLOAD_BASEURL__WEIXIN_TRIAL = 'https://ukw0y1.laf.run/upload'
   const VITE_UPLOAD_BASEURL__WEIXIN_RELEASE = 'https://ukw0y1.laf.run/upload'
 
-  // 微信Mini Program端环境区分
+  // Distinguish WeChat Mini Program environments
   if (isMpWeixin) {
     const {
       miniProgram: { envVersion },
@@ -244,7 +244,7 @@ export function sm2Encrypt(publicKey: string, plainText: string): string {
  * SM2 private key decryption
  * @param {string} privateKey Private key (hexadecimal)
  * @param {string} cipherText Ciphertext (hexadecimal)
- * @returns {string} 解密后的Plaintext
+ * @returns {string} Decrypted plaintext
  */
 export function sm2Decrypt(privateKey: string, cipherText: string): string {
   const sm2 = smCrypto.sm2
