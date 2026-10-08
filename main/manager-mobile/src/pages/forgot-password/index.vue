@@ -167,7 +167,7 @@ async function handleSendSmsCode() {
   }
   catch (error: any) {
     // 处理验证码错误
-    if (error.message.includes('请求错误[10067]')) {
+    if (error.message.includes('[10067]')) {
       toast.warning(t('login.captchaError'))
     }
     // 发送失败重新获取图形验证码
@@ -238,7 +238,7 @@ async function handleResetPassword() {
       encryptedPassword = sm2Encrypt(sm2PublicKey.value, captchaAndPassword)
     }
     catch (error) {
-      console.error('密码加密失败:', error)
+      console.error('Password encryption failed:', error)
       toast.warning(t('sm2.encryptionFailed'))
       return
     }
@@ -262,7 +262,7 @@ async function handleResetPassword() {
   }
   catch (error: any) {
     // 处理验证码错误
-    if (error.message.includes('请求错误[10067]')) {
+    if (error.message.includes('[10067]')) {
       toast.warning(t('login.captchaError'))
     }
     // 重置失败重新获取验证码
@@ -292,7 +292,7 @@ onMounted(async () => {
       await configStore.fetchPublicConfig()
     }
     catch (error) {
-      console.error('获取配置失败:', error)
+      console.error('Failed to retrieve configuration:', error)
     }
   }
   // 初始化国际化
