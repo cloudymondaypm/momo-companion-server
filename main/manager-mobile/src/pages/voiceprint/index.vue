@@ -166,7 +166,7 @@ function openAddDialog() {
     }
     catch (error: any) {
       // 捕捉声纹接口未配置错误
-      if (error.message && error.message.includes('请求错误[10054]')) {
+      if (error.message && error.message.includes('[10054]')) {
         toast.error(t('voiceprint.voiceprintInterfaceNotConfigured'))
       }
       else {
