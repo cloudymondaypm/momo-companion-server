@@ -70,7 +70,7 @@ public class AgentMcpAccessPointServiceImpl implements AgentMcpAccessPointServic
                             .maxSessionDuration(10, TimeUnit.SECONDS))) {
 
                 // 步骤1: 发送初始化消息并等待响应
-                log.info("发送MCP初始化消息，智能体ID: {}", id);
+                log.info("Sending MCP initialize message for agent {}", id);
                 client.sendText(XiaoZhiMcpJsonRpcJson.getInitializeJson());
 
                 // 等待初始化响应 (id=1) - 移除固定延迟，改为响应驱动
@@ -83,7 +83,7 @@ public class AgentMcpAccessPointServiceImpl implements AgentMcpAccessPointServic
                         }
                         return false;
                     } catch (Exception e) {
-                        log.warn("解析初始化响应失败: {}", response, e);
+                        log.warn("Failed to parse MCP initialization response: {}", response, e);
                         return false;
                     }
                 });
@@ -95,29 +95,29 @@ public class AgentMcpAccessPointServiceImpl implements AgentMcpAccessPointServic
                         Map<String, Object> jsonMap = JsonUtils.parseMap(response);
                         if (jsonMap != null && Integer.valueOf(1).equals(jsonMap.get("id"))) {
                             if (jsonMap.containsKey("result")) {
-                                log.info("MCP初始化成功，智能体ID: {}", id);
+                                log.info("MCP initialized for agent {}", id);
                                 initSucceeded = true;
                                 break;
                             } else if (jsonMap.containsKey("error")) {
-                                log.error("MCP初始化失败，智能体ID: {}, 错误: {}", id, jsonMap.get("error"));
+                                log.error("MCP initialization failed for agent {}, error: {}", id, jsonMap.get("error"));
                                 return List.of();
                             }
                         }
                     } catch (Exception e) {
-                        log.warn("处理初始化响应失败: {}", response, e);
+                        log.warn("Failed to handle MCP initialization response: {}", response, e);
                     }
                 }
 
                 if (!initSucceeded) {
-                    log.error("未收到有效的MCP初始化响应，智能体ID: {}", id);
+                    log.error("No valid MCP initialization response for agent {}", id);
                     return List.of();
                 }
 
                 // 步骤2: 发送初始化完成通知 - 只有在收到initialize响应后才发送
-                log.info("发送MCP初始化完成通知，智能体ID: {}", id);
+                log.info("Sending MCP initialized notification for agent {}", id);
                 client.sendText(XiaoZhiMcpJsonRpcJson.getNotificationsInitializedJson());
                 // 步骤3: 发送工具列表请求 - 立即发送，无需额外延迟
-                log.info("发送MCP工具列表请求，智能体ID: {}", id);
+                log.info("Requesting MCP tool list for agent {}", id);
                 client.sendText(XiaoZhiMcpJsonRpcJson.getToolsListJson());
 
                 // 等待工具列表响应 (id=2)
@@ -126,7 +126,7 @@ public class AgentMcpAccessPointServiceImpl implements AgentMcpAccessPointServic
                         Map<String, Object> jsonMap = JsonUtils.parseMap(response);
                         return jsonMap != null && Integer.valueOf(2).equals(jsonMap.get("id"));
                     } catch (Exception e) {
-                        log.warn("解析工具列表响应失败: {}", response, e);
+                        log.warn("Failed to parse MCP tool list: {}", response, e);
                         return false;
                     }
                 });
@@ -149,25 +149,25 @@ public class AgentMcpAccessPointServiceImpl implements AgentMcpAccessPointServic
                                             .filter(name -> name != null)
                                             .sorted()
                                             .collect(Collectors.toList());
-                                    log.info("成功获取MCP工具列表，智能体ID: {}, 工具数量: {}", id, result.size());
+                                    log.info("Received MCP tools for agent {}, count: {}", id, result.size());
                                     return result;
                                 }
                             } else if (jsonMap.containsKey("error")) {
-                                log.error("获取工具列表失败，智能体ID: {}, 错误: {}", id, jsonMap.get("error"));
+                                log.error("MCP tool listing failed for agent {}, error: {}", id, jsonMap.get("error"));
                                 return List.of();
                             }
                         }
                     } catch (Exception e) {
-                        log.warn("处理工具列表响应失败: {}", response, e);
+                        log.warn("Failed to handle MCP tool response: {}", response, e);
                     }
                 }
 
-                log.warn("未找到有效的工具列表响应，智能体ID: {}", id);
+                log.warn("No valid tool list response for agent {}", id);
                 return List.of();
 
             }
         } catch (Exception e) {
-            log.error("获取智能体 MCP 工具列表失败，智能体ID: {},错误原因：{}", id, e.getMessage());
+            log.error("Failed to get MCP tools for agent {}, cause: {}", id, e.getMessage());
             return List.of();
         }
     }
@@ -182,8 +182,8 @@ public class AgentMcpAccessPointServiceImpl implements AgentMcpAccessPointServic
         try {
             return new URI(url);
         } catch (URISyntaxException e) {
-            log.error("路径格式不正确路径：{}，\n错误信息:{}", url, e.getMessage());
-            throw new RuntimeException("mcp的地址存在错误，请进入参数管理修改mcp接入点地址");
+            log.error("Invalid URL path: {}\nError: {}", url, e.getMessage());
+            throw new RuntimeException("Invalid MCP endpoint URL. Update the endpoint in Parameter Management.");
         }
     }
 
