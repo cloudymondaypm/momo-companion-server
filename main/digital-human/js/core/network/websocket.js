@@ -79,7 +79,7 @@ export class WebSocketHandler {
             session_id: sessionId,
             type: 'listen',
             state: 'detect',
-            text: 'Hey, hello!'
+            text: '嘿，你好呀'
         }));
         log('Sending listen-detect message, wake word: Hey, hello!', 'info');
 
@@ -474,8 +474,8 @@ export class WebSocketHandler {
         };
 
         this.websocket.onerror = (error) => {
-            log(`WebSocket错误: ${error.message || '未知错误'}`, 'error');
-            uiController.addChatMessage(`⚠️ WebSocket错误: ${error.message || '未知错误'}`, false);
+            log(`WebSocket error: ${error.message || 'Unknown error'}`, 'error');
+            uiController.addChatMessage(`⚠️ WebSocket error: ${error.message || 'Unknown error'}`, false);
             if (this.onConnectionStateChange) {
                 this.onConnectionStateChange(false);
             }
@@ -490,14 +490,14 @@ export class WebSocketHandler {
                     this.handleBinaryMessage(event.data);
                 }
             } catch (error) {
-                log(`WebSocket消息处理错误: ${error.message}`, 'error');
-                // 不再使用旧的addMessage函数，因为conversationDiv元素不存在
-                // 错误消息将通过其他方式显示
+                log(`WebSocket message handler error: ${error.message}`, 'error');
+                // Do not use the old addMessage function; conversationDiv no longer exists
+                // Display errors via other UI methods
             }
         };
     }
 
-    // 断开连接
+    // Disconnect
     disconnect() {
         if (!this.websocket) return;
 
@@ -517,14 +517,14 @@ export class WebSocketHandler {
         }
     }
 
-    // 发送文本消息
+    // Send text message
     sendTextMessage(text) {
         if (text === '' || !this.websocket || this.websocket.readyState !== WebSocket.OPEN) {
             return false;
         }
 
         try {
-            // 如果对方正在说话，先发送打断消息
+            // Send interruption before text if assistant is speaking
             if (this.isRemoteSpeaking && this.currentSessionId) {
                 const abortMessage = {
                     session_id: this.currentSessionId,
@@ -532,7 +532,7 @@ export class WebSocketHandler {
                     reason: 'wake_word_detected'
                 };
                 this.websocket.send(JSON.stringify(abortMessage));
-                log('发送打断消息', 'info');
+                log('Sending interrupt message', 'info');
             }
 
             const listenMessage = {
@@ -542,18 +542,18 @@ export class WebSocketHandler {
             };
 
             this.websocket.send(JSON.stringify(listenMessage));
-            log(`发送文本消息: ${text}`, 'info');
+            log(`Send text message: ${text}`, 'info');
 
             return true;
         } catch (error) {
-            log(`发送消息错误: ${error.message}`, 'error');
+            log(`Error sending message: ${error.message}`, 'error');
             return false;
         }
     }
 
     /**
      * Trigger Live2D emotion
-     * @param {string} emotion - 情绪名称
+     * @param {string} emotion - Emotion name
      */
     triggerLive2DEmotionAction(emotion) {
         try {
@@ -562,25 +562,25 @@ export class WebSocketHandler {
                 live2dManager.triggerEmotionAction(emotion);
                 log(`Trigger Live2D emotion: ${emotion}`, 'info');
             } else {
-                log(`无法Trigger Live2D emotion: Live2D管理器未找到或方法不可用`, 'warning');
+                log(`无法Trigger Live2D emotion: Live2D manager unavailable or missing method`, 'warning');
             }
         } catch (error) {
-            log(`Trigger Live2D emotion失败: ${error.message}`, 'error');
+            log(`Failed to trigger Live2D emotion: ${error.message}`, 'error');
         }
     }
 
-    // 获取WebSocket实例
+    // Get WebSocket instance
     getWebSocket() {
         return this.websocket;
     }
 
-    // 检查是否已连接
+    // Check connection state
     isConnected() {
         return this.websocket && this.websocket.readyState === WebSocket.OPEN;
     }
 }
 
-// 创建单例
+// Create singleton
 let wsHandlerInstance = null;
 
 export function getWebSocketHandler() {
