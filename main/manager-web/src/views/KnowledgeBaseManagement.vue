@@ -53,7 +53,7 @@
                       <div class="kb-card-name">{{ kb.name }}</div>
                       <div class="kb-card-bottom">
                         <div class="kb-card-meta">
-                          <span>{{`文档&nbsp;&nbsp;${kb.documentCount || 0}` }}</span>
+                          <span>{{`Documents&nbsp;&nbsp;${kb.documentCount || 0}` }}</span>
                           <el-divider direction="vertical" />
                           <span>{{ formatDate(kb.createdAt) }}</span>
                           <el-divider direction="vertical" />
@@ -167,7 +167,7 @@
         <div class="el-upload__text">{{ $t('knowledgeFileUpload.dragOrClick') }}</div>
         <div class="el-upload__tip" slot="tip">{{ $t('knowledgeFileUpload.uploadTip') }}</div>
       </el-upload>
-      <!-- 已选择文件列表 -->
+      <!-- Selected files -->
       <div class="selected-files-section" v-if="selectedFilesList.length > 0">
         <h4>{{ $t('knowledgeFileUpload.selectedFiles') }} ({{ selectedFilesList.length }})</h4>
         <div class="selected-files-list">
@@ -468,7 +468,7 @@ export default {
 
     handleFileChange(file) {
       if (!file || !file.raw) return;
-       // 文件上传前的验证
+       // Validate before uploading files
       const isLt10M = file.size / 1024 / 1024 < 10;
       if (!isLt10M) {
         this.$message.error(this.$t('knowledgeFileUpload.fileSizeExceeded'));
@@ -520,7 +520,7 @@ export default {
               } else {
                 reject({ success: false, fileName: file.name, error: this.$t('knowledgeFileUpload.uploadFailed') });
               }
-              console.error('上传文档失败:', err);
+              console.error('Failed to upload document:', err);
             }
           );
         });
@@ -574,12 +574,12 @@ export default {
           if (data && data.code === 0) {
             this.retrievalTestResult = data.data || data;
           } else {
-            this.$message.error(data?.msg || '召回测试失败');
+            this.$message.error(data?.msg || 'Retrieval test failed');
           }
         },
         (err) => {
           this.retrievalTestLoading = false;
-          this.$message.error(err?.data?.msg || '召回测试失败');
+          this.$message.error(err?.data?.msg || 'Retrieval test failed');
         }
       );
     },
