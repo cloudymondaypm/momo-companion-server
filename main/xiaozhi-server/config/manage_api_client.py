@@ -164,7 +164,7 @@ class ManageApiClient:
         """Get singleton instance reference in a thread-safe way
 
         Callers should use the returned local reference, not reread it after checking.
-        ManageApiClient._instance：即使随后 safe_close() 将 _instance
+        ManageApiClient._instance: even if safe_close() later sets _instance
         is set to None, the local reference still points to the original object, preventing races after checking.
         before use in the TOCTOU window.
         """
@@ -223,7 +223,7 @@ def api_guard(error_msg: str = None, raise_when_closed: bool = False):
 
 @api_guard(raise_when_closed=True)
 async def get_server_config(instance) -> Optional[Dict]:
-    """获取服务器基础配置"""
+    """Get base server configuration"""
     return await instance._execute_async_request("POST", "/config/server-base")
 
 
@@ -231,7 +231,7 @@ async def get_server_config(instance) -> Optional[Dict]:
 async def get_agent_models(
     instance, mac_address: str, client_id: str, selected_module: Dict
 ) -> Optional[Dict]:
-    """获取代理模型配置"""
+    """Get agent model configuration"""
     return await instance._execute_async_request(
         "POST",
         "/config/agent-models",
@@ -243,38 +243,38 @@ async def get_agent_models(
     )
 
 
-@api_guard("获取替换词失败")
+@api_guard("Failed to get replacement words")
 async def get_correct_words(instance, mac_address: str) -> Optional[Dict]:
-    """获取智能体替换词"""
+    """Get agent replacement words"""
     return await instance._execute_async_request(
         "POST", "/config/correct-words",
         json={"macAddress": mac_address}
     )
 
 
-@api_guard("生成并保存聊天记录总结失败")
+@api_guard("Failed to generate and save chat summary")
 async def generate_and_save_chat_summary(instance, session_id: str) -> Optional[Dict]:
-    """生成并保存聊天记录总结（守护线程中调用，服务已关闭时静默返回 None）"""
+    """Generate and save chat summary (background worker; return None if closed)"""
     return await instance._execute_async_request(
         "POST",
         f"/agent/chat-summary/{session_id}/save",
     )
 
 
-@api_guard("生成并保存聊天标题失败")
+@api_guard("Failed to generate and save chat title")
 async def generate_and_save_chat_title(instance, session_id: str) -> Optional[Dict]:
-    """生成并保存聊天标题（守护线程中调用，服务已关闭时静默返回 None）"""
+    """Generate and save chat title (background worker; return None if closed)"""
     return await instance._execute_async_request(
         "POST",
         f"/agent/chat-title/{session_id}/generate",
     )
 
 
-@api_guard("TTS上报失败")
+@api_guard("Failed to report TTS")
 async def report(
     instance, mac_address: str, session_id: str, chat_type: int, content: str, audio, report_time
 ) -> Optional[Dict]:
-    """异步聊天记录上报"""
+    """Report chat history asynchronously"""
     if not content:
         return None
     return await instance._execute_async_request(
@@ -293,9 +293,9 @@ async def report(
     )
 
 
-@api_guard("通讯录查找失败")
+@api_guard("Address book lookup failed")
 async def lookup_address_book(instance, caller_mac: str, nickname: str) -> Optional[Dict]:
-    """根据昵称查找目标设备"""
+    """Find device by nickname"""
     return await instance._execute_async_request(
         "GET",
         f"/device/address-book/lookup?callerMac={caller_mac}&nickname={nickname}",
