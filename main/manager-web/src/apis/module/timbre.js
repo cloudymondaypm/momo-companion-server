@@ -19,7 +19,7 @@ export default {
                 callback(res.data || []);
             })
             .networkFail((err) => {
-                console.error('Get voice listfailed:', err);
+                console.error('Get voice list failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.getVoiceList(params, callback);
                 });
@@ -45,7 +45,7 @@ export default {
                 callback(res.data);
             })
             .networkFail((err) => {
-                console.error('Save voicefailed:', err);
+                console.error('Save voice failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.saveVoice(params, callback);
                 });
@@ -62,7 +62,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Delete voicefailed:', err);
+                console.error('Delete voice failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.deleteVoice(ids, callback);
                 });
@@ -88,7 +88,7 @@ export default {
                 callback(res.data);
             })
             .networkFail((err) => {
-                console.error('Modify voicefailed:', err);
+                console.error('Modify voice failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.updateVoice(params, callback);
                 });
