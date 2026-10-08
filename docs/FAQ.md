@@ -2,7 +2,7 @@
 
 ### 1. Why does the assistant transcribe my speech as Korean, Japanese, or English when I speak Chinese? 🇰🇷
 
-**Recommendation:** Verify that `models/SenseVoiceSmall/model.pt` exists. If it does not, download the speech recognition model as described in [Download Speech Recognition Model Files](Deployment.md#模型文件).
+**Recommendation:** Verify that `models/SenseVoiceSmall/model.pt` exists. If it does not, download the speech recognition model as described in [Download Speech Recognition Model Files](Deployment.md).
 
 ### 2. Why do I get "TTS task failed: file not found"? 📁
 
