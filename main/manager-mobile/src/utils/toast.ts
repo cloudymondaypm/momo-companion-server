@@ -1,7 +1,7 @@
 /**
- * toast 弹窗组件
- * 支持 success/error/warning/info 四种状态
- * 可配置 duration, position 等参数
+ * Toast notification component
+ * Supports success, error, warning, and info states
+ * Supports configurable duration, position, and other options
  */
 
 type ToastType = 'success' | 'error' | 'warning' | 'info'
@@ -25,14 +25,14 @@ export function showToast(options: ToastOptions | string) {
     = typeof options === 'string'
       ? { ...defaultOptions, message: options }
       : { ...defaultOptions, ...options }
-  // 映射position到uniapp支持的格式
+  // Map position to uni-app supported values
   const positionMap: Record<ToastOptions['position'], 'top' | 'bottom' | 'center'> = {
     top: 'top',
     middle: 'center',
     bottom: 'bottom',
   }
 
-  // 映射图标类型
+  // Map icon types
   const iconMap: Record<
     ToastType,
     'success' | 'error' | 'none' | 'loading' | 'fail' | 'exception'
@@ -43,7 +43,7 @@ export function showToast(options: ToastOptions | string) {
     info: 'none',
   }
 
-  // 调用uni.showToast显示提示
+  // Show notification with uni.showToast
   uni.showToast({
     title: mergedOptions.message,
     duration: mergedOptions.duration,
