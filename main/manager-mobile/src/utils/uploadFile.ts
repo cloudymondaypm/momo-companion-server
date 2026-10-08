@@ -8,8 +8,8 @@ import { toast } from './toast'
  *   uploadUrl,
  *   {},
  *   {
- *     maxSize: 5, // 最大5MB
- *     sourceType: ['album'], // 仅支持从相册选择
+ *     maxSize: 5, // Maximum 5 MB
+ *     sourceType: ['album'], // Select only from album
  *     onProgress: (p) => console.log(`Upload progress：${p}%`),
  *     onSuccess: (res) => console.log('Upload succeeded', res),
  *     onError: (err) => console.error('Upload failed', err),
@@ -32,7 +32,7 @@ export const uploadFileUrl = {
  * @param url Upload URL
  * @param filePath Local file path
  * @param formData Extra form data
- * @param options 上传选项
+ * @param options Upload options
  */
 export function useFileUpload<T = string>(url: string, filePath: string, formData: Record<string, any> = {}, options: Omit<UploadOptions, 'sourceType' | 'sizeType' | 'count'> = {}) {
   return useUpload<T>(
@@ -68,14 +68,14 @@ export interface UploadOptions {
 
 /**
  * File upload hook
- * @template T Upload succeeded后返回的数据类型
+ * @template T Successful upload response type
  * @param url Upload URL
  * @param formData Extra form data
- * @param options 上传选项
- * @returns 上传状态和控制对象
+ * @param options Upload options
+ * @returns Upload state and controls
  */
 export function useUpload<T = string>(url: string, formData: Record<string, any> = {}, options: UploadOptions = {},
-  /** 直接传入文件路径，跳过选择器 */
+  /** Provide file path to skip picker */
   directFilePath?: string) {
   /** Uploading state */
   const loading = ref(false)
@@ -86,30 +86,30 @@ export function useUpload<T = string>(url: string, formData: Record<string, any>
   /** Upload progress（0-100） */
   const progress = ref(0)
 
-  /** 解构上传选项，设置默认值 */
+  /** Destructure options and apply defaults */
   const {
     /** Maximum image count */
     count = 1,
-    /** 所选的图片的尺寸 */
+    /** Selected image dimensions */
     sizeType = ['original', 'compressed'],
-    /** 选择图片的来源 */
+    /** Image source */
     sourceType = ['album', 'camera'],
     /** File size limit (MB) */
     maxSize = 10,
-    /** 进度回调 */
+    /** Progress callback */
     onProgress,
-    /** 成功回调 */
+    /** Success callback */
     onSuccess,
-    /** 失败回调 */
+    /** Failure callback */
     onError,
-    /** 完成回调 */
+    /** Completion callback */
     onComplete,
   } = options
 
   /**
    * Check file size limit
-   * @param size File size（字节）
-   * @returns 是否通过检查
+   * @param size File size in bytes
+   * @returns Whether validation passed
    */
   const checkFileSize = (size: number) => {
     const sizeInMB = size / 1024 / 1024
@@ -120,14 +120,14 @@ export function useUpload<T = string>(url: string, formData: Record<string, any>
     return true
   }
   /**
-   * 触发文件选择和上传
+   * Select and upload a file
    * Use a platform-specific picker：
-   * - 微信小程序使用 chooseMedia
-   * - 其他平台使用 chooseImage
+   * - WeChat Mini Programs use chooseMedia
+   * - Other platforms use chooseImage
    */
   const run = () => {
     if (directFilePath) {
-      // 直接使用传入的文件路径
+      // Use provided file path
       loading.value = true
       progress.value = 0
       uploadFile<T>({
@@ -150,15 +150,15 @@ export function useUpload<T = string>(url: string, formData: Record<string, any>
     // Use chooseMedia on WeChat Mini Programs
     uni.chooseMedia({
       count,
-      mediaType: ['image'], // 仅支持图片类型
+      mediaType: ['image'], // Only image files are supported
       sourceType,
       success: (res) => {
         const file = res.tempFiles[0]
-        // 检查File size是否符合限制
+        // Check file size limit
         if (!checkFileSize(file.size))
           return
 
-        // 开始上传
+        // Start upload
         loading.value = true
         progress.value = 0
         uploadFile<T>({
@@ -190,9 +190,9 @@ export function useUpload<T = string>(url: string, formData: Record<string, any>
       sizeType,
       sourceType,
       success: (res) => {
-        console.log('选择图片成功:', res)
+        console.log('Image selected:', res)
 
-        // 开始上传
+        // Start upload
         loading.value = true
         progress.value = 0
         uploadFile<T>({
@@ -223,7 +223,7 @@ export function useUpload<T = string>(url: string, formData: Record<string, any>
 
 /**
  * File upload options interface
- * @template T Upload succeeded后返回的数据类型
+ * @template T Successful upload response type
  */
 interface UploadFileOptions<T> {
   /** Upload URL */
@@ -240,20 +240,20 @@ interface UploadFileOptions<T> {
   loading: Ref<boolean>
   /** Upload progress（0-100） */
   progress: Ref<number>
-  /** Upload progress回调 */
+  /** Upload progress callback */
   onProgress?: (progress: number) => void
-  /** Upload succeeded回调 */
+  /** Upload success callback */
   onSuccess?: (res: Record<string, any>) => void
-  /** Upload failed回调 */
+  /** Upload failure callback */
   onError?: (err: Error | UniApp.GeneralCallbackResult) => void
-  /** 上传完成回调 */
+  /** Upload completion callback */
   onComplete?: () => void
 }
 
 /**
  * Execute file upload
- * @template T Upload succeeded后返回的数据类型
- * @param options 上传选项
+ * @template T Successful upload response type
+ * @param options Upload options
  */
 function uploadFile<T>({
   url,
@@ -273,7 +273,7 @@ function uploadFile<T>({
     const uploadTask = uni.uploadFile({
       url,
       filePath: tempFilePath,
-      name: 'file', // 文件对应的 key
+      name: 'file', // Form field key for file
       formData,
       header: {
         // Allow browser to set multipart Content-Type on H5
@@ -281,31 +281,31 @@ function uploadFile<T>({
         'Content-Type': 'multipart/form-data',
         // #endif
       },
-      // 确保文件名称合法
+      // Validate file name
       success: (uploadFileRes) => {
         console.log('File uploaded successfully:', uploadFileRes)
         try {
-          // 解析响应数据
+          // Parse response data
           const { data: _data } = JSON.parse(uploadFileRes.data)
           // Upload succeeded
           data.value = _data as T
           onSuccess?.(_data)
         }
         catch (err) {
-          // 响应解析错误
+          // Response parsing error
           console.error('Failed to parse upload response:', err)
           error.value = true
           onError?.(new Error('Failed to parse upload response'))
         }
       },
       fail: (err) => {
-        // Upload request失败
+        // Upload request failed
         console.error('Failed to upload file:', err)
         error.value = true
         onError?.(err)
       },
       complete: () => {
-        // 无论成功失败都执行
+        // Run regardless of outcome
         loading.value = false
         onComplete?.()
       },
