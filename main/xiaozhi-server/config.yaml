@@ -778,7 +778,7 @@ TTS:
   EdgeTTS:
     # Define TTS API type
     type: edge
-    voice: zh-CN-XiaoxiaoNeural
+    voice: en-US-JennyNeural  # English-first default; use zh-CN-XiaoxiaoNeural for Mandarin
     output_dir: tmp/
     # language: "English"  # Specify an output language supported by your chosen voice.
   DoubaoTTS:
