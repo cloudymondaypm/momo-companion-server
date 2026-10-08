@@ -85,7 +85,7 @@ function renderMcpTools() {
                 <div class="mcp-tool-info">
                     <div class="mcp-tool-info-row">
                         <span class="mcp-tool-info-label">Parameter count:</span>
-                        <span class="mcp-tool-info-value">${paramCount} 个 ${requiredCount > 0 ? `(${requiredCount}  required)` : ''}</span>
+                        <span class="mcp-tool-info-value">${paramCount} ${requiredCount > 0 ? `(${requiredCount}  required)` : ''}</span>
                     </div>
                     <div class="mcp-tool-info-row">
                         <span class="mcp-tool-info-label">Mock response:</span>
@@ -450,7 +450,7 @@ function deleteMcpTool(index) {
         alert('Cannot edit tools while WebSocket is connected.');
         return;
     }
-    if (confirm(`Delete tool "${mcpTools[index].name}" 吗？`)) {
+    if (confirm(`Delete tool "${mcpTools[index].name}"?`)) {
         const toolName = mcpTools[index].name;
         mcpTools.splice(index, 1);
         saveMcpTools();
@@ -500,7 +500,7 @@ export async function executeMcpTool(toolName, toolArgs) {
     if (tool.mockResponse) {
         // Replace template placeholders
         let responseStr = JSON.stringify(tool.mockResponse);
-        // 替换 ${paramName} formatted variables
+        // Replace ${paramName} template variables
         if (toolArgs) {
             Object.keys(toolArgs).forEach(key => {
                 const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
