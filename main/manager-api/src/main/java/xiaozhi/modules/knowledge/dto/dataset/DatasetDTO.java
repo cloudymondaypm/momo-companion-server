@@ -59,7 +59,7 @@ public class DatasetDTO {
     // ========== Request classes ==========
 
     /**
-     * Create knowledge base request (映射接口 1: create)
+     * Create knowledge base request (API operation 1: create)
      */
     @Data
     @NoArgsConstructor
@@ -96,7 +96,7 @@ public class DatasetDTO {
     }
 
     /**
-     * Update knowledge base request (映射接口 4: update)
+     * Update knowledge base request (API operation 4: update)
      */
     @Data
     @NoArgsConstructor
@@ -131,22 +131,22 @@ public class DatasetDTO {
         private ParserConfig parserConfig;
 
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        @Schema(description = "PageRank 权重 (0-100)", example = "50")
+        @Schema(description = "PageRank weight (0-100)", example = "50")
         private Integer pagerank;
     }
 
     /**
-     * 查询知识库列表请求 (映射接口 3: list_datasets)
+     * List knowledge bases request (API operation 3: list_datasets)
      */
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    @Schema(description = "查询知识库列表请求")
+    @Schema(description = "List knowledge bases request")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ListReq implements Serializable {
 
-        @Schema(description = "Page number (从 1 开始)", example = "1")
+        @Schema(description = "Page number (starting at 1)", example = "1")
         private Integer page;
 
         @Schema(description = "Page size", example = "30")
@@ -159,7 +159,7 @@ public class DatasetDTO {
         @Schema(description = "Descending order", example = "true")
         private Boolean desc;
 
-        @Schema(description = "Filter by name (模糊匹配)", example = "my_dataset")
+        @Schema(description = "Filter by name (partial match)", example = "my_dataset")
         private String name;
 
         @Schema(description = "Filter by knowledge base ID", example = "abc123")
@@ -167,7 +167,7 @@ public class DatasetDTO {
     }
 
     /**
-     * Bulk delete knowledge bases request (映射接口 2: delete)
+     * Bulk delete knowledge bases request (API operation 2: delete)
      */
     @Data
     @NoArgsConstructor
@@ -219,7 +219,7 @@ public class DatasetDTO {
     }
 
     /**
-     * Async task ID response VO (映射接口 7/8: run_graphrag/run_raptor)
+     * Async task ID response VO (API operation 7/8: run_graphrag/run_raptor)
      */
     @Data
     @NoArgsConstructor
@@ -241,7 +241,7 @@ public class DatasetDTO {
     // ========== Response classes ==========
 
     /**
-     * Knowledge base details VO (映射接口 1/3 的返回数据项)
+     * Knowledge base details VO (API operation 1/3 response items)
      */
     @Data
     @NoArgsConstructor
@@ -290,11 +290,11 @@ public class DatasetDTO {
         @JsonProperty("document_count")
         private Long documentCount;
 
-        @Schema(description = "Created at (时间戳)", example = "1700000000000")
+        @Schema(description = "Created at (timestamp)", example = "1700000000000")
         @JsonProperty("create_time")
         private Long createTime;
 
-        @Schema(description = "Updated at (时间戳)", example = "1700000001000")
+        @Schema(description = "Updated at (timestamp)", example = "1700000001000")
         @JsonProperty("update_time")
         private Long updateTime;
 
@@ -302,11 +302,11 @@ public class DatasetDTO {
         @JsonProperty("token_num")
         private Long tokenNum;
 
-        @Schema(description = "Creation date (格式: yyyy-MM-dd HH:mm:ss)")
+        @Schema(description = "Creation date (format: yyyy-MM-dd HH:mm:ss)")
         @JsonProperty("create_date")
         private String createDate;
 
-        @Schema(description = "Last updated (格式: yyyy-MM-dd HH:mm:ss)")
+        @Schema(description = "Last updated (format: yyyy-MM-dd HH:mm:ss)")
         @JsonProperty("update_date")
         private String updateDate;
     }
@@ -332,13 +332,13 @@ public class DatasetDTO {
     // ========== Knowledge graph data ==========
 
     /**
-     * 知识Graph数据 VO (映射接口 5: knowledge_graph)
+     * Knowledge graph data VO (API operation 5: knowledge_graph)
      */
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    @Schema(description = "知识Graph数据 VO")
+    @Schema(description = "Knowledge graph data VO")
     public static class GraphVO implements Serializable {
 
         @Schema(description = "Graph nodes")
@@ -352,13 +352,13 @@ public class DatasetDTO {
         private Map<String, Object> mindMap;
 
         /**
-         * Graph节点
+         * Graph nodes
          */
         @Data
         @NoArgsConstructor
         @AllArgsConstructor
         @Builder
-        @Schema(description = "Graph节点")
+        @Schema(description = "Graph nodes")
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class Node implements Serializable {
 
@@ -368,7 +368,7 @@ public class DatasetDTO {
             @Schema(description = "Node label", example = "Product")
             private String label;
 
-            @Schema(description = "PageRank 值", example = "0.85")
+            @Schema(description = "PageRank value", example = "0.85")
             private Double pagerank;
 
             @Schema(description = "Node color", example = "#FF5733")
@@ -379,13 +379,13 @@ public class DatasetDTO {
         }
 
         /**
-         * Graph边
+         * Graph edges
          */
         @Data
         @NoArgsConstructor
         @AllArgsConstructor
         @Builder
-        @Schema(description = "Graph边")
+        @Schema(description = "Graph edges")
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class Edge implements Serializable {
 
@@ -403,16 +403,16 @@ public class DatasetDTO {
         }
     }
 
-    // ========== Async task追踪 (GraphRAG/RAPTOR) ==========
+    // ========== Async task tracking (GraphRAG/RAPTOR) ==========
 
     /**
-     * Async task追踪 VO (映射接口 9/10: Task progress response)
+     * Async task tracking VO (API operation 9/10: Task progress response)
      */
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    @Schema(description = "Async task追踪 VO")
+    @Schema(description = "Async task tracking VO")
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TaskTraceVO implements Serializable {
 
@@ -423,26 +423,26 @@ public class DatasetDTO {
         @JsonProperty("doc_id")
         private String docId;
 
-        @Schema(description = "起始Page number", example = "1")
+        @Schema(description = "Starting page number", example = "1")
         @JsonProperty("from_page")
         private Integer fromPage;
 
-        @Schema(description = "结束Page number", example = "10")
+        @Schema(description = "Ending page number", example = "10")
         @JsonProperty("to_page")
         private Integer toPage;
 
-        @Schema(description = "进度百分比 (0.0 - 1.0)", example = "0.75")
+        @Schema(description = "Progress percentage (0.0 - 1.0)", example = "0.75")
         private Double progress;
 
-        @Schema(description = "进度消息", example = "正在处理第 5 页...")
+        @Schema(description = "Progress message", example = "Processing page 5...")
         @JsonProperty("progress_msg")
         private String progressMsg;
 
-        @Schema(description = "Created at (时间戳)", example = "1700000000000")
+        @Schema(description = "Created at (timestamp)", example = "1700000000000")
         @JsonProperty("create_time")
         private Long createTime;
 
-        @Schema(description = "Updated at (时间戳)", example = "1700000001000")
+        @Schema(description = "Updated at (timestamp)", example = "1700000001000")
         @JsonProperty("update_time")
         private Long updateTime;
     }
