@@ -313,7 +313,7 @@ class UIController {
                     statusDot.className = 'status-dot status-connected';
                 }
             } else {
-                connectionStatus.textContent = '离线';
+                connectionStatus.textContent = 'Offline';
                 if (statusDot) {
                     statusDot.className = 'status-dot status-disconnected';
                 }
