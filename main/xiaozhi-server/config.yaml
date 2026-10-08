@@ -296,47 +296,47 @@ Memory:
   mem0ai:
     type: mem0ai
     # https://app.mem0.ai/dashboard/api-keys
-    # 每月有1000次免费调用
+    # Up to 1,000 free requests per month
     api_key: 你的mem0ai api key
   powermem:
-    # PowerMem是OceanBase开源的agent记忆组件，通过本地LLM进行记忆总结
-    # 费用说明：PowerMem本身免费，实际费用取决于所选LLM和数据库
-    # - 使用sqlite + 免费LLM(如glm-4-flash) = 完全免费
-    # - 使用云端LLM或云端数据库 = 按对应服务收费
+    # PowerMem is an open-source agent memory system by OceanBase; it summarizes memories with a local LLM.
+    # PowerMem is free; operating costs depend on your LLM and database.
+    # - SQLite plus a free LLM (such as glm-4-flash) can be free.
+    # - Cloud LLMs or databases may incur provider charges.
     # GitHub: https://github.com/oceanbase/powermem
-    # 官网: https://www.powermem.ai/
-    # 使用示例: https://github.com/oceanbase/powermem/tree/main/examples
+    # Website: https://www.powermem.ai/
+    # Examples: https://github.com/oceanbase/powermem/tree/main/examples
     type: powermem
-    # 是否启用用户画像功能
-    # - false: 使用普通记忆模式(AsyncMemory)
-    # - true: 使用用户画像模式(UserMemory)，自动提取用户信息
-    # 用户画像功能支持: oceanbase、seekdb、sqlite (powermem 0.3.0+)
+    # Whether to enable user profiling
+    # - false: Use standard memory (AsyncMemory)
+    # - true: Use user profiling (UserMemory) to extract user information automatically.
+    # User profiling supports: oceanbase、seekdb、sqlite (powermem 0.3.0+)
     enable_user_profile: true
-    # ========== LLM 配置 ==========
-    # 通义千问: https://bailian.console.aliyun.com/?apiKey=1#/api-key
-    # 智谱AI(免费): https://bigmodel.cn/usercenter/proj-mgmt/apikeys
+    # ========== LLM Configuration ==========
+    # Qwen: https://bailian.console.aliyun.com/?apiKey=1#/api-key
+    # Zhipu AI (free): https://bigmodel.cn/usercenter/proj-mgmt/apikeys
     llm:
-      provider: openai  # 可选: qwen, openai, zhipu 等
+      provider: openai  # Optional: qwen, openai, zhipu 等
       config:
         api_key: 你的LLM API密钥
         model: qwen-plus
-        # openai_base_url: https://api.openai.com/v1  # 可选，自定义服务地址
-    # ========== Embedding 配置 ==========
+        # openai_base_url: https://api.openai.com/v1  # Optional，Custom API base URL
+    # ========== Embedding Configuration ==========
     embedder:
-      provider: openai  # 可选: qwen, openai 等
+      provider: openai  # Optional: qwen, openai 等
       config:
         api_key: 你的嵌入模型API密钥
         model: text-embedding-v4
         openai_base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
-        # embedding_dims: 1024  # 向量维度，非1536时需配置
+        # embedding_dims: 1024  # Set embedding dimension if different from 1536
 
-    # ========== Database 配置 ==========
-    # oceanbase(推荐,最佳性能), seekdb(推荐,AI应用存储一体), postgres, sqlite(轻量备选)
-    # 用户画像功能支持: oceanbase、seekdb、sqlite
+    # ========== Database Configuration ==========
+    # oceanbase(recommended, best performance), seekdb(recommended, integrated AI data storage), postgres, sqlite(lightweight alternative)
+    # User profiling supports: oceanbase、seekdb、sqlite
     vector_store:
       provider: sqlite
-      config: {}  # SQLite 无需额外配置
-      # OceanBase 配置示例:
+      config: {}  # SQLite needs no additional configuration
+      # OceanBase configuration example:
       # provider: oceanbase
       # config:
       #   host: 127.0.0.1
@@ -344,17 +344,17 @@ Memory:
       #   user: root@test
       #   password: your_password
       #   db_name: powermem
-      #   collection_name: memories  # 默认表名，如创建维度错误请删除此表或更改名称
-      #   embedding_model_dims: 1024  # 嵌入向量维度，注意跟使用模型适配，以智普为例：embedding-2的维度是1024，embedding-3的维度是2048
+      #   collection_name: memories  # Default table name; recreate the table or rename it if dimensions are wrong
+      #   embedding_model_dims: 1024  # Match embedding dimensions to your model; Zhipu embedding-2 uses 1024 and embedding-3 uses 2048.
   nomem:
-    # 不想使用记忆功能，可以使用nomem
+    # Use nomem to disable memory
     type: nomem
   mem_local_short:
-    # 本地记忆功能，通过selected_module的llm总结，数据保存在本地服务器，不会上传到外部服务器
+    # Local memory uses the selected LLM and stores data locally.
     type: mem_local_short
-    # 配备记忆存储独立的思考模型
-    # 如果这里不填，则会默认使用selected_module.LLM的模型作为意图识别的思考模型
-    # 如果你的不想使用selected_module.LLM记忆存储，这里最好使用独立的LLM作为意图识别，例如使用免费的ChatGLMLLM
+    # Configure a separate LLM for memory summaries
+    # If unset, defaults to selected_module.LLM.
+    # Use a separate LLM such as ChatGLMLLM if you do not want to use selected_module.LLM for memory.
     llm: ChatGLMLLM
 
 ASR:
@@ -362,18 +362,18 @@ ASR:
     type: fun_local
     model_dir: models/SenseVoiceSmall
     output_dir: tmp/
-    # 识别语种：auto 自动检测；如需限制只识别中文可设为 zh，避免中文短句误判为韩文等。
-    # SenseVoice 支持 zh、en、ja、ko、yue 等语种标记。
+    # ASR language: auto-detect by default; use zh to force Chinese and avoid misclassification of short phrases.
+    # SenseVoice supports zh, en, ja, ko, yue and other language tags.
     language: auto
   FunASRServer:
-    # 独立部署FunASR，使用FunASR的API服务，只需要五句话
-    # 第一句：mkdir -p ./funasr-runtime-resources/models
-    # 第二句：sudo docker run -p 10096:10095 -it --privileged=true -v $PWD/funasr-runtime-resources/models:/workspace/models registry.cn-hangzhou.aliyuncs.com/funasr_repo/funasr:funasr-runtime-sdk-online-cpu-0.1.12
-    # 上一句话执行后会进入到容器，继续第三句：cd FunASR/runtime
-    # 不要退出容器，继续在容器中执行第四句：nohup bash run_server_2pass.sh --download-model-dir /workspace/models --vad-dir damo/speech_fsmn_vad_zh-cn-16k-common-onnx --model-dir iic/SenseVoiceSmall-onnx  --online-model-dir damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-online-onnx  --punc-dir damo/punc_ct-transformer_zh-cn-common-vad_realtime-vocab272727-onnx --lm-dir damo/speech_ngram_lm_zh-cn-ai-wesp-fst --itn-dir thuduj12/fst_itn_zh --hotword /workspace/models/hotwords.txt > log.txt 2>&1 &
-    # 上一句话执行后会进入到容器，继续第五句：tail -f log.txt
-    # 第五句话执行完后，会看到模型下载日志，下载完后就可以连接使用了
-    # 以上是使用CPU推理，如果有GPU，详细参考：https://github.com/modelscope/FunASR/blob/main/runtime/docs/SDK_advanced_guide_online_zh.md
+    # To run FunASR separately with its API, follow these five commands:
+    # First command：mkdir -p ./funasr-runtime-resources/models
+    # Second command：sudo docker run -p 10096:10095 -it --privileged=true -v $PWD/funasr-runtime-resources/models:/workspace/models registry.cn-hangzhou.aliyuncs.com/funasr_repo/funasr:funasr-runtime-sdk-online-cpu-0.1.12
+    # After the previous command opens the container, run the third command：cd FunASR/runtime
+    # Stay in the container and run the fourth command：nohup bash run_server_2pass.sh --download-model-dir /workspace/models --vad-dir damo/speech_fsmn_vad_zh-cn-16k-common-onnx --model-dir iic/SenseVoiceSmall-onnx  --online-model-dir damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-online-onnx  --punc-dir damo/punc_ct-transformer_zh-cn-common-vad_realtime-vocab272727-onnx --lm-dir damo/speech_ngram_lm_zh-cn-ai-wesp-fst --itn-dir thuduj12/fst_itn_zh --hotword /workspace/models/hotwords.txt > log.txt 2>&1 &
+    # Then run the fifth command：tail -f log.txt
+    # Wait for model download logs; connect after the downloads finish.
+    # The commands above use CPU inference; for GPU guidance, see：https://github.com/modelscope/FunASR/blob/main/runtime/docs/SDK_advanced_guide_online_zh.md
     type: fun_server
     host: 127.0.0.1
     port: 10096
@@ -381,92 +381,92 @@ ASR:
     api_key: none
     output_dir: tmp/
   SherpaASR:
-    # Sherpa-ONNX 本地语音识别（需手动下载模型）
+    # Sherpa-ONNX local ASR (download model manually)
     type: sherpa_onnx_local
     model_dir: models/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-2024-07-17
     output_dir: tmp/
-    # 模型类型：sense_voice (多语言) 或 paraformer (中文专用)
+    # Models: sense_voice (multilingual) or paraformer (Chinese only)
     model_type: sense_voice
   SherpaParaformerASR:
-    # 中文语音识别模型，可以运行在低性能设备（需手动下载模型，例如RK3566-2g）
-    # 详细配置说明请参考：docs/sherpa-paraformer-guide.md
+    # Chinese ASR can run on modest hardware, e.g. RK3566 2GB (download model manually).
+    # See detailed configuration guide：docs/sherpa-paraformer-guide.md
     type: sherpa_onnx_local
     model_dir: models/sherpa-onnx-paraformer-zh-small-2024-03-09
     output_dir: tmp/
     model_type: paraformer
   DoubaoASR:
-    # 可以在这里申请相关Key等信息
+    # Obtain credentials here
     # https://console.volcengine.com/speech/app
-    # DoubaoASR和DoubaoStreamASR的区别是：DoubaoASR是按次收费，DoubaoStreamASR是按时收费
-    # 一般来说按次收费的更便宜，但是DoubaoStreamASR使用了大模型技术，效果更好
+    # DoubaoASR is billed per request; DoubaoStreamASR is billed by duration.
+    # Per-request billing can be cheaper, but DoubaoStreamASR may offer better recognition.
     type: doubao
     appid: 你的火山引擎语音合成服务appid
     access_token: 你的火山引擎语音合成服务access_token
     cluster: volcengine_input_common
-    # 热词、替换词使用流程：https://www.volcengine.com/docs/6561/155738
+    # Hotword and replacement-word setup：https://www.volcengine.com/docs/6561/155738
     boosting_table_name: （选填）你的热词文件名称
     correct_table_name: （选填）你的替换词文件名称
     output_dir: tmp/
   DoubaoStreamASR:
-    # 可以在这里申请相关Key等信息
+    # Obtain credentials here
     # https://console.volcengine.com/speech/app
-    # DoubaoASR和DoubaoStreamASR的区别是：DoubaoASR是按次收费，DoubaoStreamASR是按时收费
-    # 开通地址https://console.volcengine.com/speech/service/10011
-    # 一般来说按次收费的更便宜，但是DoubaoStreamASR使用了大模型技术，效果更好
+    # DoubaoASR is billed per request; DoubaoStreamASR is billed by duration.
+    # Activation URLhttps://console.volcengine.com/speech/service/10011
+    # Per-request billing can be cheaper, but DoubaoStreamASR may offer better recognition.
     type: doubao_stream
     appid: 你的火山引擎语音合成服务appid
     access_token: 你的火山引擎语音合成服务access_token
-    # 资源ID：小时版 volc.bigasr.sauc.duration，并发版 volc.bigasr.sauc.concurrent
+    # Resource ID: duration plan volc.bigasr.sauc.duration，concurrency plan volc.bigasr.sauc.concurrent
     resource_id: volc.bigasr.sauc.duration
-    # 热词、替换词使用流程：https://www.volcengine.com/docs/6561/155738
+    # Hotword and replacement-word setup：https://www.volcengine.com/docs/6561/155738
     boosting_table_name: （选填）你的热词文件名称
     correct_table_name: （选填）你的替换词文件名称
-    # 是否开启多语种识别模式
+    # Whether to enable multilingual recognition
     enable_multilingual: False
-    # 多语种识别当该键为空时，该模型支持中英文、上海话、闽南语，四川、陕西、粤语识别。当将其设置为特定键时，它可以识别指定语言。
-    # 详细语言列表参考 https://www.volcengine.com/docs/6561/1354869
+    # When unset, recognizes Chinese, English, Shanghainese, Minnan, Sichuanese, Shaanxi and Cantonese; specify a language to restrict recognition.
+    # See supported languages https://www.volcengine.com/docs/6561/1354869
     # language: zh-cn
-    # 静音判定时长(ms)，默认200ms
+    # Silence threshold in milliseconds (default 200 ms)
     end_window_size: 200
     output_dir: tmp/
   DoubaoStreamASRV2:
-    # 豆包语音识别模型2.0（基于火山引擎seed-asr）
-    # 开通地址：https://console.volcengine.com/speech/service/10038
-    # 价格更为便宜，建议在高并发场景下使用
+    # Doubao Speech Recognition 2.0 (Volcengine seed-asr)
+    # Activation URL：https://console.volcengine.com/speech/service/10038
+    # More economical; recommended for high-concurrency workloads.
     type: doubao_stream
     appid: 你的火山引擎语音合成服务appid
     access_token: 你的火山引擎语音合成服务access_token
-    # 资源ID：小时版 volc.seedasr.sauc.duration，并发版 volc.seedasr.sauc.concurrent
+    # Resource ID: duration plan volc.seedasr.sauc.duration，concurrency plan volc.seedasr.sauc.concurrent
     resource_id: volc.seedasr.sauc.duration
-    # 热词、替换词使用流程：https://www.volcengine.com/docs/6561/155738
+    # Hotword and replacement-word setup：https://www.volcengine.com/docs/6561/155738
     boosting_table_name: （选填）你的热词文件名称
     correct_table_name: （选填）你的替换词文件名称
-    # 是否开启多语种识别模式
+    # Whether to enable multilingual recognition
     enable_multilingual: False
-    # 多语种识别当该键为空时，该模型支持中英文、上海话、闽南语，四川、陕西、粤语识别。当将其设置为特定键时，它可以识别指定语言。
-    # 详细语言列表参考 https://www.volcengine.com/docs/6561/1354869
+    # When unset, recognizes Chinese, English, Shanghainese, Minnan, Sichuanese, Shaanxi and Cantonese; specify a language to restrict recognition.
+    # See supported languages https://www.volcengine.com/docs/6561/1354869
     # language: zh-cn
-    # 静音判定时长(ms)，默认200ms
+    # Silence threshold in milliseconds (default 200 ms)
     end_window_size: 200
     output_dir: tmp/
   TencentASR:
-    # token申请地址：https://console.cloud.tencent.com/cam/capi
-    # 免费领取资源：https://console.cloud.tencent.com/asr/resourcebundle
+    # Request an access token：https://console.cloud.tencent.com/cam/capi
+    # Free resource allocation：https://console.cloud.tencent.com/asr/resourcebundle
     type: tencent
     appid: 你的腾讯语音合成服务appid
     secret_id: 你的腾讯语音合成服务secret_id
     secret_key: 你的腾讯语音合成服务secret_key
     output_dir: tmp/
   AliyunASR:
-    # 阿里云智能语音交互服务，需要先在阿里云平台开通服务，然后获取验证信息
-    # HTTP POST请求，一次性处理完整音频
-    # 平台地址：https://nls-portal.console.aliyun.com/
-    # appkey地址：https://nls-portal.console.aliyun.com/applist
-    # token地址：https://nls-portal.console.aliyun.com/overview
-    # AliyunASR和AliyunStreamASR的区别是：AliyunASR是批量处理场景，AliyunStreamASR是实时交互场景
-    # 一般来说非流式ASR更便宜（0.004元/秒，¥0.24/分钟）
-    # 但是AliyunStreamASR实时性更好（0.005元/秒，¥0.3/分钟）
-    # 定义ASR API类型
+    # Activate Alibaba Cloud speech services and obtain credentials first.
+    # HTTP POST processes complete audio in a single request.
+    # Platform URL：https://nls-portal.console.aliyun.com/
+    # App key URL：https://nls-portal.console.aliyun.com/applist
+    # Token URL：https://nls-portal.console.aliyun.com/overview
+    # AliyunASR handles batch requests; AliyunStreamASR handles real-time audio.
+    # Non-streaming ASR generally costs less (¥0.004/s or ¥0.24/min).
+    # AliyunStreamASR has lower latency (¥0.005/s or ¥0.30/min).
+    # Define ASR API type
     type: aliyun
     appkey: 你的阿里云智能语音交互服务项目Appkey
     token: 你的阿里云智能语音交互服务AccessToken，临时的24小时，要长期用下方的access_key_id，access_key_secret
@@ -474,135 +474,135 @@ ASR:
     access_key_secret: 你的阿里云账号access_key_secret
     output_dir: tmp/
   AliyunStreamASR:
-    # 阿里云智能语音交互服务 - 实时流式语音识别
-    # WebSocket连接，实时处理音频流
-    # 平台地址：https://nls-portal.console.aliyun.com/
-    # appkey地址：https://nls-portal.console.aliyun.com/applist
-    # token地址：https://nls-portal.console.aliyun.com/overview
-    # AliyunASR和AliyunStreamASR的区别是：AliyunASR是批量处理场景，AliyunStreamASR是实时交互场景
-    # 一般来说非流式ASR更便宜（0.004元/秒，¥0.24/分钟）
-    # 但是AliyunStreamASR实时性更好（0.005元/秒，¥0.3/分钟）
-    # 定义ASR API类型
+    # Alibaba Cloud real-time streaming ASR
+    # Process audio streams in real time over WebSocket
+    # Platform URL：https://nls-portal.console.aliyun.com/
+    # App key URL：https://nls-portal.console.aliyun.com/applist
+    # Token URL：https://nls-portal.console.aliyun.com/overview
+    # AliyunASR handles batch requests; AliyunStreamASR handles real-time audio.
+    # Non-streaming ASR generally costs less (¥0.004/s or ¥0.24/min).
+    # AliyunStreamASR has lower latency (¥0.005/s or ¥0.30/min).
+    # Define ASR API type
     type: aliyun_stream
     appkey: 你的阿里云智能语音交互服务项目Appkey
     token: 你的阿里云智能语音交互服务AccessToken，临时的24小时，要长期用下方的access_key_id，access_key_secret
     access_key_id: 你的阿里云账号access_key_id
     access_key_secret: 你的阿里云账号access_key_secret
-    # 服务器地域选择，可选择距离更近的服务器以减少延迟，如nls-gateway-cn-hangzhou.aliyuncs.com(杭州)等
+    # Choose the nearest regional endpoint to reduce latency, e.g. nls-gateway-cn-hangzhou.aliyuncs.com.
     host: nls-gateway-cn-shanghai.aliyuncs.com
-    # 断句检测时间(毫秒)，控制静音多长时间后进行断句，默认800毫秒
+    # Silence duration for sentence segmentation (default 800 ms).
     max_sentence_silence: 800
     output_dir: tmp/
   BaiduASR:
-    # 获取AppID、API Key、Secret Key：https://console.bce.baidu.com/ai-engine/old/#/ai/speech/app/list
-    # 查看资源额度：https://console.bce.baidu.com/ai-engine/old/#/ai/speech/overview/resource/list
+    # Get App ID, API key and secret key：https://console.bce.baidu.com/ai-engine/old/#/ai/speech/app/list
+    # Check resource quota：https://console.bce.baidu.com/ai-engine/old/#/ai/speech/overview/resource/list
     type: baidu
     app_id: 你的百度语音技术AppID
     api_key: 你的百度语音技术APIKey
     secret_key: 你的百度语音技术SecretKey
-    # 语言参数，1537为普通话，具体参考：https://ai.baidu.com/ai-doc/SPEECH/0lbxfnc9b
+    # Language parameter 1537 indicates Mandarin; see：https://ai.baidu.com/ai-doc/SPEECH/0lbxfnc9b
     dev_pid: 1537
     output_dir: tmp/
   OpenaiASR:
-    # OpenAI语音识别服务，需要先在OpenAI平台创建组织并获取api_key
-    # 支持中、英、日、韩等多种语音识别，具体参考文档https://platform.openai.com/docs/guides/speech-to-text
-    # 需要网络连接
-    # 申请步骤：
-    # 1.登录OpenAI Platform。https://auth.openai.com/log-in
-    # 2.创建api-key  https://platform.openai.com/settings/organization/api-keys
-    # 3.模型可以选择gpt-4o-transcribe或GPT-4o mini Transcribe
+    # OpenAI speech recognition requires an API key.
+    # Supports Chinese, English, Japanese, Korean and more; see documentationhttps://platform.openai.com/docs/guides/speech-to-text
+    # Internet connection required
+    # Setup steps：
+    # 1. Sign in to OpenAI Platform。https://auth.openai.com/log-in
+    # 2. Create an API key  https://platform.openai.com/settings/organization/api-keys
+    # 3. Choose gpt-4o-transcribe or GPT-4o mini Transcribe
     type: openai
     api_key: 你的OpenAI API密钥
     base_url: https://api.openai.com/v1/audio/transcriptions
     model_name: gpt-4o-mini-transcribe
     output_dir: tmp/
   GroqASR:
-    # Groq语音识别服务，需要先在Groq Console创建API密钥
-    # 申请步骤：
-    # 1.登录groq Console。https://console.groq.com/home
-    # 2.创建api-key  https://console.groq.com/keys
-    # 3.模型可以选择whisper-large-v3-turbo或whisper-large-v3（distil-whisper-large-v3-en仅支持英语转录）
+    # Groq ASR requires an API key from Groq Console
+    # Setup steps：
+    # 1. Sign in to Groq Console。https://console.groq.com/home
+    # 2. Create an API key  https://console.groq.com/keys
+    # 3. Choose whisper-large-v3-turbo or whisper-large-v3 (distil-whisper-large-v3-en only supports English).
     type: openai
     api_key: 你的Groq API密钥
     base_url: https://api.groq.com/openai/v1/audio/transcriptions
     model_name: whisper-large-v3-turbo
     output_dir: tmp/
   VoskASR:
-    # 官方网站：https://alphacephei.com/vosk/
-    # 配置说明：
-    # 1. VOSK是一个离线语音识别库，支持多种语言
-    # 2. 需要先下载模型文件：https://alphacephei.com/vosk/models
-    # 3. 中文模型推荐使用vosk-model-small-cn-0.22或vosk-model-cn-0.22
-    # 4. 完全离线运行，无需网络连接
-    # 5. 输出文件保存在tmp/目录
-    # 使用步骤：
-    # 1. 访问 https://alphacephei.com/vosk/models 下载对应的模型
-    # 2. 解压模型文件到项目目录下的models/vosk/文件夹
-    # 3. 在配置中指定正确的模型路径
-    # 4. 注意：VOSK中文模型输出不带标点符号，词与词之间会有空格
+    # Official website：https://alphacephei.com/vosk/
+    # Configuration instructions：
+    # 1. VOSK is an offline ASR library supporting multiple languages.
+    # 2. Download a model：https://alphacephei.com/vosk/models
+    # 3. For Chinese, use vosk-model-small-cn-0.22 or vosk-model-cn-0.22.
+    # 4. Runs fully offline.
+    # 5. Outputs are saved under tmp/.
+    # Usage instructions：
+    # 1. Visit https://alphacephei.com/vosk/models to download the appropriate model
+    # 2. Extract the model into models/vosk/.
+    # 3. Set model_path to the extracted model.
+    # 4. Note: Chinese VOSK outputs have no punctuation and include spaces between words.
     type: vosk
     model_path: 你的模型路径，如：models/vosk/vosk-model-small-cn-0.22
     output_dir: tmp/
   Qwen3ASRFlash:
-    # 通义千问Qwen3-ASR-Flash语音识别服务，需要先在阿里云百炼平台创建API密钥
-    # 申请步骤：
-    # 1.登录阿里云百炼平台。https://bailian.console.aliyun.com/
-    # 2.创建API-KEY  https://bailian.console.aliyun.com/#/api-key
-    # 3.Qwen3-ASR-Flash基于通义千问多模态基座，支持多语言识别、歌唱识别、噪声拒识等功能
+    # Qwen3-ASR-Flash requires an Alibaba Cloud Bailian API key.
+    # Setup steps：
+    # 1. Sign in to Alibaba Cloud Bailian。https://bailian.console.aliyun.com/
+    # 2. Create API key  https://bailian.console.aliyun.com/#/api-key
+    # 3. Qwen3-ASR-Flash supports multiple languages, singing and noise rejection.
     type: qwen3_asr_flash
     api_key: 你的阿里云百炼API密钥
     base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
     model_name: qwen3-asr-flash
     output_dir: tmp/
-    # ASR选项配置
-    enable_lid: true  # 自动语种检测
-    enable_itn: true  # 逆文本归一化
-    #language: "zh"  # 语种，支持zh、en、ja、ko等
-    context: ""  # 上下文信息，用于提高识别准确率，不超过10000 Token
+    # ASR options
+    enable_lid: true  # Automatic language detection
+    enable_itn: true  # Inverse text normalization
+    #language: "zh"  # Language supports zh, en, ja, ko, etc.
+    context: ""  # Optional context to improve ASR (up to 10,000 tokens).
   XunfeiStreamASR:
-    # 讯飞流式语音识别服务
-    # 需要先在讯飞开放平台创建应用，获取以下认证信息
-    # 讯飞开放平台地址：https://www.xfyun.cn/
-    # 创建应用后，在"我的应用"中获取：
+    # iFlytek streaming ASR
+    # Create an application in iFlytek Open Platform to get credentials.
+    # iFlytek Open Platform URL：https://www.xfyun.cn/
+    # After creating an app, get credentials from My Applications:：
     # - APPID
     # - APISecret  
     # - APIKey
     type: xunfei_stream
-    # 必填参数 - 讯飞开放平台应用信息
+    # Required iFlytek app credentials
     app_id: 你的APPID
     api_key: 你的APIKey
     api_secret: 你的APISecret
-    # 识别参数配置
-    domain: slm # 识别领域，iat:日常用语，medical:医疗，finance:金融等
-    language: zh_cn # 语言，zh_cn:中文，en_us:英文
-    accent: mandarin # 方言，mandarin:普通话
-    # 调整音频处理参数以提高长语音识别质量
+    # Recognition settings
+    domain: slm # Domain: iat (general), medical, finance, etc.
+    language: zh_cn # Language: zh_cn Chinese, en_us English
+    accent: mandarin # Dialect: mandarin
+    # Adjust audio processing for long speech.
     output_dir: tmp/
   AliyunBLStreamASR:
-    # 阿里百炼Paraformer实时语音识别服务
-    # WebSocket实时流式语音识别，支持多语言、热词定制、语义断句等高级功能
-    # 平台地址：https://bailian.console.aliyun.com/
-    # API Key地址：https://bailian.console.aliyun.com/#/api-key
-    # 文档地址：https://help.aliyun.com/zh/model-studio/websocket-for-paraformer-real-time-service
-    # 支持模型：paraformer-realtime-v2(推荐), paraformer-realtime-8k-v2, paraformer-realtime-v1, paraformer-realtime-8k-v1
+    # Alibaba Bailian Paraformer real-time ASR
+    # Real-time streaming ASR supporting multiple languages, hotwords and semantic segmentation.
+    # Platform URL：https://bailian.console.aliyun.com/
+    # API key URL：https://bailian.console.aliyun.com/#/api-key
+    # Documentation URL：https://help.aliyun.com/zh/model-studio/websocket-for-paraformer-real-time-service
+    # Supported models: paraformer-realtime-v2 (recommended), paraformer-realtime-8k-v2, paraformer-realtime-v1, paraformer-realtime-8k-v1
     type: aliyunbl_stream
-    # 必填参数
+    # Required settings
     api_key: 你的阿里云百炼API密钥
-    # 模型选择，推荐使用v2版本
+    # Model selection; v2 recommended
     model: paraformer-realtime-v2
-    # 音频格式和采样率
+    # Audio format and sampling rate
     format: pcm
-    sample_rate: 16000  # v2支持任意采样率，v1仅支持16000，8k版本仅支持8000
-    # 可选参数
-    disfluency_removal_enabled: false  # 是否过滤语气词(如"嗯"、"啊"等)
-    semantic_punctuation_enabled: false  # 语义断句(true:会议场景,准确;false:VAD断句,交互场景,低延迟)
-    max_sentence_silence: 200  # VAD断句静音时长阈值(ms)，范围200-6000，仅VAD断句时生效
-    multi_threshold_mode_enabled: false  # 防止VAD断句切割过长，仅VAD断句时生效
-    punctuation_prediction_enabled: true  # 是否自动添加标点符号
+    sample_rate: 16000  # v2 supports arbitrary sample rates; v1 supports 16000, and 8k models support 8000.
+    # Optional参数
+    disfluency_removal_enabled: false  # Remove filler words like uh, um
+    semantic_punctuation_enabled: false  # Semantic segmentation: true for meetings, false for lower-latency VAD
+    max_sentence_silence: 200  # VAD silence threshold in ms (200–6000), for VAD mode only
+    multi_threshold_mode_enabled: false  # Prevent overly long VAD chunks; applies to VAD mode only
+    punctuation_prediction_enabled: true  # Whether to add punctuation automatically
     inverse_text_normalization_enabled: true  # 是否开启ITN(中文数字转阿拉伯数字)
-    # 热词定制文档地址：https://help.aliyun.com/zh/model-studio/custom-hot-words?
-    # vocabulary_id: vocab-xxx-24ee19fa8cfb4d52902170a0xxxxxxxx  # 热词ID(可选)
-    # language_hints: ["zh", "en"]  # 指定语言(可选)，支持zh、en、ja、yue、ko、de、fr、ru
+    # 热词定制Documentation URL：https://help.aliyun.com/zh/model-studio/custom-hot-words?
+    # vocabulary_id: vocab-xxx-24ee19fa8cfb4d52902170a0xxxxxxxx  # 热词ID(Optional)
+    # language_hints: ["zh", "en"]  # 指定语言(Optional)，支持zh、en、ja、yue、ko、de、fr、ru
     output_dir: tmp/  
 VAD:
   SileroVAD:
@@ -642,7 +642,7 @@ LLM:
     # 定义LLM API类型
     type: openai
     # 先开通服务，打开以下网址，开通的服务搜索Doubao-Seed-2.0-Lite，开通它
-    # 开通地址：https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement?LLM=%7B%7D&OpenTokenDrawer=false
+    # Activation URL：https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement?LLM=%7B%7D&OpenTokenDrawer=false
     # 免费额度500000token
     # 开通后，进入这里获取密钥：https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey?apikey=%7B%7D
     base_url: https://ark.cn-beijing.volces.com/api/v3
