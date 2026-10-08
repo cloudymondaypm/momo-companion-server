@@ -408,8 +408,8 @@ ASR:
     access_token: YOUR_ACCESS_TOKEN_HERE
     cluster: volcengine_input_common
     # Hotword and replacement-word setup：https://www.volcengine.com/docs/6561/155738
-    boosting_table_name: （选填）你的热词文件名称
-    correct_table_name: （选填）你的替换词文件名称
+    boosting_table_name: YOUR_OPTIONAL_HOTWORD_TABLE
+    correct_table_name: YOUR_OPTIONAL_REPLACEMENT_TABLE
     output_dir: tmp/
   DoubaoStreamASR:
     # Obtain credentials here
@@ -423,8 +423,8 @@ ASR:
     # Resource ID: duration plan volc.bigasr.sauc.duration，concurrency plan volc.bigasr.sauc.concurrent
     resource_id: volc.bigasr.sauc.duration
     # Hotword and replacement-word setup：https://www.volcengine.com/docs/6561/155738
-    boosting_table_name: （选填）你的热词文件名称
-    correct_table_name: （选填）你的替换词文件名称
+    boosting_table_name: YOUR_OPTIONAL_HOTWORD_TABLE
+    correct_table_name: YOUR_OPTIONAL_REPLACEMENT_TABLE
     # Whether to enable multilingual recognition
     enable_multilingual: False
     # When unset, recognizes Chinese, English, Shanghainese, Minnan, Sichuanese, Shaanxi and Cantonese; specify a language to restrict recognition.
@@ -443,8 +443,8 @@ ASR:
     # Resource ID: duration plan volc.seedasr.sauc.duration，concurrency plan volc.seedasr.sauc.concurrent
     resource_id: volc.seedasr.sauc.duration
     # Hotword and replacement-word setup：https://www.volcengine.com/docs/6561/155738
-    boosting_table_name: （选填）你的热词文件名称
-    correct_table_name: （选填）你的替换词文件名称
+    boosting_table_name: YOUR_OPTIONAL_HOTWORD_TABLE
+    correct_table_name: YOUR_OPTIONAL_REPLACEMENT_TABLE
     # Whether to enable multilingual recognition
     enable_multilingual: False
     # When unset, recognizes Chinese, English, Shanghainese, Minnan, Sichuanese, Shaanxi and Cantonese; specify a language to restrict recognition.
