@@ -45,7 +45,7 @@ class ManageApiClient:
         if not cls.config.get("url") or not cls.config.get("secret"):
             raise Exception("Invalid manager-api URL or secret")
 
-        if "你" in cls.config.get("secret", "") or cls.config.get("secret", "").lower().startswith(("your-", "your ")):
+        if "你" in cls.config.get("secret", "") or cls.config.get("secret", "").lower().startswith(("your-", "your ", "your_")):
             raise Exception("Configure manager-api.secret first")
 
         cls._secret = cls.config.get("secret")
