@@ -13,7 +13,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Get voice resource listfailed:', err);
+                console.error('Get voice resource list failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.getVoiceResourceList(params, callback);
                 });
@@ -29,7 +29,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Get voice resource informationfailed:', err);
+                console.error('Get voice resource information failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.getVoiceResourceInfo(id, callback);
                 });
@@ -46,7 +46,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Save voice resourcefailed:', err);
+                console.error('Save voice resource failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.saveVoiceResource(entity, callback);
                 });
@@ -62,7 +62,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Delete voice resourcefailed:', err);
+                console.error('Delete voice resource failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.deleteVoiceResource(ids, callback);
                 });
@@ -78,7 +78,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Get user voice resource listfailed:', err);
+                console.error('Get user voice resource list failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.getVoiceResourceByUserId(userId, callback);
                 });
@@ -94,7 +94,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Get TTS platform listfailed:', err);
+                console.error('Get TTS platform list failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.getTtsPlatformList(callback);
                 });
