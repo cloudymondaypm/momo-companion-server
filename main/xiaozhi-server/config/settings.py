@@ -12,23 +12,23 @@ def check_config_file():
     if config_file_valid:
         return
     """
-    简化的配置检查，仅提示用户配置文件的使用情况
+    Simple configuration check to explain how the configuration file is used
     """
     custom_config_file = get_project_dir() + "data/." + default_config_file
     if not os.path.exists(custom_config_file):
         raise FileNotFoundError(
-            "找不到data/.config.yaml文件，请按教程确认该配置文件是否存在"
+            "Cannot find data/.config.yaml. Confirm the configuration file exists as described in the setup guide."
         )
 
-    # 检查是否从API读取配置
+    # Check whether configuration is loaded from the API
     config = asyncio.run(load_config())
     if config.get("read_config_from_api", False):
-        print("从API读取配置")
+        print("Loading configuration from the API")
         old_config_origin = read_config(custom_config_file)
         if old_config_origin.get("selected_module") is not None:
-            error_msg = "您的配置文件好像既包含智控台的配置又包含本地配置：\n"
-            error_msg += "\n建议您：\n"
-            error_msg += "1、将根目录的config_from_api.yaml文件复制到data下，重命名为.config.yaml\n"
-            error_msg += "2、按教程配置好接口地址和密钥\n"
+            error_msg = "Your config file contains settings for both the management console and local configuration:\n"
+            error_msg += "\nRecommended action:\n"
+            error_msg += "1. Copy config_from_api.yaml from the project root to data/.config.yaml\n"
+            error_msg += "2. Configure the API URL and secret according to the setup guide\n"
             raise ValueError(error_msg)
     config_file_valid = True
