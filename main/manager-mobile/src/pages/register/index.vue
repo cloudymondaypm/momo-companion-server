@@ -3,7 +3,7 @@
   "layout": "default",
   "style": {
     "navigationStyle": "custom",
-    "navigationBarTitleText": "注册"
+    "navigationBarTitleText": "Register"
   }
 }
 </route>
@@ -79,7 +79,7 @@ const configStore = useConfigStore()
 // 区号选择相关
 const showAreaCodeSheet = ref(false)
 const selectedAreaCode = ref('+86')
-const selectedAreaName = ref('中国大陆')
+const selectedAreaName = ref('Mainland China')
 
 // 计算属性：是否启用手机号注册
 const enableMobileRegister = computed(() => {
@@ -88,7 +88,7 @@ const enableMobileRegister = computed(() => {
 
 // 计算属性：区号列表
 const areaCodeList = computed(() => {
-  return configStore.config.mobileAreaList || [{ name: '中国大陆', key: '+86' }]
+  return configStore.config.mobileAreaList || [{ name: 'Mainland China', key: '+86' }]
 })
 
 // SM2公钥
@@ -178,7 +178,7 @@ async function sendSmsVerification() {
   }
   catch (error: any) {
     // 处理验证码错误 - 从error.message中解析错误码
-    if (error.message.includes('请求错误[10067]')) {
+    if (error.message.includes('[10067]')) {
       toast.warning(t('login.captchaError'))
     }
     // 发送失败重新获取图形验证码
@@ -254,7 +254,7 @@ async function handleRegister() {
       encryptedPassword = sm2Encrypt(sm2PublicKey.value, captchaAndPassword)
     }
     catch (error) {
-      console.error('密码加密失败:', error)
+      console.error('Password encryption failed:', error)
       toast.warning(t('sm2.encryptionFailed'))
       return
     }
@@ -281,11 +281,11 @@ async function handleRegister() {
   }
   catch (error: any) {
     // 处理验证码错误 - 从error.message中解析错误码
-    if (error.message.includes('请求错误[10067]')) {
+    if (error.message.includes('[10067]')) {
       toast.warning(t('login.captchaError'))
     }
     // 处理手机号码已注册错误
-    else if (error.message.includes('请求错误[10070]')) {
+    else if (error.message.includes('[10070]')) {
       toast.warning(t('message.phoneRegistered'))
     }
     // 注册失败重新获取验证码
@@ -315,7 +315,7 @@ onMounted(async () => {
       await configStore.fetchPublicConfig()
     }
     catch (error) {
-      console.error('获取配置失败:', error)
+      console.error('Failed to retrieve configuration:', error)
     }
   }
   // 初始化国际化
