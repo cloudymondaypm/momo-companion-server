@@ -1,54 +1,44 @@
-# 基于虾哥编译好的固件配置自定义服务器
+# Point Existing Xiaozhi Firmware to a Custom Server
 
-## 第1步 确认版本
-烧录虾哥已经编译好的[1.6.1版本以上固件](https://github.com/78/xiaozhi-esp32/releases)
+## Step 1. Confirm firmware version
 
-## 第2步 准备你的ota地址
-如果你按照教程使用的是全模块部署，就应该会有ota地址。
+Flash [Xiaozhi firmware version 1.6.1 or newer](https://github.com/78/xiaozhi-esp32/releases), as provided by the upstream device project.
 
-此刻，请你用浏览器打开你的ota地址，例如我的ota地址
-```
-https://2662r3426b.vicp.fun/xiaozhi/ota/
-```
+## Step 2. Check your OTA address
 
-如果显示“OTA接口运行正常，websocket集群数量：X”。那就往下。
+If you deployed the full management system, your server should expose an OTA endpoint. Open that endpoint in your browser, for example:
 
-如果显示“OTA接口运行不正常”，大概是你还没在`智控台`配置`Websocket`地址。那就：
-
-- 1、使用超级管理员登录智控台
-
-- 2、顶部菜单点击`参数管理`
-
-- 3、在列表中找到`server.websocket`项目，输入你的`Websocket`地址。例如我的就是
-
-```
-wss://2662r3426b.vicp.fun/xiaozhi/v1/
+```text
+https://your-domain.example/xiaozhi/ota/
 ```
 
-配置完后，再使用浏览器刷新你的ota接口地址，看看是不是正常了。如果还不正常就，就再次确认一下Websocket是否正常启动，是否配置了Websocket地址。
+If the response indicates that the OTA endpoint is healthy and shows a WebSocket cluster count, proceed to Step 3.
 
-## 第3步 进入配网模式
-进入机器的配网模式，在页面顶部，点击“高级选项”，在里面输入你服务器的`ota`地址，点击保存。重启设备
-![请参考-OTA地址设置](../docs/images/firmware-setting-ota.png)
+If the response says an OTA setting is missing, sign in to the **management console** as a superadmin, open **Parameter Management**, and check `server.websocket`. Enter the public WebSocket endpoint, for example:
 
-## 第4步 唤醒小智，查看日志输出
+```text
+wss://your-domain.example/xiaozhi/v1/
+```
 
-唤醒小智，看看日志是不是正常输出。
+Refresh the OTA endpoint. If it still reports a problem, make sure the WebSocket server is running and that the configured URL is reachable from the device.
 
+## Step 3. Enter Wi-Fi provisioning mode
 
-## 常见问题
-以下是一些常见问题，供参考：
+Put the device into provisioning mode. Under **Advanced Options**, enter your server's OTA URL, save the settings, and restart the device.
 
-[1、为什么我说的话，小智识别出来很多韩文、日文、英文](./FAQ.md)
+![OTA URL configuration](images/firmware-setting-ota.png)
 
-[2、为什么会出现“TTS 任务出错 文件不存在”？](./FAQ.md)
+## Step 4. Wake the assistant and verify logs
 
-[3、TTS 经常失败，经常超时](./FAQ.md)
+Wake the device and check that the server logs show a successful connection and conversation requests.
 
-[4、使用Wifi能连接自建服务器，但是4G模式却接不上](./FAQ.md)
+## Common questions
 
-[5、如何提高小智对话响应速度？](./FAQ.md)
+See [Frequently Asked Questions](FAQ.md) for fixes to:
 
-[6、我说话很慢，停顿时小智老是抢话](./FAQ.md)
-
-[7、我想通过小智控制电灯、空调、远程开关机等操作](./FAQ.md)
+- Speech detected as the wrong language
+- Missing TTS files or TTS timeouts
+- Wi-Fi connections working while 4G connections fail
+- Slow responses
+- Voice activity detection interrupting long pauses
+- Smart home device control and extensions
