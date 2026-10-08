@@ -1,77 +1,77 @@
 import BlockingQueue from '../../utils/blocking-queue.js?v=0205';
 import { log } from '../../utils/logger.js?v=0205';
 
-// 音频流播放上下文类
+// Audio streaming playback context
 export class StreamingContext {
     constructor(opusDecoder, audioContext, sampleRate, channels, minAudioDuration) {
         this.opusDecoder = opusDecoder;
         this.audioContext = audioContext;
 
-        // 音频参数
+        // Audio parameters
         this.sampleRate = sampleRate;
         this.channels = channels;
         this.minAudioDuration = minAudioDuration;
 
-        // 初始化队列和状态
-        this.queue = [];          // 已解码的PCM队列。正在播放
-        this.activeQueue = new BlockingQueue(); // 已解码的PCM队列。准备播放
-        this.pendingAudioBufferQueue = [];  // 待处理的缓存队列
-        this.audioBufferQueue = new BlockingQueue();  // 缓存队列
-        this.playing = false;     // 是否正在播放
-        this.endOfStream = false; // 是否收到结束信号
-        this.source = null;       // 当前音频源
-        this.totalSamples = 0;    // 累积的总样本数
-        this.lastPlayTime = 0;    // 上次播放的时间戳
-        this.scheduledEndTime = 0; // 已调度音频的结束时间
+        // Initialize queues and state
+        this.queue = [];          // Decoded PCM queue currently playing
+        this.activeQueue = new BlockingQueue(); // Decoded PCM queue ready for playback
+        this.pendingAudioBufferQueue = [];  // Pending buffer queue
+        this.audioBufferQueue = new BlockingQueue();  // Buffer queue
+        this.playing = false;     // Whether playback is active
+        this.endOfStream = false; // Whether end-of-stream was received
+        this.source = null;       // Current audio source
+        this.totalSamples = 0;    // Total accumulated samples
+        this.lastPlayTime = 0;    // Last playback timestamp
+        this.scheduledEndTime = 0; // End time of scheduled audio
 
-        // 初始化分析器节点（供Live2D使用）
+        // Initialize audio analyzer for Live2D
         this.analyser = this.audioContext.createAnalyser();
         this.analyser.fftSize = 256;
     }
 
-    // 缓存音频数组
+    // Buffer audio packets
     pushAudioBuffer(item) {
         this.audioBufferQueue.enqueue(...item);
     }
 
-    // 获取需要处理缓存队列，单线程：在audioBufferQueue一直更新的状态下不会出现安全问题
+    // Get pending buffer queue; single-threaded updates avoid races
     async getPendingAudioBufferQueue() {
-        // 等待数据到达并获取
+        // Wait for data and retrieve it
         const data = await this.audioBufferQueue.dequeue();
-        // 赋值给待处理队列
+        // Assign to pending queue
         this.pendingAudioBufferQueue = data;
     }
 
-    // 获取正在播放已解码的PCM队列，单线程：在activeQueue一直更新的状态下不会出现安全问题
+    // Get decoded PCM playback queue; single-threaded updates avoid races
     async getQueue(minSamples) {
         const num = minSamples - this.queue.length > 0 ? minSamples - this.queue.length : 1;
 
-        // 等待数据并获取
+        // Wait for and retrieve data
         const tempArray = await this.activeQueue.dequeue(num);
         this.queue.push(...tempArray);
     }
 
-    // 将Int16音频数据转换为Float32音频数据
+    // Convert Int16 audio to Float32
     convertInt16ToFloat32(int16Data) {
         const float32Data = new Float32Array(int16Data.length);
         for (let i = 0; i < int16Data.length; i++) {
-            // 将[-32768,32767]范围转换为[-1,1]，统一使用32768.0避免不对称失真
+            // Map Int16 range to [-1, 1] using 32768.0 to avoid asymmetrical distortion
             float32Data[i] = int16Data[i] / 32768.0;
         }
         return float32Data;
     }
 
-    // 获取待解码包数
+    // Count packets pending decoding
     getPendingDecodeCount() {
         return this.audioBufferQueue.length + this.pendingAudioBufferQueue.length;
     }
 
-    // 获取待播放样本数（转换为包数，每包960样本）
+    // Count queued playback samples (converted to 960-sample packets)
     getPendingPlayCount() {
-        // 计算已在队列中的样本
+        // Calculate samples currently queued
         const queuedSamples = this.activeQueue.length + this.queue.length;
 
-        // 计算已调度但未播放的样本（在Web Audio缓冲区中）
+        // Calculate scheduled but unplayed samples in Web Audio buffer
         let scheduledSamples = 0;
         if (this.playing && this.scheduledEndTime) {
             const currentTime = this.audioContext.currentTime;
@@ -83,96 +83,96 @@ export class StreamingContext {
         return Math.ceil(totalSamples / 960);
     }
 
-    // 清空所有音频缓冲
+    // Clear all audio buffers
     clearAllBuffers() {
-        log('清空所有音频缓冲', 'info');
+        log('Clear all audio buffers', 'info');
 
-        // 清空所有队列（使用clear方法保持对象引用）
+        // Clear queues while preserving references
         this.audioBufferQueue.clear();
         this.pendingAudioBufferQueue = [];
         this.activeQueue.clear();
         this.queue = [];
 
-        // 停止当前播放的音频源
+        // Stop current audio source
         if (this.source) {
             try {
                 this.source.stop();
                 this.source.disconnect();
             } catch (e) {
-                // 忽略已经停止的错误
+                // Ignore errors for already stopped sources
             }
             this.source = null;
         }
 
-        // 重置状态
+        // Reset state
         this.playing = false;
         this.scheduledEndTime = this.audioContext.currentTime;
         this.totalSamples = 0;
 
-        log('音频缓冲已清空', 'success');
+        log('Audio buffer cleared', 'success');
     }
 
-    // 获取分析器节点（供Live2D使用）
+    // Get analyzer node for Live2D
     getAnalyser() {
         return this.analyser;
     }
 
-    // 将Opus数据解码为PCM
+    // Decode Opus data to PCM
     async decodeOpusFrames() {
         if (!this.opusDecoder) {
-            log('Opus解码器未初始化，无法解码', 'error');
+            log('Opus decoder is uninitialized; cannot decode', 'error');
             return;
         } else {
-            log('Opus解码器启动', 'info');
+            log('Opus decoder started', 'info');
         }
 
         while (true) {
             let decodedSamples = [];
             for (const frame of this.pendingAudioBufferQueue) {
                 try {
-                    // 使用Opus解码器解码
+                    // Decode using Opus decoder
                     const frameData = this.opusDecoder.decode(frame);
                     if (frameData && frameData.length > 0) {
-                        // 转换为Float32
+                        // Convert to Float32
                         const floatData = this.convertInt16ToFloat32(frameData);
-                        // 使用循环替代展开运算符
+                        // Use loop rather than spread operator
                         for (let i = 0; i < floatData.length; i++) {
                             decodedSamples.push(floatData[i]);
                         }
                     }
                 } catch (error) {
-                    log("Opus解码失败: " + error.message, 'error');
+                    log("Opus decoding failed: " + error.message, 'error');
                 }
             }
 
             if (decodedSamples.length > 0) {
-                // 使用循环替代展开运算符
+                // Use loop rather than spread operator
                 for (let i = 0; i < decodedSamples.length; i++) {
                     this.activeQueue.enqueue(decodedSamples[i]);
                 }
                 this.totalSamples += decodedSamples.length;
             } else {
-                log('没有成功解码的样本', 'warning');
+                log('No samples decoded successfully', 'warning');
             }
             await this.getPendingAudioBufferQueue();
         }
     }
 
-    // 开始播放音频
+    // Start audio playback
     async startPlaying() {
-        this.scheduledEndTime = this.audioContext.currentTime; // 跟踪已调度音频的结束时间
+        this.scheduledEndTime = this.audioContext.currentTime; // Track scheduled audio end time
 
         while (true) {
-            // 初始缓冲：等待足够的样本再开始播放
+            // Initial buffer: wait for enough samples before playback
             const minSamples = this.sampleRate * this.minAudioDuration * 2;
             if (!this.playing && this.queue.length < minSamples) {
                 await this.getQueue(minSamples);
             }
             this.playing = true;
 
-            // 持续播放队列中的音频，每次播放一个小块
+            // Continuously play small blocks from the queue
             while (this.playing && this.queue.length > 0) {
-                // 每次播放120ms的音频（2个Opus包）
+                // Play 120 ms per chunk (two Opus packets)
                 const playDuration = 0.12;
                 const targetSamples = Math.floor(this.sampleRate * playDuration);
                 const actualSamples = Math.min(this.queue.length, targetSamples);
@@ -183,39 +183,39 @@ export class StreamingContext {
                 const audioBuffer = this.audioContext.createBuffer(this.channels, currentSamples.length, this.sampleRate);
                 audioBuffer.copyToChannel(new Float32Array(currentSamples), 0);
 
-                // 创建音频源
+                // Create audio source
                 this.source = this.audioContext.createBufferSource();
                 this.source.buffer = audioBuffer;
 
-                // 精确调度播放时间
+                // Schedule exact playback timing
                 const currentTime = this.audioContext.currentTime;
                 const startTime = Math.max(this.scheduledEndTime, currentTime);
 
-                // 连接到分析器和输出
+                // Connect to analyzer and output
                 this.source.connect(this.analyser);
                 this.source.connect(this.audioContext.destination);
 
-                log(`调度播放 ${currentSamples.length} 个样本，约 ${(currentSamples.length / this.sampleRate).toFixed(2)} 秒`, 'debug');
+                log(`Scheduling playback for ${currentSamples.length}  samples, approximately ${(currentSamples.length / this.sampleRate).toFixed(2)} seconds`, 'debug');
                 this.source.start(startTime);
 
-                // 更新下一个音频块的调度时间
+                // Update scheduled start time for next audio block
                 const duration = audioBuffer.duration;
                 this.scheduledEndTime = startTime + duration;
                 this.lastPlayTime = startTime;
 
-                // 如果队列中数据不足，等待新数据
+                // Wait for more data if queue is empty
                 if (this.queue.length < targetSamples) {
                     break;
                 }
             }
 
-            // 等待新数据
+            // Wait for new data
             await this.getQueue(minSamples);
         }
     }
 }
 
-// 创建streamingContext实例的工厂函数
+// Factory for creating streamingContext instances
 export function createStreamingContext(opusDecoder, audioContext, sampleRate, channels, minAudioDuration) {
     return new StreamingContext(opusDecoder, audioContext, sampleRate, channels, minAudioDuration);
 }
