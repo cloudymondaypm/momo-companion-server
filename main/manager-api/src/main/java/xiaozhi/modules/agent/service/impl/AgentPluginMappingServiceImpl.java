@@ -43,7 +43,7 @@ public class AgentPluginMappingServiceImpl extends CrudRepository<AgentPluginMap
         for (int i = list.size() - 1; i >= 0; i--) {
             AgentPluginMapping mapping = list.get(i);
             if (StringUtils.isBlank(mapping.getProviderCode())) {
-                // 查询知识库插件参数
+                // Query knowledge base plugin parameters
                 KnowledgeBaseEntity knowledgeBaseEntity = knowledgeBaseService.selectById(mapping.getPluginId());
                 if (knowledgeBaseEntity == null) {
                     list.remove(i);
@@ -85,9 +85,9 @@ public class AgentPluginMappingServiceImpl extends CrudRepository<AgentPluginMap
                 paramInfo.put("dataset_ids",
                         knowledgeBaseList.stream().map(KnowledgeBaseEntity::getDatasetId).toList());
 
-                String description = "如果用户询问与【"
+                String description = "If the user asks about topics covered by ["
                         + String.join(",", knowledgeBaseList.stream().map(KnowledgeBaseEntity::getName).toList())
-                        + "】涵盖的主体范围相关内容时应调用本方法，用于查询：" + String.join(",",
+                        + "] call this tool to search for relevant information: " + String.join(",",
                                 knowledgeBaseList.stream().map(KnowledgeBaseEntity::getDescription).toList());
                 paramInfo.put("description", description);
                 agentPluginMapping.setParamInfo(JsonUtils.toJsonString(paramInfo));
