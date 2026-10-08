@@ -13,7 +13,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Get voice listfailed:', err);
+                console.error('Get voice list failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.getVoiceCloneList(params, callback);
                 });
@@ -31,7 +31,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Upload audiofailed:', err);
+                console.error('Upload audio failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.uploadVoice(formData, callback);
                 });
@@ -49,7 +49,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Update namefailed:', err);
+                console.error('Update name failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.updateName(params, callback);
                 });
@@ -66,7 +66,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Get audio IDfailed:', err);
+                console.error('Get audio ID failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.getAudioId(id, callback);
                 });
@@ -98,7 +98,7 @@ export default {
                 }
             })
             .networkFail((err) => {
-                console.error('Uploadfailed:', err);
+                console.error('Upload failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.cloneAudio(params, callback, errorCallback);
                 });
