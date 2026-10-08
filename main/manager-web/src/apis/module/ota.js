@@ -13,7 +13,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Get OTA firmware listfailed:', err);
+                console.error('Get OTA firmware list failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.getOtaList(params, callback);
                 });
@@ -29,7 +29,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Get OTA firmware informationfailed:', err);
+                console.error('Get OTA firmware information failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.getOtaInfo(id, callback);
                 });
@@ -46,7 +46,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Save OTA firmware informationfailed:', err);
+                console.error('Save OTA firmware information failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.saveOta(entity, callback);
                 });
@@ -63,7 +63,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Update OTA firmware informationfailed:', err);
+                console.error('Update OTA firmware information failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.updateOta(id, entity, callback);
                 });
@@ -79,7 +79,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Delete OTA firmwarefailed:', err);
+                console.error('Delete OTA firmware failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.deleteOta(id, callback);
                 });
@@ -98,7 +98,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Upload firmware filefailed:', err);
+                console.error('Upload firmware file failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.uploadFirmware(file, callback);
                 });
@@ -114,7 +114,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Get download URLfailed:', err);
+                console.error('Get download URL failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.getDownloadUrl(id, callback);
                 });
