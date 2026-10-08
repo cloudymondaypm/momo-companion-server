@@ -93,7 +93,7 @@ export default {
                 callback(res);
             })
             .networkFail((err) => {
-                console.error('Save configurationfailed:', err);
+                console.error('Save configuration failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.saveDeviceConfig(device_id, configData, callback);
                 });
@@ -109,7 +109,7 @@ export default {
                 callback(res)
             })
             .networkFail((err) => {
-                console.error('API requestfailed:', err)
+                console.error('API request failed:', err)
                 RequestService.reAjaxFun(() => {
                     this.getUserInfo(callback)
                 })
@@ -147,7 +147,7 @@ export default {
                 successCallback(res);
             })
             .networkFail((err) => {
-                console.error('Change user statusfailed:', err)
+                console.error('Change user status failed:', err)
                 RequestService.reAjaxFun(() => {
                     this.changeUserStatus(status, userIds)
                 })
@@ -169,7 +169,7 @@ export default {
                 }
             })
             .networkFail((err) => {
-                console.error('Get public configurationfailed:', err);
+                console.error('Get public configuration failed:', err);
                 RequestService.reAjaxFun(() => {
                     this.getPubConfig(callback, failCallback);
                 });
