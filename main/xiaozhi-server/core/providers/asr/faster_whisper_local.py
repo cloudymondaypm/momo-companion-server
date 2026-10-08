@@ -17,8 +17,15 @@ class ASRProvider(ASRProviderBase):
         self.interface_type = InterfaceType.LOCAL
         self.output_dir = config.get("output_dir", "tmp/")
         self.delete_audio_file = delete_audio_file
+        configured_model = config.get("model_dir", "models/faster-whisper-small")
+        # Older database rows may point at a vanished Hugging Face cache snapshot.
+        # Prefer the stable deployment path when that persisted model is mounted.
+        persistent_model = "/opt/xiaozhi-esp32-server/models/faster-whisper-small"
+        model_dir = persistent_model if __import__("os").path.isfile(
+            __import__("os").path.join(persistent_model, "model.bin")
+        ) else configured_model
         self.model = WhisperModel(
-            config.get("model_dir", "models/faster-whisper-small"),
+            model_dir,
             device=config.get("device", "cpu"),
             compute_type=config.get("compute_type", "int8"),
         )
