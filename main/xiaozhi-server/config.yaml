@@ -17,14 +17,14 @@ server:
   # This generated URL may be inaccurate behind Docker, SSL, or a public domain.
   # For Docker, set websocket to an address accessible by your devices.
   # For public deployment, set websocket to the public URL.
-  websocket: ws://你的ip或者域名:端口号/xiaozhi/v1/
+  websocket: ws://your-host:port/xiaozhi/v1/
   # Vision analysis endpoint
   # Vision analysis URL sent to devices
   # The system generates this URL and logs it at startup; verify in your browser.
   # This generated URL may be inaccurate behind Docker, SSL, or a public domain.
   # For Docker, set vision_explain to a reachable LAN address.
   # For public deployment, set vision_explain to the public URL.
-  vision_explain: http://你的ip或者域名:端口号/mcp/vision/explain
+  vision_explain: http://your-host:port/mcp/vision/explain
   # Timezone offset in OTA responses
   timezone_offset: +8
   # Authentication settings
@@ -84,6 +84,8 @@ tts_audio_send_delay: 0
 exit_commands:
   - "退出"
   - "关闭"
+  - "exit"
+  - "quit"
 
 xiaozhi:
   type: hello
@@ -116,9 +118,11 @@ wakeup_words:
   - "喵喵同学"
   - "小滨小滨"
   - "小冰小冰"
+  - "Hey Momo"
+  - "Hello Momo"
 # MCP endpoint URL: ws://your-mcp-host:port/mcp/?token=your-token
 # Detailed guide https://github.com/xinnan-tech/xiaozhi-esp32-server/blob/main/docs/mcp-endpoint-integration.md
-mcp_endpoint: 你的接入点 websocket地址
+mcp_endpoint: YOUR_MCP_ENDPOINT_HERE
 
 # Context provider configuration
 # Inject dynamic data such as health metrics or market data into the system prompt.
@@ -138,7 +142,7 @@ plugins:
   get_weather:
     api_host: "mj7p3y7naa.re.qweatherapi.com"
     api_key: "a861d0d5e7bf4ee1a83d9a9e4f96d4da"
-    default_location: "广州"
+    default_location: "Guangzhou"
   # News plugin: provide RSS URLs by category; examples include society, technology, and finance.
   # More RSS feeds https://www.chinanews.com.cn/rss/
   get_news_from_chinanews:
@@ -154,7 +158,7 @@ plugins:
       - 客厅,玩具灯,switch.cuco_cn_460494544_cp1_on_p_2_1
       - 卧室,台灯,switch.iot_cn_831898993_socn1_on_p_2_1
     base_url: http://homeassistant.local:8123
-    api_key: 你的home assistant api访问令牌
+    api_key: YOUR_API_KEY_HERE
   play_music:
     music_dir: "./music"  # Music directory; scans this path and its subdirectories.
     music_ext: # Music file extensions; p3 is the most efficient.
@@ -191,9 +195,9 @@ voiceprint:
   url: 
   # Speaker configuration: speaker_id, name, description
   speakers:
-    - "test1,张三,张三是一个程序员"
-    - "test2,李四,李四是一个产品经理"
-    - "test3,王五,王五是一个设计师"
+    - "test1,Alex,Alex is a programmer"
+    - "test2,Jamie,Jamie is a product manager"
+    - "test3,Sam,Sam is a designer"
   # Voiceprint similarity threshold, 0.0–1.0 (default 0.4)
   # Higher values reduce false matches but may increase false rejections.
   similarity_threshold: 0.4
@@ -281,7 +285,7 @@ Intent:
     # Example plugins for weather, role switching, and news
     functions:
       - change_role
-      - web_search                  # 联网搜索
+      - web_search                  # Web search
       - get_weather
       # - search_from_ragflow
       # - get_news_from_chinanews
@@ -297,7 +301,7 @@ Memory:
     type: mem0ai
     # https://app.mem0.ai/dashboard/api-keys
     # Up to 1,000 free requests per month
-    api_key: 你的mem0ai api key
+    api_key: YOUR_API_KEY_HERE
   powermem:
     # PowerMem is an open-source agent memory system by OceanBase; it summarizes memories with a local LLM.
     # PowerMem is free; operating costs depend on your LLM and database.
@@ -316,16 +320,16 @@ Memory:
     # Qwen: https://bailian.console.aliyun.com/?apiKey=1#/api-key
     # Zhipu AI (free): https://bigmodel.cn/usercenter/proj-mgmt/apikeys
     llm:
-      provider: openai  # Optional: qwen, openai, zhipu 等
+      provider: openai  # Optional: qwen, openai, zhipu etc.
       config:
-        api_key: 你的LLM API密钥
+        api_key: YOUR_API_KEY_HERE
         model: qwen-plus
         # openai_base_url: https://api.openai.com/v1  # Optional，Custom API base URL
     # ========== Embedding Configuration ==========
     embedder:
-      provider: openai  # Optional: qwen, openai 等
+      provider: openai  # Optional: qwen, openai etc.
       config:
-        api_key: 你的嵌入模型API密钥
+        api_key: YOUR_API_KEY_HERE
         model: text-embedding-v4
         openai_base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
         # embedding_dims: 1024  # Set embedding dimension if different from 1536
@@ -400,8 +404,8 @@ ASR:
     # DoubaoASR is billed per request; DoubaoStreamASR is billed by duration.
     # Per-request billing can be cheaper, but DoubaoStreamASR may offer better recognition.
     type: doubao
-    appid: 你的火山引擎语音合成服务appid
-    access_token: 你的火山引擎语音合成服务access_token
+    appid: YOUR_APPID_HERE
+    access_token: YOUR_ACCESS_TOKEN_HERE
     cluster: volcengine_input_common
     # Hotword and replacement-word setup：https://www.volcengine.com/docs/6561/155738
     boosting_table_name: （选填）你的热词文件名称
@@ -414,8 +418,8 @@ ASR:
     # Activation URLhttps://console.volcengine.com/speech/service/10011
     # Per-request billing can be cheaper, but DoubaoStreamASR may offer better recognition.
     type: doubao_stream
-    appid: 你的火山引擎语音合成服务appid
-    access_token: 你的火山引擎语音合成服务access_token
+    appid: YOUR_APPID_HERE
+    access_token: YOUR_ACCESS_TOKEN_HERE
     # Resource ID: duration plan volc.bigasr.sauc.duration，concurrency plan volc.bigasr.sauc.concurrent
     resource_id: volc.bigasr.sauc.duration
     # Hotword and replacement-word setup：https://www.volcengine.com/docs/6561/155738
@@ -434,8 +438,8 @@ ASR:
     # Activation URL：https://console.volcengine.com/speech/service/10038
     # More economical; recommended for high-concurrency workloads.
     type: doubao_stream
-    appid: 你的火山引擎语音合成服务appid
-    access_token: 你的火山引擎语音合成服务access_token
+    appid: YOUR_APPID_HERE
+    access_token: YOUR_ACCESS_TOKEN_HERE
     # Resource ID: duration plan volc.seedasr.sauc.duration，concurrency plan volc.seedasr.sauc.concurrent
     resource_id: volc.seedasr.sauc.duration
     # Hotword and replacement-word setup：https://www.volcengine.com/docs/6561/155738
@@ -453,9 +457,9 @@ ASR:
     # Request an access token：https://console.cloud.tencent.com/cam/capi
     # Free resource allocation：https://console.cloud.tencent.com/asr/resourcebundle
     type: tencent
-    appid: 你的腾讯语音合成服务appid
-    secret_id: 你的腾讯语音合成服务secret_id
-    secret_key: 你的腾讯语音合成服务secret_key
+    appid: YOUR_APPID_HERE
+    secret_id: YOUR_SECRET_ID_HERE
+    secret_key: YOUR_SECRET_KEY_HERE
     output_dir: tmp/
   AliyunASR:
     # Activate Alibaba Cloud speech services and obtain credentials first.
@@ -468,10 +472,10 @@ ASR:
     # AliyunStreamASR has lower latency (¥0.005/s or ¥0.30/min).
     # Define ASR API type
     type: aliyun
-    appkey: 你的阿里云智能语音交互服务项目Appkey
-    token: 你的阿里云智能语音交互服务AccessToken，临时的24小时，要长期用下方的access_key_id，access_key_secret
-    access_key_id: 你的阿里云账号access_key_id
-    access_key_secret: 你的阿里云账号access_key_secret
+    appkey: YOUR_APPKEY_HERE
+    token: YOUR_TOKEN_HERE
+    access_key_id: YOUR_ACCESS_KEY_ID_HERE
+    access_key_secret: YOUR_ACCESS_KEY_SECRET_HERE
     output_dir: tmp/
   AliyunStreamASR:
     # Alibaba Cloud real-time streaming ASR
@@ -484,10 +488,10 @@ ASR:
     # AliyunStreamASR has lower latency (¥0.005/s or ¥0.30/min).
     # Define ASR API type
     type: aliyun_stream
-    appkey: 你的阿里云智能语音交互服务项目Appkey
-    token: 你的阿里云智能语音交互服务AccessToken，临时的24小时，要长期用下方的access_key_id，access_key_secret
-    access_key_id: 你的阿里云账号access_key_id
-    access_key_secret: 你的阿里云账号access_key_secret
+    appkey: YOUR_APPKEY_HERE
+    token: YOUR_TOKEN_HERE
+    access_key_id: YOUR_ACCESS_KEY_ID_HERE
+    access_key_secret: YOUR_ACCESS_KEY_SECRET_HERE
     # Choose the nearest regional endpoint to reduce latency, e.g. nls-gateway-cn-hangzhou.aliyuncs.com.
     host: nls-gateway-cn-shanghai.aliyuncs.com
     # Silence duration for sentence segmentation (default 800 ms).
@@ -497,9 +501,9 @@ ASR:
     # Get App ID, API key and secret key：https://console.bce.baidu.com/ai-engine/old/#/ai/speech/app/list
     # Check resource quota：https://console.bce.baidu.com/ai-engine/old/#/ai/speech/overview/resource/list
     type: baidu
-    app_id: 你的百度语音技术AppID
-    api_key: 你的百度语音技术APIKey
-    secret_key: 你的百度语音技术SecretKey
+    app_id: YOUR_APP_ID_HERE
+    api_key: YOUR_API_KEY_HERE
+    secret_key: YOUR_SECRET_KEY_HERE
     # Language parameter 1537 indicates Mandarin; see：https://ai.baidu.com/ai-doc/SPEECH/0lbxfnc9b
     dev_pid: 1537
     output_dir: tmp/
@@ -512,7 +516,7 @@ ASR:
     # 2. Create an API key  https://platform.openai.com/settings/organization/api-keys
     # 3. Choose gpt-4o-transcribe or GPT-4o mini Transcribe
     type: openai
-    api_key: 你的OpenAI API密钥
+    api_key: YOUR_API_KEY_HERE
     base_url: https://api.openai.com/v1/audio/transcriptions
     model_name: gpt-4o-mini-transcribe
     output_dir: tmp/
@@ -523,7 +527,7 @@ ASR:
     # 2. Create an API key  https://console.groq.com/keys
     # 3. Choose whisper-large-v3-turbo or whisper-large-v3 (distil-whisper-large-v3-en only supports English).
     type: openai
-    api_key: 你的Groq API密钥
+    api_key: YOUR_API_KEY_HERE
     base_url: https://api.groq.com/openai/v1/audio/transcriptions
     model_name: whisper-large-v3-turbo
     output_dir: tmp/
@@ -541,7 +545,7 @@ ASR:
     # 3. Set model_path to the extracted model.
     # 4. Note: Chinese VOSK outputs have no punctuation and include spaces between words.
     type: vosk
-    model_path: 你的模型路径，如：models/vosk/vosk-model-small-cn-0.22
+    model_path: YOUR_MODEL_PATH_HERE
     output_dir: tmp/
   Qwen3ASRFlash:
     # Qwen3-ASR-Flash requires an Alibaba Cloud Bailian API key.
@@ -550,7 +554,7 @@ ASR:
     # 2. Create API key  https://bailian.console.aliyun.com/#/api-key
     # 3. Qwen3-ASR-Flash supports multiple languages, singing and noise rejection.
     type: qwen3_asr_flash
-    api_key: 你的阿里云百炼API密钥
+    api_key: YOUR_API_KEY_HERE
     base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
     model_name: qwen3-asr-flash
     output_dir: tmp/
@@ -569,9 +573,9 @@ ASR:
     # - APIKey
     type: xunfei_stream
     # Required iFlytek app credentials
-    app_id: 你的APPID
-    api_key: 你的APIKey
-    api_secret: 你的APISecret
+    app_id: YOUR_APP_ID_HERE
+    api_key: YOUR_API_KEY_HERE
+    api_secret: YOUR_API_SECRET_HERE
     # Recognition settings
     domain: slm # Domain: iat (general), medical, finance, etc.
     language: zh_cn # Language: zh_cn Chinese, en_us English
@@ -587,13 +591,13 @@ ASR:
     # Supported models: paraformer-realtime-v2 (recommended), paraformer-realtime-8k-v2, paraformer-realtime-v1, paraformer-realtime-8k-v1
     type: aliyunbl_stream
     # Required settings
-    api_key: 你的阿里云百炼API密钥
+    api_key: YOUR_API_KEY_HERE
     # Model selection; v2 recommended
     model: paraformer-realtime-v2
     # Audio format and sampling rate
     format: pcm
     sample_rate: 16000  # v2 supports arbitrary sample rates; v1 supports 16000, and 8k models support 8000.
-    # Optional参数
+    # Optional parameters
     disfluency_removal_enabled: false  # Remove filler words like uh, um
     semantic_punctuation_enabled: false  # Semantic segmentation: true for meetings, false for lower-latency VAD
     max_sentence_silence: 200  # VAD silence threshold in ms (200–6000), for VAD mode only
@@ -621,7 +625,7 @@ LLM:
     # Find your API key here https://bailian.console.aliyun.com/?apiKey=1#/api-key
     base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
     model_name: qwen-flash
-    api_key: 你的deepseek web key
+    api_key: YOUR_API_KEY_HERE
     temperature: 0.7  # Temperature
     max_tokens: 500   # Maximum generated tokens
     top_p: 1
@@ -630,9 +634,9 @@ LLM:
     # Define LLM API type
     type: AliBL
     base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
-    app_id: 你的app_id
+    app_id: YOUR_APP_ID_HERE
     # Find your API key here https://bailian.console.aliyun.com/?apiKey=1#/api-key
-    api_key: 你的api_key
+    api_key: YOUR_API_KEY_HERE
     # Whether to ignore the local prompt (set prompt in the Bailian app)
     is_no_prompt: true
     # Ali_memory_id: false to disable, or your memory ID from the Bailian application
@@ -647,14 +651,14 @@ LLM:
     # Get your API key after activation：https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey?apikey=%7B%7D
     base_url: https://ark.cn-beijing.volces.com/api/v3
     model_name: doubao-seed-2-0-lite-260215
-    api_key: 你的doubao web key
+    api_key: YOUR_API_KEY_HERE
   DeepSeekLLM:
     # Define LLM API type
     type: openai
     # Find your API key here https://platform.deepseek.com/
     model_name: deepseek-v4-flash
     url: https://api.deepseek.com
-    api_key: 你的deepseek web key
+    api_key: YOUR_API_KEY_HERE
   ChatGLMLLM:
     # Define LLM API type
     type: openai
@@ -662,7 +666,7 @@ LLM:
     # Find your API key here https://bigmodel.cn/usercenter/proj-mgmt/apikeys
     model_name: glm-4-flash
     url: https://open.bigmodel.cn/api/paas/v4/
-    api_key: 你的chat-glm web key
+    api_key: YOUR_API_KEY_HERE
   OllamaLLM:
     # Define LLM API type
     type: ollama
@@ -674,7 +678,7 @@ LLM:
     # Prefer a local Dify deployment if public-cloud access is restricted.
     # DifyLLM ignores local prompts; configure prompts in the Dify console.
     base_url: https://api.dify.ai/v1
-    api_key: 你的DifyLLM web key
+    api_key: YOUR_API_KEY_HERE
     # Choose workflow (workflows/run), chat (chat-messages) or text generation (completion-messages).
     # Workflows use query as input and answer as output.
     # Text generation also uses query as input.
@@ -685,7 +689,7 @@ LLM:
     # Follow applicable local regulations when operating in China.
     # Token application URL： https://aistudio.google.com/apikey
     # Ensure network connectivity to the API from your deployment region.
-    api_key: 你的gemini web key
+    api_key: YOUR_API_KEY_HERE
     model_name: "gemini-2.0-flash"
     http_proxy: ""  #"http://127.0.0.1:10808"
     https_proxy: "" #http://127.0.0.1:10808"
@@ -695,9 +699,9 @@ LLM:
     # Find your personal access token here
     # https://www.coze.cn/open/oauth/pats
     # Put bot_id and user_id in quotation marks
-    bot_id: "你的bot_id"
-    user_id: "你的user_id"
-    personal_access_token: 你的coze个人令牌
+    bot_id: YOUR_BOT_ID_HERE
+    user_id: YOUR_USER_ID_HERE
+    personal_access_token: YOUR_PERSONAL_ACCESS_TOKEN_HERE
   VolcesAiGatewayLLM:
     # Volcengine edge LLM gateway
     # Define LLM API type
@@ -708,7 +712,7 @@ LLM:
     # Get your API key after activation：https://console.volcengine.com/vei/aigateway/tokens-list
     base_url: https://ai-gateway.vei.volces.com/v1
     model_name: doubao-pro-32k-functioncall
-    api_key: 你的网关访问密钥
+    api_key: YOUR_API_KEY_HERE
   LMStudioLLM:
     # Define LLM API type
     type: openai
@@ -720,7 +724,7 @@ LLM:
     type: homeassistant
     base_url: http://homeassistant.local:8123
     agent_id: conversation.chatgpt
-    api_key: 你的home assistant api访问令牌
+    api_key: YOUR_API_KEY_HERE
   FastgptLLM:
     # Define LLM API type
     type: fastgpt
@@ -728,7 +732,7 @@ LLM:
     base_url: https://host/api/v1
     # Find your API key here
     # https://cloud.tryfastgpt.ai/account/apikey
-    api_key: 你的fastgpt密钥
+    api_key: YOUR_API_KEY_HERE
     variables:
       k: "v"
       k2: "v2"
@@ -752,23 +756,23 @@ VLLM:
     # Find your API key here https://bigmodel.cn/usercenter/proj-mgmt/apikeys
     model_name: glm-4v-flash  # Zhipu AI vision model
     url: https://open.bigmodel.cn/api/paas/v4/
-    api_key: 你的api_key
+    api_key: YOUR_API_KEY_HERE
   QwenVLVLLM:
     type: openai
     model_name: qwen3.5-flash
     url: https://dashscope.aliyuncs.com/compatible-mode/v1
     # Find your API key here https://bailian.console.aliyun.com/?apiKey=1#/api-key
-    api_key: 你的api_key
+    api_key: YOUR_API_KEY_HERE
   XunfeiSparkLLM:
     # Define LLM API type
     type: openai
     # Create an application at the URL below.
     # App activation URL：https://console.xfyun.cn/app/myapp
     # Free quota is available, but service activation is required for an API key.
-    # Each model requires separate activation and api_password; e.g. Lite athttps://console.xfyun.cn/services/cbm 开通
+    # Each model requires separate activation and api_password; e.g. Lite athttps://console.xfyun.cn/services/cbm Activate
     base_url: https://ark.cn-beijing.volces.com/api/v3
     model_name: lite
-    api_key: 你的api_password
+    api_key: YOUR_API_KEY_HERE
 TTS:
   # Currently supports edge and doubao; extend as needed
   EdgeTTS:
@@ -784,13 +788,13 @@ TTS:
     # Volcengine TTS has paid tiers with higher concurrency; the free tier may be limited.
     # Newly activated voices may take time before becoming available.
     # Activate standard voices here：https://console.volcengine.com/speech/service/8
-    # Activate Wanwan Xiaohe voice here：https://console.volcengine.com/speech/service/10007，开通后将下面的voice设置成zh_female_wanwanxiaohe_moon_bigtts
+    # Activate Wanwan Xiaohe voice here：https://console.volcengine.com/speech/service/10007，after activation, set voice to zh_female_wanwanxiaohe_moon_bigtts
     api_url: https://openspeech.bytedance.com/api/v1/tts
     voice: BV001_streaming
     output_dir: tmp/
     authorization: "Bearer;"
-    appid: 你的火山引擎语音合成服务appid
-    access_token: 你的火山引擎语音合成服务access_token
+    appid: YOUR_APPID_HERE
+    access_token: YOUR_ACCESS_TOKEN_HERE
     cluster: volcano_tts
     speed_ratio: 1.0
     volume_ratio: 1.0
@@ -801,12 +805,12 @@ TTS:
     type: huoshan_double_stream
     # Visit https://console.volcengine.com/speech/service/10007 to activate speech synthesis and purchase voices
     # Find appid and access_token at the bottom of the page.
-    # Fixed resource ID：volc.service_type.10029（大模型语音合成及混音）
+    # Fixed resource ID：volc.service_type.10029（large-model TTS and mixing）
     # For Gizwits, set the endpoint to wss://bytedance.gizwitsapi.com/api/v3/tts/bidirection.
     # Gizwits does not require an appid.
     ws_url: wss://openspeech.bytedance.com/api/v3/tts/bidirection
-    appid: 你的火山引擎语音合成服务appid
-    access_token: 你的火山引擎语音合成服务access_token
+    appid: YOUR_APPID_HERE
+    access_token: YOUR_ACCESS_TOKEN_HERE
     resource_id: volc.service_type.10029
     speaker: zh_female_wanwanxiaohe_moon_bigtts
     # Reuse WebSocket connections by default; idle listening connections may consume concurrency slots.
@@ -842,12 +846,12 @@ TTS:
     type: huoshan_double_stream
     # Visit https://console.volcengine.com/speech/service/10035 to activate speech synthesis and purchase voices
     # Find appid and access_token at the bottom of the page.
-    # Fixed resource ID：seed-tts-2.0（豆包语音合成模型2.0）
+    # Fixed resource ID：seed-tts-2.0（Doubao Speech Synthesis 2.0）
     # For Gizwits, set the endpoint to wss://bytedance.gizwitsapi.com/api/v3/tts/bidirection.
     # Gizwits does not require an appid.
     ws_url: wss://openspeech.bytedance.com/api/v3/tts/bidirection
-    appid: 你的火山引擎语音合成服务appid
-    access_token: 你的火山引擎语音合成服务access_token
+    appid: YOUR_APPID_HERE
+    access_token: YOUR_ACCESS_TOKEN_HERE
     resource_id: seed-tts-2.0
     speaker: zh_female_xiaohe_uranus_bigtts
     # Reuse WebSocket connections by default; idle listening connections may consume concurrency slots.
@@ -869,7 +873,7 @@ TTS:
     model: FunAudioLLM/CosyVoice2-0.5B
     voice: FunAudioLLM/CosyVoice2-0.5B:alex
     output_dir: tmp/
-    access_token: 你的硅基流动API密钥
+    access_token: YOUR_ACCESS_TOKEN_HERE
     response_format: wav
     # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
   CozeCnTTS:
@@ -878,23 +882,23 @@ TTS:
     # Token application URL https://www.coze.cn/open/oauth/pats
     voice: 7426720361733046281
     output_dir: tmp/
-    access_token: 你的coze web key
+    access_token: YOUR_ACCESS_TOKEN_HERE
     response_format: wav
     # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
     # Optional; defaults are available
-    # speed: 1  # Speech rate：-0.5到2
-    # loudness_rate: 0  # Volume：-50到100
+    # speed: 1  # Speech rate：-0.5 to 2
+    # loudness_rate: 0  # Volume：-50 to 100
   VolcesAiGatewayTTS:
     type: openai
     # Volcengine edge LLM gateway
-    # 先开通服务，打开以下网址，创建网关Visit密钥，搜索并勾选 Doubao-语音合成 ，开通
-    # 如果需要使用边缘大模型网关提供的 LLM，一并勾选 Doubao-pro-32k-functioncall ，另见 LLM.VolcesAiGatewayLLM 配置
+    # Create gateway credentials and enable Doubao speech synthesis in the console.
+    # To use the gateway LLM, also enable Doubao-pro-32k-functioncall; see LLM.VolcesAiGatewayLLM.
     # https://console.volcengine.com/vei/aigateway/
     # Get your API key after activation：https://console.volcengine.com/vei/aigateway/tokens-list
-    api_key: 你的网关访问密钥
+    api_key: YOUR_API_KEY_HERE
     api_url: https://ai-gateway.vei.volces.com/v1/audio/speech
     model: doubao-tts
-    # 音色列表见 https://www.volcengine.com/docs/6561/1257544
+    # Voice list https://www.volcengine.com/docs/6561/1257544
     voice: zh_male_shaonianzixin_moon_bigtts
     speed: 1
     output_dir: tmp/
@@ -918,7 +922,7 @@ TTS:
     seed: null
     channels: 1
     rate: 44100
-    api_key: "你的api_key"
+    api_key: YOUR_API_KEY_HERE
     api_url: "http://127.0.0.1:8080/v1/tts"
     # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
   GPT_SOVITS_V2:
@@ -971,8 +975,8 @@ TTS:
   # MiniMax streaming TTS
     type: minimax_httpstream
     output_dir: tmp/
-    group_id: 你的minimax平台groupID
-    api_key: 你的minimax平台接口密钥
+    group_id: YOUR_GROUP_ID_HERE
+    api_key: YOUR_API_KEY_HERE
     model: "speech-01-turbo"
     voice_id: "female-shaonv"
     # Optional; defaults are available
@@ -1007,11 +1011,11 @@ TTS:
     # Define TTS API type
     type: aliyun
     output_dir: tmp/
-    appkey: 你的阿里云智能语音交互服务项目Appkey
-    token: 你的阿里云智能语音交互服务AccessToken，临时的24小时，要长期用下方的access_key_id，access_key_secret
+    appkey: YOUR_APPKEY_HERE
+    token: YOUR_TOKEN_HERE
     voice: xiaoyun
-    access_key_id: 你的阿里云账号access_key_id
-    access_key_secret: 你的阿里云账号access_key_secret
+    access_key_id: YOUR_ACCESS_KEY_ID_HERE
+    access_key_secret: YOUR_ACCESS_KEY_SECRET_HERE
 
     # Optional, defaults are available
     # format: wav
@@ -1030,18 +1034,18 @@ TTS:
     # Uses three-stage streaming: StartSynthesis -> RunSynthesis -> StopSynthesis
     type: aliyun_stream
     output_dir: tmp/
-    appkey: 你的阿里云智能语音交互服务项目Appkey
-    token: 你的阿里云智能语音交互服务AccessToken，临时的24小时，要长期用下方的access_key_id，access_key_secret
+    appkey: YOUR_APPKEY_HERE
+    token: YOUR_TOKEN_HERE
     voice: longxiaochun
-    access_key_id: 你的阿里云账号access_key_id
-    access_key_secret: 你的阿里云账号access_key_secret
+    access_key_id: YOUR_ACCESS_KEY_ID_HERE
+    access_key_secret: YOUR_ACCESS_KEY_SECRET_HERE
     # As of July 21, 2025, large-model voices are only available in Beijing region.
     host: nls-gateway-cn-beijing.aliyuncs.com
     # Optional, defaults are available
     # format: pcm  # Audio format：pcm、wav、mp3
     # volume: 50  # Volume：0-100
-    # speech_rate: 0  # Speech rate：-500到500
-    # pitch_rate: 0  # Pitch：-500到500
+    # speech_rate: 0  # Speech rate：-500 to 500
+    # pitch_rate: 0  # Pitch：-500 to 500
     # language: "中文"  # Set output language supported by the voice; defaults to Chinese
   TencentTTS:
     # Activate Tencent Cloud speech services first.
@@ -1049,20 +1053,20 @@ TTS:
     # Free resources：https://console.cloud.tencent.com/tts/resourcebundle
     type: tencent
     output_dir: tmp/
-    appid: 你的腾讯云AppId
-    secret_id: 你的腾讯云SecretID
-    secret_key: 你的腾讯云SecretKey
+    appid: YOUR_APPID_HERE
+    secret_id: YOUR_SECRET_ID_HERE
+    secret_key: YOUR_SECRET_KEY_HERE
     region: ap-guangzhou
     voice: 101001
     # language: "中文"  # Set output language supported by the voice; defaults to Chinese
     # Optional, defaults are available
     # format: wav  # Audio format：pcm、wav、mp3
-    # volume: 0  # Volume：-10到10
-    # speech_rate: 0  # Speech rate：-2到6
+    # volume: 0  # Volume：-10 to 10
+    # speech_rate: 0  # Speech rate：-2 to 6
   TTS302AI:
     # 302AI TTS requires registration, account balance and API credentials.
     # Add 302.ai TTS configuration
-    # token申请地址：https://dash.302.ai/
+    # Token application URL：https://dash.302.ai/
     # Get API key：https://dash.302.ai/apis/list
     # Pricing example: $35 per million characters versus ¥450 for original Volcengine
     type: doubao
@@ -1071,14 +1075,14 @@ TTS:
     # Wanwan Xiaohe voice
     voice: "zh_female_wanwanxiaohe_moon_bigtts"
     output_dir: tmp/
-    access_token: "你的302API密钥"
+    access_token: YOUR_ACCESS_TOKEN_HERE
     # language: "中文"  # Set output language supported by the voice; defaults to Chinese
   OpenAITTS:
     # OpenAI text-to-speech supports many languages.
     type: openai
     # Get your API key here
     # https://platform.openai.com/api-keys
-    api_key: 你的openai api key
+    api_key: YOUR_API_KEY_HERE
     # A proxy may be required in some regions.
     api_url: https://api.openai.com/v1/audio/speech
     # Choose tts-1 for speed or tts-1-hd for quality.
@@ -1141,7 +1145,7 @@ TTS:
     # Find your API key here https://bailian.console.aliyun.com/?apiKey=1#/api-key
     # cosyvoice-v3 and some voices require activation.
     type: alibl_stream
-    api_key: 你的api_key
+    api_key: YOUR_API_KEY_HERE
     # Legacy URL remains supported; for workspace deployments, use wss://<WorkspaceId>.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference
     ws_url: wss://dashscope.aliyuncs.com/api-ws/v1/inference/
     model: "cosyvoice-v2"
@@ -1160,9 +1164,9 @@ TTS:
     # Purchase services for your APPID, e.g. expressive speech synthesis https://console.xfyun.cn/services/uts
     type: xunfei_stream
     api_url: wss://cbm01.cn-huabei-1.xf-yun.com/v1/private/mcd9m97e6
-    app_id: 你的app_id
-    api_secret: 你的api_secret
-    api_key: 你的api_key
+    app_id: YOUR_APP_ID_HERE
+    api_secret: YOUR_API_SECRET_HERE
+    api_key: YOUR_API_KEY_HERE
     voice: x5_lingxiaoxuan_flow
     output_dir: tmp/
     # Optional defaults; note V5 voices do not support colloquial-style settings
