@@ -20,20 +20,20 @@ MAX_FILE_SIZE = 5 * 1024 * 1024
 class VisionHandler(BaseHandler):
     def __init__(self, config: dict):
         super().__init__(config)
-        # 初始化认证工具
+        # Initialize authentication helper
         self.auth = AuthToken(config["server"]["auth_key"])
 
     def _create_error_response(self, message: str) -> dict:
-        """创建统一的错误响应格式"""
+        """Create standard error response"""
         return {"success": False, "message": message}
 
     def _verify_auth_token(self, request) -> Tuple[bool, Optional[str]]:
-        """验证认证token"""
-        # 测试模式：允许特定测试令牌或跳过验证
+        """Verify authentication token"""
+        # Test mode: allow designated test clients to bypass authentication
         auth_header = request.headers.get("Authorization", "")
         client_id = request.headers.get("Client-Id", "")
 
-        # 允许测试客户端跳过认证
+        # Allow test client to bypass token check
         if client_id == "web_test_client":
             device_id = request.headers.get("Device-Id", "test_device")
             return True, device_id
@@ -41,14 +41,14 @@ class VisionHandler(BaseHandler):
         if not auth_header.startswith("Bearer "):
             return False, None
 
-        token = auth_header[7:]  # 移除"Bearer "前缀
+        token = auth_header[7:]  # Remove Bearer prefix
         return self.auth.verify_token(token)
 
     async def handle_post(self, request):
-        """处理 MCP Vision POST 请求"""
-        response = None  # 初始化response变量
+        """Handle MCP Vision POST request"""
+        response = None  # Initialize response variable
         try:
-            # 验证token
+            # Verify token
             is_valid, token_device_id = self._verify_auth_token(request)
             if not is_valid:
                 response = web.Response(
@@ -60,47 +60,47 @@ class VisionHandler(BaseHandler):
                 )
                 return response
 
-            # 获取请求头信息
+            # Get request headers
             device_id = request.headers.get("Device-Id", "")
             client_id = request.headers.get("Client-Id", "")
             if device_id != token_device_id:
                 raise ValueError("Device ID does not match the token")
-            # 解析multipart/form-data请求
+            # Parse multipart/form-data body
             reader = await request.multipart()
 
-            # 读取question字段
+            # Read question field
             question_field = await reader.next()
             if question_field is None:
                 raise ValueError("Missing question field")
             question = await question_field.text()
             self.logger.bind(tag=TAG).debug(f"Question: {question}")
 
-            # 读取图片文件
+            # Read image file
             image_field = await reader.next()
             if image_field is None:
                 raise ValueError("Missing image file")
 
-            # 读取图片数据
+            # Read image data
             image_data = await image_field.read()
             if not image_data:
                 raise ValueError("Image data is empty")
 
-            # 检查文件大小
+            # Check file size
             if len(image_data) > MAX_FILE_SIZE:
                 raise ValueError(
                     f"Image exceeds the maximum allowed size of {MAX_FILE_SIZE/1024/1024}MB"
                 )
 
-            # 检查文件格式
+            # Validate image format
             if not is_valid_image_file(image_data):
                 raise ValueError(
                     "Unsupported file format. Upload a valid JPEG, PNG, GIF, BMP, TIFF or WEBP image."
                 )
 
-            # 将图片转换为base64编码
+            # Encode image as Base64
             image_base64 = base64.b64encode(image_data).decode("utf-8")
 
-            # 如果开启了智控台，则从智控台获取模型配置
+            # Load model settings from management API when enabled
             current_config = copy.deepcopy(self.config)
             read_config_from_api = current_config.get("read_config_from_api", False)
             if read_config_from_api:
@@ -159,7 +159,7 @@ class VisionHandler(BaseHandler):
             return response
 
     async def handle_get(self, request):
-        """处理 MCP Vision GET 请求"""
+        """Handle MCP Vision GET request"""
         try:
             vision_explain = get_vision_url(self.config)
             if vision_explain and len(vision_explain) > 0 and "null" != vision_explain:
