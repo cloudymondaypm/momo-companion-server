@@ -1,50 +1,51 @@
-# 致开发者的公开信
+# An Open Letter to Developers
 
-"春江水暖鸭先知，正是河豚欲上时！"
+> The warm river in spring is known first to the ducks; the pufferfish are just about to swim upstream.
 
-亲爱的朋友，我是John，是一名普通公司里的Java程序员，今天，我怀着无比真挚的心情，向热爱AI技术与创新的你发出这封公开信。
+Dear friends,
 
-半年前我看到很多优秀的项目，比如`Dify`、`Chat2DB`等人工智能相关的项目，我在想，我要是能参与这些项目多好，可惜“报国无门，空打十年代码”。
+My name is John. I am a Java developer at an ordinary company, writing with sincere enthusiasm to everyone who loves artificial intelligence and new technology.
 
-我是2025年初刷到虾哥团队的视频，我非常好奇他是怎么实现的，我想复刻他们的后端服务，打造一个低成本民用贾维斯。很可惜现在做的作品依然只是一个人工智障，它并发低、没有灵魂，响应很慢，bug很多。
+About six months ago I discovered projects such as `Dify` and `Chat2DB`. I wanted to contribute to work like that but did not know where to begin. I had spent years writing code, yet had never found the right way to contribute to an AI project.
 
-虾哥团队是我们学习的对象，我很想拥有像虾哥团队一样智能的小智后端服务。但是我也能理解虾哥不开源的决定。“一花独放不是春，百花齐放春满园”，人工智能遍地开花的时代，也许就在我们这代实现，我们可以用自己的双手，实现低成本民用贾维斯。我个人认为，他能实现的，我们也能实现，只是时间问题而已，我称之为“我们的取经之路”。
+In early 2025 I came across videos from the Xiaozhi hardware team. I became fascinated by how they built their assistant, and wanted to reproduce its backend as an affordable, everyday version of Jarvis. My early result was far from ideal: limited concurrency, little personality, slow responses, and plenty of bugs.
 
-那么这条取经之路，我们会遇到什么困难？我想应该不少于八十一难。这一路必然会出现各种妖怪，当然也有神仙暗中帮助我们，也有人加入取经队伍。
+The Xiaozhi team has been an inspiration. I would love to see an equally capable, accessible open-source backend. At the same time, I respect their decision about which parts of their work to open-source. As the saying goes, a single blossom does not make spring; a hundred flowers blooming together fill the garden. We may be the generation that makes useful, low-cost AI assistants available to everyone. I believe we can get there with enough patience and collective effort. I think of it as our journey westward, a quest full of obstacles.
 
-以上内容，如果你觉得好笑。那我也觉得非常的幸运。我能够在你人生3万多天里博你笑五秒，也算是为你做了一次贡献。
+Will that journey be easy? Probably not. We may encounter the equivalent of the eighty-one trials from the classic story, along with unexpected helpers and new fellow travelers.
 
-民用低成本贾维斯这个想法，会失败吗，我不知道，但是我们普通人的一生，这种失败不是很常见吗？
+If these thoughts brought you a smile, I am grateful. Making someone laugh for five seconds out of a lifetime is a contribution in its own way.
 
-未来，有一点是可以确定的，就一定会有人完全复刻虾哥团队的功能，实现民用低成本贾维斯。这个项目会是我们吗？
+Will the idea of an affordable personal Jarvis ultimately succeed? I cannot know. But people try things, and sometimes fail, throughout ordinary life.
 
-期待与你携手前行，共创未来。
+What I do believe is that someone will eventually create an accessible personal assistant with capabilities comparable to the original vision. Could it be this project?
 
-John，2025.3.11，广州
+I look forward to building the future together.
 
-# 附 开发贡献指南
-## 项目目标
+**John — Guangzhou, March 11, 2025**
 
-1. **民用低成本贾维斯解决方案**  
+---
 
-2. **智能联动周边硬件的解决方案**  
+# Contribution Guide
 
-## 加入我们
+## Project goals
 
-我们热忱欢迎志同道合的朋友加入，共同为项目贡献力量。您可在[这个链接](https://github.com/users/xinnan-tech/projects/3)查看我们近期要实现的功能，功能列表中还没指派相关人员处理的，正是急需您的参与。参与方式如下：
+1. Develop a low-cost personal assistant that people can host and use themselves.
+2. Build practical integrations between intelligent assistants and everyday hardware.
 
-### 1、成为普通贡献者
+## Join the project
 
-Fork 项目，提交 PR，由开发者审核后合入主分支。
+We welcome people who are passionate about open source and practical AI. You can view the upstream team's [project roadmap](https://github.com/users/xinnan-tech/projects/3) and contribute to issues that are not yet assigned.
 
-### 2、成为开发者
+### Become a contributor
 
-当你累计提交 3 次有效 PR 后，可以联系群主申请成为开发者，群主将邀请你加入独立的开发者群，共同探讨项目未来。
+Fork the project, develop your change, and open a pull request for review.
 
-## 开发者开发流程
+### Become a developer
 
-1. **创建新分支**  
-   每个功能点请以新分支方式开发，分支名称应简洁明了，让人一眼看出所实现的功能，避免功能撞车。
+In the upstream project, contributors with three accepted PRs may ask its maintainers about joining the development group. For this Momo Companion fork, please coordinate with the repository maintainers directly.
 
-2. **提交 PR 审核**  
-   功能开发完成后，请在 GitHub 上提交 PR，由其他开发者审核，审核通过后合并入主分支。
+## Development workflow
+
+1. **Create a new branch.** Keep each change on a clearly named feature branch to avoid overlapping work.
+2. **Open a pull request.** Once your change is ready, submit it for review and merge only after approval.
