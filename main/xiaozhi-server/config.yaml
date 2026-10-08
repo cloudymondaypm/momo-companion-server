@@ -101,9 +101,9 @@ xiaozhi:
 # Module testing settings
 module_test:
   test_sentences:
-    - "你好，请介绍一下你自己"
+    - "Hello, please introduce yourself"
     - "What's the weather like today?"
-    - "请用100字概括量子计算的基本原理和应用前景"
+    - "Summarize the basics of quantum computing in 100 words"
 
 # Wake words, used to distinguish activation from ordinary speech
 wakeup_words:
@@ -155,8 +155,8 @@ plugins:
     news_sources: "澎湃新闻;百度热搜;财联社"
   home_assistant:
     devices:
-      - 客厅,玩具灯,switch.cuco_cn_460494544_cp1_on_p_2_1
-      - 卧室,台灯,switch.iot_cn_831898993_socn1_on_p_2_1
+      - Living room,Toy light,switch.cuco_cn_460494544_cp1_on_p_2_1
+      - Bedroom,Desk lamp,switch.iot_cn_831898993_socn1_on_p_2_1
     base_url: http://homeassistant.local:8123
     api_key: YOUR_API_KEY_HERE
   play_music:
@@ -780,7 +780,7 @@ TTS:
     type: edge
     voice: zh-CN-XiaoxiaoNeural
     output_dir: tmp/
-    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+    # language: "English"  # Specify an output language supported by your chosen voice.
   DoubaoTTS:
     # Define TTS API type
     type: doubao
@@ -799,7 +799,7 @@ TTS:
     speed_ratio: 1.0
     volume_ratio: 1.0
     pitch_ratio: 1.0
-    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+    # language: "English"  # Specify an output language supported by your chosen voice.
   #Volcengine TTS supports bidirectional streaming
   HuoshanDoubleStreamTTS:
     type: huoshan_double_stream
@@ -840,7 +840,7 @@ TTS:
     #       mix_factor: 0.3
     #     - source_speaker: zh_male_ahu_conversation_wvae_bigtts
     #       mix_factor: 0.4
-    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+    # language: "English"  # Specify an output language supported by your chosen voice.
   #Doubao TTS 2.0 supports bidirectional streaming using seed-tts-2.0
   HuoshanDoubleStreamTTSV2:
     type: huoshan_double_stream
@@ -865,7 +865,7 @@ TTS:
     additions:
       post_process:
         pitch: 0  # Pitch(-12~12)
-    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+    # language: "English"  # Specify an output language supported by your chosen voice.
   CosyVoiceSiliconflow:
     type: siliconflow
     # SiliconFlow TTS
@@ -875,7 +875,7 @@ TTS:
     output_dir: tmp/
     access_token: YOUR_ACCESS_TOKEN_HERE
     response_format: wav
-    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+    # language: "English"  # Specify an output language supported by your chosen voice.
   CozeCnTTS:
     type: cozecn
     # COZECN TTS
@@ -884,7 +884,7 @@ TTS:
     output_dir: tmp/
     access_token: YOUR_ACCESS_TOKEN_HERE
     response_format: wav
-    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+    # language: "English"  # Specify an output language supported by your chosen voice.
     # Optional; defaults are available
     # speed: 1  # Speech rate：-0.5 to 2
     # loudness_rate: 0  # Volume：-50 to 100
@@ -902,7 +902,7 @@ TTS:
     voice: zh_male_shaonianzixin_moon_bigtts
     speed: 1
     output_dir: tmp/
-    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+    # language: "English"  # Specify an output language supported by your chosen voice.
   FishSpeech:
     # See guide：https://github.com/xinnan-tech/xiaozhi-esp32-server/blob/main/docs/fish-speech-integration.md
     type: fishspeech
@@ -924,7 +924,7 @@ TTS:
     rate: 44100
     api_key: YOUR_API_KEY_HERE
     api_url: "http://127.0.0.1:8080/v1/tts"
-    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+    # language: "English"  # Specify an output language supported by your chosen voice.
   GPT_SOVITS_V2:
     # Define TTS API type
     #How to start TTS：
@@ -950,7 +950,7 @@ TTS:
     parallel_infer: true
     repetition_penalty: 1.35
     aux_ref_audio_paths: []
-    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+    # language: "English"  # Specify an output language supported by your chosen voice.
   GPT_SOVITS_V3:
     # Define TTS API type GPT-SoVITS-v3lora-20250228
     #How to start TTS：
@@ -970,7 +970,7 @@ TTS:
     inp_refs: []
     sample_steps: 32
     if_sr: false
-    # language: "中文"  # Specify an output language supported by the voice (Chinese, English, Japanese, Korean, etc.); default is Chinese.
+    # language: "English"  # Specify an output language supported by your chosen voice.
   MinimaxTTSHTTPStream:
   # MiniMax streaming TTS
     type: minimax_httpstream
@@ -1002,7 +1002,7 @@ TTS:
     #     voice_id: female-shaonv
     #     weight: 1
     # language_boost: auto
-    # language: "中文"  # Set output language supported by the voice; defaults to Chinese
+    # language: "English"  # Set output language supported by your chosen voice.
   AliyunTTS:
     # Activate Alibaba Cloud speech services and obtain credentials first.
     # Platform URL：https://nls-portal.console.aliyun.com/
@@ -1022,7 +1022,7 @@ TTS:
     # volume: 50
     # speech_rate: 0
     # pitch_rate: 0
-    # language: "中文"  # Set output language supported by the voice; defaults to Chinese
+    # language: "English"  # Set output language supported by your chosen voice.
   AliyunStreamTTS:
     # Alibaba Cloud CosyVoice streaming text-to-speech
     # Uses FlowingSpeechSynthesizer for low latency and natural speech.
@@ -1046,7 +1046,7 @@ TTS:
     # volume: 50  # Volume：0-100
     # speech_rate: 0  # Speech rate：-500 to 500
     # pitch_rate: 0  # Pitch：-500 to 500
-    # language: "中文"  # Set output language supported by the voice; defaults to Chinese
+    # language: "English"  # Set output language supported by your chosen voice.
   TencentTTS:
     # Activate Tencent Cloud speech services first.
     # Get appid, secret_id and secret_key：https://console.cloud.tencent.com/cam/capi
@@ -1058,7 +1058,7 @@ TTS:
     secret_key: YOUR_SECRET_KEY_HERE
     region: ap-guangzhou
     voice: 101001
-    # language: "中文"  # Set output language supported by the voice; defaults to Chinese
+    # language: "English"  # Set output language supported by your chosen voice.
     # Optional, defaults are available
     # format: wav  # Audio format：pcm、wav、mp3
     # volume: 0  # Volume：-10 to 10
@@ -1076,7 +1076,7 @@ TTS:
     voice: "zh_female_wanwanxiaohe_moon_bigtts"
     output_dir: tmp/
     access_token: YOUR_ACCESS_TOKEN_HERE
-    # language: "中文"  # Set output language supported by the voice; defaults to Chinese
+    # language: "English"  # Set output language supported by your chosen voice.
   OpenAITTS:
     # OpenAI text-to-speech supports many languages.
     type: openai
@@ -1092,7 +1092,7 @@ TTS:
     # Speed range: 0.25–4.0
     speed: 1
     output_dir: tmp/
-    # language: "中文"  # Set output language supported by the voice; defaults to Chinese
+    # language: "English"  # Set output language supported by your chosen voice.
   CustomTTS:
     # Custom TTS endpoint supports configurable request parameters.
     # Example: locally hosted KokoroTTS
@@ -1115,7 +1115,7 @@ TTS:
       # Authorization: Bearer xxxx
     format: mp3 # Audio format returned by API
     output_dir: tmp/
-    # language: "中文"  # Set output language supported by the voice; defaults to Chinese
+    # language: "English"  # Set output language supported by your chosen voice.
   PaddleSpeechTTS:
     #Baidu PaddleSpeech supports local offline deployment and model training.
     #Framework URL https://www.paddlepaddle.org.cn/
@@ -1129,7 +1129,7 @@ TTS:
     speed: 1.0  # Speech rate，1.0 is normal speed, >1 faster, <1 slower
     volume: 1.0  # Volume，1.0 is normal volume, >1 louder, <1 softer
     save_path:   # Save path
-    # language: "中文"  # Set output language supported by the voice; defaults to Chinese
+    # language: "English"  # Set output language supported by your chosen voice.
   IndexStreamTTS:
     # TTS service based on Index-TTS-vLLM
     # See guide：https://github.com/Ksuriuri/index-tts-vllm/blob/master/README.md
@@ -1139,7 +1139,7 @@ TTS:
     # Default voice; register other voices in the project's assets directory
     voice: "jay_klee"
     output_dir: tmp/
-    # language: "中文"  # Set output language supported by the voice; defaults to Chinese
+    # language: "English"  # Set output language supported by your chosen voice.
   AliBLTTS:
     # Alibaba Cloud Bailian CosyVoice streaming TTS
     # Find your API key here https://bailian.console.aliyun.com/?apiKey=1#/api-key
@@ -1156,7 +1156,7 @@ TTS:
     # volume: 50  # Volume：0-100
     # rate: 1  # Speech rate：0.5~2
     # pitch: 1  # Pitch：0.5~2
-    # language: "中文"  # Set output language supported by the voice; defaults to Chinese
+    # language: "English"  # Set output language supported by your chosen voice.
   XunFeiTTS:
     # iFlytek TTS official website：https://www.xfyun.cn/
     # Log in to iFlytek Voice Platform https://console.xfyun.cn/app/myapp to create an application
@@ -1178,4 +1178,4 @@ TTS:
     # volume: 50  # Volume：0-100
     # speed: 50  # Speech rate：0-100
     # pitch: 50  # Pitch：0-100
-    # language: "中文"  # Set output language supported by the voice; defaults to Chinese
+    # language: "English"  # Set output language supported by your chosen voice.
