@@ -8,10 +8,10 @@ Device calling provides bidirectional communication between two registered devic
 Device A → Authorization → MQTT gateway → Remote wake-up of Device B → Connection → Call established
 ```
 ## Prerequisites
-1. At least two devices are required; both must use`ESP32-S3`，because only`ESP32-S3`supports remote wake-up in the documented firmware。
-2. The devices should have`two microphones`。If the devices have only`one microphone`，the feature can still be tried, but call quality may be poor。
-3. Use[full-module deployment](Deployment_all.md)because the`management console`is required to control permissions and communication。
-4. Install and configure the`May 27, 2026`or newer[MQTT gateway](mqtt-gateway-integration.md)，If installed already, check it is from`May 27, 2026`or later。
+1. At least two devices must use ESP32-S3 hardware, which supports remote wake-up in the documented firmware.
+2. Two microphones are recommended. Single-microphone devices may work, but expect degraded call quality.
+3. Use [full-module deployment](Deployment_all.md) because the management console manages call permissions and connections.
+4. Install an [MQTT gateway](mqtt-gateway-integration.md) build dated May 27, 2026 or newer.
 
 The steps below assume these requirements are satisfied.
 
@@ -19,7 +19,7 @@ The steps below assume these requirements are satisfied.
 
 ### Step 1. Enable the address book
 
-1. Confirm the management console version is`0.9.4`or later。
+1. Confirm your management console is version 0.9.4 or later.
 2. Sign in to the management console
 3. Open **System Feature Configuration**
 4. Enable **Address Book**
@@ -27,7 +27,7 @@ The steps below assume these requirements are satisfied.
 
 ### Step 2. Configure device call permissions
 
-1. In the top navigation menuClick **Address Book**
+1. In the top navigation menu, select **Address Book**
 2. Select Device A in the agent's device list (search by MAC address or nickname)
 3. In the details panel, select a nickname for Device B, such as **"Alex"**
 4. Enable Device B's **call permission** checkbox
@@ -40,12 +40,12 @@ The steps below assume these requirements are satisfied.
 
 ### Step 3. Enable the calling tool for the agent
 
-1. In the top navigation menuClick **智能体管理**
-2. For the agent linked to the devices,Click **Edit Agent**
-3. In the right-hand details panel,，Click **Edit Functions**
-4. Enable **Device-to-device Call** 工具
+1. In the top navigation menu, select **Agent Management**
+2. For the agent linked to the devices, click **Edit Agent**
+3. In the right-hand details panel, click **Edit Functions**
+4. Enable the **Device-to-device Call** tool
 5. Click **Save Configuration** to confirm
-6. In the main agent panel, alsoClick **Save Configuration** ，then restart the device
+6. Save the overall agent configuration and restart the device
 
 ### Step 4. Add the remote wake-up tool to firmware
 
@@ -108,16 +108,15 @@ The steps below assume these requirements are satisfied.
             auto& app = Application::GetInstance();
             app.RemoteWakeup(reason);
             return true;
+        });
     ```
 5. Follow [Firmware Build Guide](firmware-build.md) to build and flash the device
-6. Enable AEC in firmware configuration even on a single-microphone device!
-7. Enable AEC in firmware configuration even on a single-microphone device!
-8. Enable AEC in firmware configuration even on a single-microphone device!
+6. Enable **AEC** in the firmware settings regardless of the number of microphones.
 
 ### Step 5. Set up the MQTT gateway
 
 1. Deploy the gateway following [MQTT gateway integration](mqtt-gateway-integration.md)
-2. If already deployed, check the gateway version isMay 27, 2026or later
+2. If already deployed, confirm the gateway build is dated May 27, 2026 or later.
 
 ## Test a call
 
@@ -137,12 +136,12 @@ Configure both devices and enable the calling tool. On Device A, say "Call Alex"
 - Enable permission to call B from Device A
 - Ensure the configuration is saved
 
-### Q: 如何to confirmAddress Book功能已开启？
+### Q: How do I confirm that the address book is enabled?
 
-- management console顶部菜单如显示"Address Book"入口，则表示已开启
+- The **Address Book** entry should be visible in the console's top navigation.
 
 ### Q: ASR mishears the contact nickname. How do I fix this?
 - Check whether your ASR provider supports hotwords.
-- If using`FunASRServer`,add the correct nickname to the`hotword file`and restart the container.
-- If using`Volcengine` service，you can`Volcengine provider console` add`hotword file`，then return tomanagement console的`Model Configuration`，and set`hotword table name`under`Volcengine的tts`as appropriate。
+- For `FunASRServer`, add the contact's exact name to its hotword file and restart the container.
+- For Volcengine ASR, configure the hotword table in the provider console, then set the matching hotword table name under the model's ASR configuration in Momo Companion.
 
