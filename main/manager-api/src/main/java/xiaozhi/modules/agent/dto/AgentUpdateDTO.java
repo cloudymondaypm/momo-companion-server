@@ -97,7 +97,7 @@ public class AgentUpdateDTO implements Serializable {
     @Schema(description = "Tag names", nullable = true)
     private List<String> tagNames;
 
-    @Schema(description = "Tag ID列表", nullable = true)
+    @Schema(description = "List of tag IDs", nullable = true)
     private List<String> tagIds;
 
     @Data
@@ -106,10 +106,10 @@ public class AgentUpdateDTO implements Serializable {
         private static final TypeReference<HashMap<String, Object>> PARAM_INFO_TYPE = new TypeReference<>() {
         };
 
-        @Schema(description = "插件ID", example = "plugin_01")
+        @Schema(description = "Plugin ID", example = "plugin_01")
         private String pluginId;
 
-        @Schema(description = "函数参数信息", nullable = true)
+        @Schema(description = "Function parameters", nullable = true)
         private HashMap<String, Object> paramInfo = new HashMap<>();
 
         public void setParamInfo(Object paramInfo) {
