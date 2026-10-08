@@ -11,20 +11,20 @@
 <script lang="ts" setup>
 import { onLoad } from '@dcloudio/uni-app'
 import { computed, onMounted, ref } from 'vue'
-// 导入API接口
+// Import API client
 import { retrievePassword, sendSmsCode } from '@/api/auth'
-// 导入国际化相关功能
+// Import localization helpers
 import { initI18n, t } from '@/i18n'
 import { useConfigStore } from '@/store'
 import { getEnvBaseUrl, sm2Encrypt } from '@/utils'
 import { toast } from '@/utils/toast'
 
-// 获取屏幕边界到安全区域距离
+// Get safe-area inset
 let safeAreaInsets
 let systemInfo
 
 // #ifdef MP-WEIXIN
-// 微信小程序使用新的API
+// Use newer API on WeChat Mini Programs
 systemInfo = uni.getWindowInfo()
 safeAreaInsets = systemInfo.safeArea
   ? {
@@ -37,12 +37,12 @@ safeAreaInsets = systemInfo.safeArea
 // #endif
 
 // #ifndef MP-WEIXIN
-// 其他平台继续使用uni API
+// Use uni API on other platforms
 systemInfo = uni.getSystemInfoSync()
 safeAreaInsets = systemInfo.safeAreaInsets
 // #endif
 
-// 表单数据
+// Form data
 interface ForgotPasswordData {
   mobile: string
   captcha: string
@@ -63,17 +63,17 @@ const formData = ref<ForgotPasswordData>({
   areaCode: '+86',
 })
 
-// 验证码图片
+// Captcha image
 const captchaImage = ref('')
 const loading = ref(false)
 
-// 获取配置store
+// Get configuration store
 const configStore = useConfigStore()
 
 // State for area code action sheet
 const showAreaCodeSheet = ref(false)
 const selectedAreaCode = ref('+86')
-// 短信验证码倒计时
+// SMS verification countdown
 const smsCountdown = ref(0)
 const smsLoading = ref(false)
 const areaCodeList = computed(() =>
@@ -91,29 +91,29 @@ const canSendMobileCaptcha = computed(() => {
   return phoneRegex.test(mobile) && smsCountdown.value === 0
 })
 
-// SM2公钥
+// SM2 public key
 const sm2PublicKey = computed(() => {
   return configStore.config.sm2PublicKey
 })
 
-// 打开区号选择弹窗
+// Open country code selector
 function openAreaCodeSheet() {
   showAreaCodeSheet.value = true
 }
 
-// 选择区号
+// Select country code
 function selectAreaCode(item: { value: string, label: string }) {
   selectedAreaCode.value = item.value
   formData.value.areaCode = item.value
   showAreaCodeSheet.value = false
 }
 
-// 关闭区号选择弹窗
+// Close country code selector
 function closeAreaCodeSheet() {
   showAreaCodeSheet.value = false
 }
 
-// 生成UUID
+// Generate UUID
 function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0
@@ -122,16 +122,16 @@ function generateUUID() {
   })
 }
 
-// 获取图形验证码
+// Get image captcha
 async function refreshCaptcha() {
   const uuid = generateUUID()
   formData.value.captchaId = uuid
   captchaImage.value = `${getEnvBaseUrl()}/user/captcha?uuid=${uuid}&t=${Date.now()}`
 }
 
-// 发送短信验证码
+// Send SMS verification code
 async function handleSendSmsCode() {
-  // 手机号格式验证
+  // Validate phone number format
   const phoneRegex = /^1[3-9]\d{9}$/
   if (!phoneRegex.test(formData.value.mobile)) {
     toast.warning(t('retrievePassword.inputCorrectMobile'))
@@ -145,9 +145,9 @@ async function handleSendSmsCode() {
 
   try {
     smsLoading.value = true
-    // 将手机号转换为国际格式
+    // Convert phone number to international format
     const internationalPhone = formData.value.areaCode + formData.value.mobile
-    // 调用发送短信验证码API
+    // Call SMS verification API
     await sendSmsCode({
       phone: internationalPhone,
       captcha: formData.value.captcha,
@@ -156,7 +156,7 @@ async function handleSendSmsCode() {
 
     toast.success(t('retrievePassword.captchaSendSuccess'))
 
-    // 开始倒计时
+    // Start countdown
     smsCountdown.value = 60
     const timer = setInterval(() => {
       smsCountdown.value--
@@ -166,11 +166,11 @@ async function handleSendSmsCode() {
     }, 1000)
   }
   catch (error: any) {
-    // 处理验证码错误
+    // Handle captcha error
     if (error.message.includes('[10067]')) {
       toast.warning(t('login.captchaError'))
     }
-    // 发送失败重新获取图形验证码
+    // Reload image captcha after send failure
     refreshCaptcha()
   }
   finally {
@@ -178,22 +178,22 @@ async function handleSendSmsCode() {
   }
 }
 
-// 重置密码
+// Reset password
 async function handleResetPassword() {
-  // 表单验证
+  // Validate form
   if (!formData.value.mobile) {
     toast.warning(t('retrievePassword.mobileRequired'))
     return
   }
 
-  // 手机号格式验证
+  // Validate phone number format
   const phoneRegex = /^1[3-9]\d{9}$/
   if (!phoneRegex.test(formData.value.mobile)) {
     toast.warning(t('retrievePassword.inputCorrectMobile'))
     return
   }
 
-  // 将手机号转换为国际格式
+  // Convert phone number to international format
   const internationalPhone = formData.value.areaCode + formData.value.mobile
 
   if (!formData.value.captcha) {
@@ -224,16 +224,16 @@ async function handleResetPassword() {
   try {
     loading.value = true
 
-    // 检查SM2公钥是否配置
+    // Check SM2 public key configuration
     if (!sm2PublicKey.value) {
       toast.warning(t('sm2.publicKeyNotConfigured'))
       return
     }
 
-    // 加密密码
+    // Encrypt password
     let encryptedPassword
     try {
-      // 拼接图形验证码和新密码进行加密
+      // Combine image captcha with new password before encryption
       const captchaAndPassword = formData.value.captcha + formData.value.newPassword
       encryptedPassword = sm2Encrypt(sm2PublicKey.value, captchaAndPassword)
     }
@@ -243,7 +243,7 @@ async function handleResetPassword() {
       return
     }
 
-    // 调用重置密码API
+    // Call reset password API
     await retrievePassword({
       phone: internationalPhone,
       code: formData.value.mobileCaptcha,
@@ -253,7 +253,7 @@ async function handleResetPassword() {
 
     toast.success(t('retrievePassword.passwordUpdateSuccess'))
 
-    // 跳转到登录页
+    // Go to login
     setTimeout(() => {
       uni.redirectTo({
         url: '/pages/login/index',
@@ -261,11 +261,11 @@ async function handleResetPassword() {
     }, 1000)
   }
   catch (error: any) {
-    // 处理验证码错误
+    // Handle captcha error
     if (error.message.includes('[10067]')) {
       toast.warning(t('login.captchaError'))
     }
-    // 重置失败重新获取验证码
+    // Reload captcha after reset failure
     refreshCaptcha()
   }
   finally {
@@ -273,19 +273,19 @@ async function handleResetPassword() {
   }
 }
 
-// 返回登录
+// Back to login
 function goBack() {
   uni.redirectTo({
     url: '/pages/login/index',
   })
 }
 
-// 页面加载时获取验证码
+// Get captcha on page load
 onLoad(() => {
   refreshCaptcha()
 })
 
-// 组件挂载时确保配置已加载
+// Ensure configuration is loaded on mount
 onMounted(async () => {
   if (!configStore.config.name) {
     try {
@@ -295,7 +295,7 @@ onMounted(async () => {
       console.error('Failed to retrieve configuration:', error)
     }
   }
-  // 初始化国际化
+  // Initialize localization
   initI18n()
 })
 </script>
@@ -322,7 +322,7 @@ onMounted(async () => {
 
     <view class="form-container">
       <view class="form">
-        <!-- 手机号输入 -->
+        <!-- Phone number input -->
         <view class="input-group">
           <view class="input-wrapper mobile-wrapper">
             <view class="area-code-selector" @click="openAreaCodeSheet">
@@ -344,7 +344,7 @@ onMounted(async () => {
           </view>
         </view>
 
-        <!-- 图形验证码 -->
+        <!-- Image captcha -->
         <view class="input-group">
           <view class="input-wrapper captcha-wrapper">
             <wd-input
@@ -360,7 +360,7 @@ onMounted(async () => {
           </view>
         </view>
 
-        <!-- 短信验证码 -->
+        <!-- SMS verification code -->
         <view class="input-group">
           <view class="input-wrapper sms-wrapper">
             <wd-input
@@ -382,7 +382,7 @@ onMounted(async () => {
           </view>
         </view>
 
-        <!-- 新密码 -->
+        <!-- New password -->
         <view class="input-group">
           <view class="input-wrapper">
             <wd-input
@@ -396,7 +396,7 @@ onMounted(async () => {
           </view>
         </view>
 
-        <!-- 确认新密码 -->
+        <!-- Confirm new password -->
         <view class="input-group">
           <view class="input-wrapper">
             <wd-input
@@ -410,12 +410,12 @@ onMounted(async () => {
           </view>
         </view>
 
-        <!-- 重置密码按钮 -->
+        <!-- Reset password button -->
         <view class="reset-btn" @click="handleResetPassword">
           {{ loading ? t("common.loading") : t("retrievePassword.resetButton") }}
         </view>
 
-        <!-- 返回登录链接 -->
+        <!-- Back to login link -->
         <view class="back-login-hint" @click="goBack">
           <text class="hint-text">
             {{ t("retrievePassword.goToLogin") }}
@@ -424,7 +424,7 @@ onMounted(async () => {
       </view>
     </view>
 
-    <!-- 区号选择弹窗 -->
+    <!-- Country code dialog -->
     <wd-action-sheet
       v-model="showAreaCodeSheet"
       :title="t('login.selectCountry')"
@@ -750,7 +750,7 @@ onMounted(async () => {
   }
 }
 
-// 区号选择弹窗样式
+// Country code dialog styles
 .area-code-sheet {
   background: #ffffff;
   border-radius: 24rpx 24rpx 0 0;
