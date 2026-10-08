@@ -266,7 +266,7 @@ public class SysParamsServiceImpl extends BaseServiceImpl<SysParamsDao, SysParam
             }
         });
         if (!str.isEmpty()) {
-            String promptStr = "%s这些参数不可以为空";
+            String promptStr = "The following parameters are required: %s";
             String substring = str.substring(1, str.length());
             throw new RenException(promptStr.formatted(substring));
         }
