@@ -132,13 +132,16 @@ def map_category(category_text):
         "economy": "finance_rss_url",
         # Society news
         "社会": "society_rss_url",
-        "Society news": "society_rss_url",
+        "society news": "society_rss_url",
+        "社会新闻": "society_rss_url",
         # World news
         "国际": "world_rss_url",
-        "World news": "world_rss_url",
+        "world news": "world_rss_url",
+        "国际新闻": "world_rss_url",
         # Finance news
         "财经": "finance_rss_url",
-        "Finance news": "finance_rss_url",
+        "finance news": "finance_rss_url",
+        "财经新闻": "finance_rss_url",
         "金融": "finance_rss_url",
         "经济": "finance_rss_url",
     }
