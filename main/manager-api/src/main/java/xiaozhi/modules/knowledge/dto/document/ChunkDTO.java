@@ -54,11 +54,11 @@ public class ChunkDTO {
         @Schema(description = "New chunk content")
         private String content;
 
-        @Schema(description = "Update keyword list (覆盖原有列表)")
+        @Schema(description = "Update keyword list (overwrites existing list)")
         @JsonProperty("important_keywords")
         private List<String> importantKeywords;
 
-        @Schema(description = "Enable/disable (true: 启用, false: 禁用)")
+        @Schema(description = "Enable/disable (true: enabled, false: disabled)")
         private Boolean available;
     }
 
@@ -74,14 +74,14 @@ public class ChunkDTO {
     public static class ListReq implements Serializable {
         private static final long serialVersionUID = 1L;
 
-        @Schema(description = "Page number (默认 1)")
+        @Schema(description = "Page number (default 1)")
         private Integer page;
 
-        @Schema(description = "Page size (默认 30)")
+        @Schema(description = "Page size (default 30)")
         @JsonProperty("page_size")
         private Integer pageSize;
 
-        @Schema(description = "Search keywords (全文检索)")
+        @Schema(description = "Search keywords (full-text search)")
         private String keywords;
 
         @Schema(description = "Exact chunk ID")
@@ -118,10 +118,10 @@ public class ChunkDTO {
     public static class InfoVO implements Serializable {
         private static final long serialVersionUID = 1L;
 
-        @Schema(description = "Chunk ID (通常为 document_id + 索引)", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Chunk ID (typically document_id + index)", requiredMode = Schema.RequiredMode.REQUIRED)
         private String id;
 
-        @Schema(description = "Chunk text (全文检索的主要对象)", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Chunk text (primary target for full-text search)", requiredMode = Schema.RequiredMode.REQUIRED)
         private String content;
 
         @Schema(description = "Parent document ID", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -132,14 +132,14 @@ public class ChunkDTO {
         @JsonProperty("docnm_kwd")
         private String docnmKwd;
 
-        @Schema(description = "Important keywords (用于关键词增强检索)")
+        @Schema(description = "Important keywords (for enhanced keyword retrieval)")
         @JsonProperty("important_keywords")
         private List<String> importantKeywords;
 
-        @Schema(description = "Suggested questions (用于 Q&A 模式增强)")
+        @Schema(description = "Suggested questions (for Q&A enhancement)")
         private List<String> questions;
 
-        @Schema(description = "关联的Image ID")
+        @Schema(description = "Related image ID")
         @JsonProperty("image_id")
         private String imageId;
 
@@ -147,10 +147,10 @@ public class ChunkDTO {
         @JsonProperty("dataset_id")
         private String datasetId;
 
-        @Schema(description = "切片是否可用 (true: 参与检索, false: 被禁用)")
+        @Schema(description = "Whether chunk is available (true: included in retrieval, false: excluded from retrieval)")
         private Boolean available;
 
-        @Schema(description = "切片在原文中的Location indices列表 (RAGFlow返回嵌套数组, 如 [[start, end, filename]])")
+        @Schema(description = "Location indices in source document (RAGFlow returns nested arrays, e.g. [[start, end, filename]])")
         private List<List<Object>> positions;
 
         @Schema(description = "Token IDs")
