@@ -16,6 +16,9 @@ THINKING_DISABLED_DOMAINS = {
     "bigmodel.cn": {"thinking": {"type": "disabled"}},
     "moonshot.cn": {"thinking": {"type": "disabled"}},
     "volces.com": {"thinking": {"type": "disabled"}},
+    # NVIDIA NIM Nemotron models otherwise spend max_tokens on private
+    # reasoning_content and may never emit answer content for Xiaozhi to speak.
+    "integrate.api.nvidia.com": {"chat_template_kwargs": {"enable_thinking": False}},
 }
 
 
@@ -116,13 +119,15 @@ class LLMProvider(LLMProviderBase):
         responses = self.client.chat.completions.create(**request_params)
 
         is_active = True
-        try:            
+        try:
             for chunk in responses:
                 try:
                     delta = chunk.choices[0].delta if getattr(chunk, "choices", None) else None
                     content = getattr(delta, "content", "") if delta else ""
                 except IndexError:
                     content = ""
+                # Deliberately ignore delta.reasoning. It is private chain-of-thought,
+                # not an answer, and must never be spoken or shown to the client.
                 if content:
                     if "<think>" in content:
                         is_active = False
