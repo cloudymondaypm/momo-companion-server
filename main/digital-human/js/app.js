@@ -105,7 +105,7 @@ class App {
             // Save availability state globally
             window.microphoneAvailable = isAvailable;
             window.isHttpNonLocalhost = isHttp;
-            // 更新UI
+            // Update UI
             if (this.uiController) {
                 this.uiController.updateMicrophoneAvailability(isAvailable, isHttp);
             }
