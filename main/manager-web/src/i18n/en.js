@@ -6,7 +6,7 @@ export default {
   'login.requiredMobile': 'Please enter a valid mobile phone number',
   'login.loginSuccess': 'Login successful!',
 
-  // HeaderBar组件文本
+  // HeaderBar component text
   'header.smartManagement': 'Agents',
   'header.modelConfig': 'Models',
   'header.knowledgeBase': 'Knowledge',
@@ -17,7 +17,7 @@ export default {
   'header.paramDictionary': 'More',
   'header.paramManagement': 'Params Management',
   'header.dictManagement': 'Dict Management',
-  'header.agentTemplate': 'Default Role Templates', // 添加这一行
+  'header.agentTemplate': 'Default Role Templates', // Added navigation entry
   'header.searchHistory': 'Search History',
   'header.clearHistory': 'Clear History',
   'header.providerManagement': 'Provider Management',
@@ -714,8 +714,8 @@ export default {
   'common.copyAddress': 'Copy address',
 
   // Language switch
-  'language.zhCN': '中文简体',
-  'language.zhTW': '中文繁體',
+  'language.zhCN': 'Simplified Chinese',
+  'language.zhTW': 'Traditional Chinese',
   'language.en': 'English',
   'language.de': 'Deutsch',
   'language.vi': 'Tiếng Việt',
