@@ -67,8 +67,8 @@ def get_lunar(date=None, query=None):
     lunar = cnlunar.Lunar(now, godType="8char")
     response_text += (
         "Lunar calendar information:\n"
-        "%syear%s%s\n" % (lunar.lunarYearCn, lunar.lunarMonthCn[:-1], lunar.lunarDayCn)
-        + "Stems and branches: %syear %smonth %sday\n" % (lunar.year8Char, lunar.month8Char, lunar.day8Char)
+        "Lunar date: year %s, month %s, day %s\n" % (lunar.lunarYearCn, lunar.lunarMonthCn[:-1], lunar.lunarDayCn)
+        + "Stems and branches: year %s, month %s, day %s\n" % (lunar.year8Char, lunar.month8Char, lunar.day8Char)
         + "Chinese zodiac: Year of %s\n" % (lunar.chineseYearZodiac)
         + "Eight characters: %s\n"
         % (
@@ -90,7 +90,7 @@ def get_lunar(date=None, query=None):
             )
         )
         + "Today's solar term: %s\n" % (lunar.todaySolarTerms)
-        + "Next solar term: %s %syear%smonth%sday\n"
+        + "Next solar term: %s (%s-%s-%s)\n"
         % (
             lunar.nextSolarTerm,
             lunar.nextSolarTermYear,
@@ -101,7 +101,7 @@ def get_lunar(date=None, query=None):
         % (
             ", ".join(
                 [
-                    f"{term}({date[0]}month{date[1]}day)"
+                    f"{term} ({date[0]}/{date[1]})"
                     for term, date in lunar.thisYearSolarTermsDic.items()
                 ]
             )
