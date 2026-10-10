@@ -127,6 +127,7 @@ class WebSocketServer:
             self._intent,
             self,  # 传入server实例
         )
+        handler.hybrid_authenticated = websocket.request.headers.get("voice-mode") == "hybrid-v1"
         try:
             await handler.handle_connection(websocket)
         except Exception as e:
@@ -209,6 +210,11 @@ class WebSocketServer:
 
     async def _handle_auth(self, websocket: websockets.ServerConnection):
         # 先认证，后建立连接
+        if websocket.request.headers.get("voice-mode") == "hybrid-v1":
+            from core.hybrid_voice import verify_hybrid_auth
+            if not verify_hybrid_auth(self.auth, dict(websocket.request.headers)):
+                raise AuthenticationError("Hybrid voice requires a device-bound bearer token")
+            return
         if self.auth_enable:
             headers = dict(websocket.request.headers)
             device_id = headers.get("device-id", None)
