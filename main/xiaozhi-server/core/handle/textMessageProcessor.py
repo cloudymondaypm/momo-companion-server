@@ -22,6 +22,9 @@ class TextMessageProcessor:
 
             # Handle JSON message
             if isinstance(msg_json, dict):
+                from core.hybrid_voice import handle_hybrid_message
+                if await handle_hybrid_message(conn, msg_json):
+                    return
                 message_type = msg_json.get("type")
 
                 # Log message

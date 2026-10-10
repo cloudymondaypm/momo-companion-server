@@ -33,6 +33,11 @@ class ListenTextMessageHandler(TextMessageHandler):
                 f"Client listening mode: {conn.client_listen_mode}"
             )
         if msg_json["state"] == "start":
+            if getattr(conn, "hybrid_negotiated", False):
+                output = msg_json.get("response_mode", "server")
+                conn.hybrid_output = output if output in ("device", "server") else "server"
+                conn.hybrid_reply = None
+                conn.hybrid_replayed = False
             # Clear audio state and buffers when the device switches from playback to recording
             conn.reset_audio_states()
         elif msg_json["state"] == "stop":

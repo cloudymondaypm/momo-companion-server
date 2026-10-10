@@ -443,12 +443,13 @@ class TTSProviderBase(ABC):
                         if text:
                             enqueue_text = text
                         if sentence_type == SentenceType.LAST:
-                            enqueue_tts_report(self.conn, enqueue_text, enqueue_audio)
+                            if not getattr(self.conn, "hybrid_replayed", False):
+                                enqueue_tts_report(self.conn, enqueue_text, enqueue_audio)
                             enqueue_audio = []
                             enqueue_text = None
                     else:
                         # 非累积模式：每个句子分别上报
-                        if enqueue_text is not None:
+                        if enqueue_text is not None and not getattr(self.conn, "hybrid_replayed", False):
                             enqueue_tts_report(self.conn, enqueue_text, enqueue_audio)
                         enqueue_audio = []
                         enqueue_text = text
@@ -465,7 +466,7 @@ class TTSProviderBase(ABC):
                 future.result()
 
                 # 记录输出和报告
-                if self.conn.max_output_size > 0 and text:
+                if self.conn.max_output_size > 0 and text and not getattr(self.conn, "hybrid_replayed", False):
                     add_device_output(self.conn.headers.get("device-id"), len(text))
 
             except Exception as e:

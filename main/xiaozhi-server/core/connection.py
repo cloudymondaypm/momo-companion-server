@@ -27,7 +27,7 @@ from core.utils.modules_initialize import (
     initialize_tts,
     initialize_asr,
 )
-from core.handle.reportHandle import report, enqueue_tool_report
+from core.handle.reportHandle import report, enqueue_tool_report, enqueue_tts_report
 from core.providers.tts.default import DefaultTTS
 from concurrent.futures import ThreadPoolExecutor
 from core.utils.dialogue import Message, Dialogue
@@ -207,6 +207,10 @@ class ConnectionHandler:
 
             # 获取并验证headers
             self.headers = dict(ws.request.headers)
+            self.hybrid_negotiated = False
+            self.hybrid_ready = False
+            self.hybrid_busy = False
+            self.hybrid_output = "server"
             real_ip = self.headers.get("x-real-ip") or self.headers.get(
                 "x-forwarded-for"
             )
@@ -215,7 +219,7 @@ class ConnectionHandler:
             else:
                 self.client_ip = ws.remote_address[0]
             self.logger.bind(tag=TAG).info(
-                f"{self.client_ip} conn - Headers: {self.headers}"
+                f"{self.client_ip} conn - device: {self.headers.get('device-id')}"
             )
 
             self.device_id = self.headers.get("device-id", None)
@@ -239,7 +243,7 @@ class ConnectionHandler:
             # 启动AEC缓存清理任务
             self._aec_cache_cleanup_task = asyncio.create_task(self._check_aec_cache_expiry())
 
-            self.welcome_msg = self.config["xiaozhi"]
+            self.welcome_msg = copy.deepcopy(self.config["xiaozhi"])
             self.welcome_msg["session_id"] = self.session_id
 
             # 从配置中读取采样率
@@ -607,6 +611,9 @@ class ConnectionHandler:
         try:
             if self.tts is None:
                 self.tts = self._initialize_tts()
+            if getattr(self, "hybrid_authenticated", False):
+                from core.hybrid_voice import HybridTextQueue
+                self.tts.tts_text_queue = HybridTextQueue(self)
             # 打开语音合成通道
             asyncio.run_coroutine_threadsafe(
                 self.tts.open_audio_channels(self), self.loop
@@ -652,6 +659,13 @@ class ConnectionHandler:
             self._init_prompt_enhancement()
             """注入工具调用few-shot示例（仅function_call模式）"""
             self._inject_tool_call_fewshot()
+            def report_local_reply(text):
+                enqueue_tts_report(self, text, [])
+                if self.max_output_size > 0:
+                    from core.utils.output_counter import add_device_output
+                    add_device_output(self.headers.get("device-id"), len(text))
+            self.hybrid_report_reply = report_local_reply
+            self.hybrid_ready = True
 
         except Exception as e:
             self.logger.bind(tag=TAG).error(f"实例化组件失败: {e}")

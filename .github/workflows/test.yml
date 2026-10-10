@@ -25,6 +25,9 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install pytest pytest-asyncio freezegun
+      - name: Test hybrid voice transport
+        working-directory: main/xiaozhi-server
+        run: python -m unittest discover -s tests/hybrid -v
       - name: Run smoke test
         working-directory: main/xiaozhi-server
         run: |

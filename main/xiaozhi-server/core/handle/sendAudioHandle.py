@@ -312,6 +312,7 @@ async def send_tts_message(conn: "ConnectionHandler", state, text=None):
         if hasattr(conn, "audio_rate_controller") and conn.audio_rate_controller:
             conn.audio_rate_controller.stop_sending()
         conn.clearSpeakStatus()
+        conn.hybrid_busy = False
 
     # Send message to client
     await conn.websocket.send(json.dumps(message))

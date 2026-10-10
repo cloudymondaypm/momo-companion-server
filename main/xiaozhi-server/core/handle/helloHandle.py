@@ -41,6 +41,20 @@ _wakeup_response_lock = asyncio.Lock()
 
 async def handleHelloMessage(conn: "ConnectionHandler", msg_json):
     """Handle hello message"""
+    requested = msg_json.get("features", {})
+    if isinstance(requested, dict) and requested.get("hybrid_voice") == 1:
+        if not getattr(conn, "hybrid_authenticated", False):
+            await conn.websocket.close(code=1008, reason="Hybrid voice requires authentication")
+            return
+        conn.hybrid_negotiated = True
+        conn.welcome_msg["features"] = {"hybrid_voice": 1}
+        for _ in range(100):
+            if getattr(conn, "hybrid_ready", False):
+                break
+            await asyncio.sleep(0.1)
+        else:
+            await conn.websocket.close(code=1011, reason="Voice runtime is not ready")
+            return
     audio_params = msg_json.get("audio_params")
     if audio_params:
         format = audio_params.get("format")
